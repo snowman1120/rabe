@@ -5,7 +5,6 @@ const Main = () => {
         <div>
             {/* <!-- ==== hero section start ==== --> */}
             <section className="hero pos__rel over__hi bg__img" data-background="./assets/images/hero/light-bg.png">
-                <h1 style={{color: 'red', marginLeft:100}}>This is my first gift for you.</h1>
                 <div className="container">
                     <div className="hero__area">
                         <div className="row">

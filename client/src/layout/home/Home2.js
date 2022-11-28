@@ -91,9 +91,9 @@ const Home2 = () => {
                                 </div>
                                 <div className="col-lg-4">
                                     <div className="custom__slide__btn">
-                                        <a href="javascript:void(0)" className="button button--effect prev"><i
+                                        <a href="#!" className="button button--effect prev"><i
                                                 className="fa-solid fa-arrow-left-long"></i></a>
-                                        <a href="javascript:void(0)" className="button button--effect next"><i
+                                        <a href="#!" className="button button--effect next"><i
                                                 className="fa-solid fa-arrow-right-long"></i></a>
                                     </div>
                                 </div>

@@ -66,10 +66,10 @@ const Properties = () => {
                                 <option value="grid">Date</option>
                                 <option value="list">Price</option>
                             </select>
-                            <a href="javascript:void(0)" className="grid__btn grid__view grid__btn__active">
+                            <a href="#!" className="grid__btn grid__view grid__btn__active">
                                 <i className="fa-solid fa-grip"></i>
                             </a>
-                            <a href="javascript:void(0)" className="grid__btn grid__list">
+                            <a href="#!" className="grid__btn grid__list">
                                 <i className="fa-solid fa-bars"></i>
                             </a>
                         </div>

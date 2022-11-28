@@ -241,27 +241,27 @@ const PropertyDetails = () => {
                                     <div className="group brin">
                                         <h5 className="neutral-top">Occupancy</h5>
                                         <div className="acus__btns">
-                                            <a href="javascript:void(0)" className="acus__btn acus__btn__active">0%</a>
-                                            <a href="javascript:void(0)" className="acus__btn">20%</a>
-                                            <a href="javascript:void(0)" className="acus__btn">40%</a>
-                                            <a href="javascript:void(0)" className="acus__btn">60%</a>
-                                            <a href="javascript:void(0)" className="acus__btn">80%</a>
-                                            <a href="javascript:void(0)" className="acus__btn">100%</a>
+                                            <a href="#!" className="acus__btn acus__btn__active">0%</a>
+                                            <a href="#!" className="acus__btn">20%</a>
+                                            <a href="#!" className="acus__btn">40%</a>
+                                            <a href="#!" className="acus__btn">60%</a>
+                                            <a href="#!" className="acus__btn">80%</a>
+                                            <a href="#!" className="acus__btn">100%</a>
                                         </div>
                                         <div className="acus__content">
                                             <form action="#" method="post">
                                                 <div className="input input--secondary">
-                                                    <label for="anNum">Annual return rate:</label>
+                                                    <label htmlFor="anNum">Annual return rate:</label>
                                                     <input type="number" name="an__num" id="anNum" placeholder="7.00%"
                                                         required="required" />
                                                 </div>
                                                 <div className="input input--secondary">
-                                                    <label for="anNumIn">Invest</label>
+                                                    <label htmlFor="anNumIn">Invest</label>
                                                     <input type="number" name="an__num_in" id="anNumIn" placeholder="€ 500"
                                                         required="required" />
                                                 </div>
                                                 <div className="input input--secondary">
-                                                    <label for="anNumInTwo">Earn</label>
+                                                    <label htmlFor="anNumInTwo">Earn</label>
                                                     <input type="number" name="an__num_in_two" id="anNumInTwo"
                                                         placeholder="€ 35.00" required="required" />
                                                 </div>
@@ -303,16 +303,16 @@ const PropertyDetails = () => {
                                     <div className="group birinit">
                                         <h6>Share via Social </h6>
                                         <div className="social text-start">
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-facebook-f"></i>
                                             </a>
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-twitter"></i>
                                             </a>
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-instagram"></i>
                                             </a>
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-linkedin-in"></i>
                                             </a>
                                         </div>
@@ -342,12 +342,12 @@ const PropertyDetails = () => {
                                         <hr />
                                         <h6>Investment Note</h6>
                                         <p>Property Share's Detailed Investment Note</p>
-                                        <a href="javascript:void(0)" className="button">DOWNLOAD INVESTMENT NOTE <i
+                                        <a href="#!" className="button">DOWNLOAD INVESTMENT NOTE <i
                                                 className="fa-solid fa-download"></i></a>
                                         <h6>Legal Title Report</h6>
                                         <p>Detailed Report on the Title diligence of the
                                             property by Amarchand Mangaldas</p>
-                                        <a href="javascript:void(0)" className="button">DOWNLOAD TITLE REPORT <i
+                                        <a href="#!" className="button">DOWNLOAD TITLE REPORT <i
                                                 className="fa-solid fa-download"></i></a>
                                     </div>
                                 </div>

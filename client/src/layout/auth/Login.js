@@ -1,5 +1,62 @@
+import {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import validator from 'validator';
+import { Navigate } from 'react-router-dom';
+import {isEmpty} from 'utils/validation';
 
-const Login = () => {
+import {login} from 'actions/auth';
+
+const Login = ({serverErrors, login, role, isAuthenticated}) => {
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    
+    const [rememberMe, setRememberMe] = useState(false);
+
+    const [errors, setErrors] = useState({
+        email: '',
+        password: '',
+        msg: ''
+    });
+
+    useEffect(() => {
+        setErrors(serverErrors);
+    }, [serverErrors]);
+
+    const onChange = (e) => {
+        setFormData({...formData, [e.target.name]: e.target.value});
+    }
+
+    const onChangeCheckbox = (e) => {
+        setRememberMe(e.target.checked);
+    }
+
+    const onSubmit = () => {
+        let t_errors = {};
+        Object.keys(formData).forEach((key) => {
+            if(isEmpty(formData[key])) {
+                t_errors = {...t_errors, [key]: 'Required field'};
+            }
+        });
+
+        if(isEmpty(t_errors.email) && !validator.isEmail(formData.email)) {
+            t_errors = {...t_errors, email: 'Enter a valid email!'}
+        }
+
+        setErrors({...t_errors});
+
+        if(isEmpty(t_errors)) {
+            // Send request
+            login(formData);
+        }
+    }
+
+    if (isAuthenticated) {
+        if(role === 'admin') return <Navigate to="/admin/dashboard" />;
+        return <Navigate to="/" />;
+    }
+
     return (
         <div>
             {/* <!-- ==== registration section start ==== --> */}
@@ -8,29 +65,32 @@ const Login = () => {
                     <div className="registration__area">
                         <h4 className="neutral-top">Log in</h4>
                         <p>Don't have an account? <a href="registration">Register here.</a></p>
-                        <form action="#" method="post" name="login__form" className="form__login">
+                        <div name="login__form" className="form__login">
                             <div className="input input--secondary">
-                                <label for="loginMail">Email*</label>
-                                <input type="email" name="login__email" id="loginMail" placeholder="Enter your email"
-                                    required="required" />
+                                <label htmlFor="loginMail">Email*</label>
+                                <input type="email" name="email" id="loginMail" placeholder="Enter your email"
+                                    required="required" onChange={onChange} />
+                                {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
                             </div>
                             <div className="input input--secondary">
-                                <label for="loginPass">Password*</label>
-                                <input type="password" name="login__pass" id="loginPass" placeholder="Password"
-                                    required="required" />
+                                <label htmlFor="loginPass">Password*</label>
+                                <input type="password" name="password" id="loginPass" placeholder="Password"
+                                    required="required" onChange={onChange} />
+                                {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
                             </div>
                             <div className="checkbox login__checkbox">
                                 <label>
-                                    <input type="checkbox" id="remeberPass" name="remeber__pass" value="remember" />
+                                    <input type="checkbox" id="remeberPass" name="remeber__pass" value="remember" onChange={onChangeCheckbox} />
                                     <span className="checkmark"></span>
                                     Remember Me
                                 </label>
-                                <a href="javascript:void(0)">Forget Password</a>
+                                <a href="#!">Forget Password</a>
                             </div>
                             <div className="input__button">
-                                <button type="submit" className="button button--effect">Login</button>
+                                <button type="submit" className="button button--effect" onClick={onSubmit}>Login</button>
+                                {!isEmpty(errors.msg) ? <div className="error__message">{errors.msg}</div> : ''}
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -39,4 +99,10 @@ const Login = () => {
     )
 }
 
-export default Login;
+const mapStateToProps = (state) => ({
+    serverErrors: state.auth.errors,
+    isAuthenticated: state.auth.isAuthenticated,
+    role: state.auth.user && state.auth.user.role
+});
+
+export default connect(mapStateToProps, {login}) (Login);

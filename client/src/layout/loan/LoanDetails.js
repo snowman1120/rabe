@@ -29,27 +29,27 @@ const LoanDetails = () => {
                                                     <div>
                                                         <input type="radio" id="pone" checked className="radio-input"
                                                             name="radio-group"/>
-                                                        <label for="pone" className="radio-label"> <span
+                                                        <label htmlFor="pone" className="radio-label"> <span
                                                                 className="radio-border"></span> 13% </label>
                                                     </div>
                                                     <div>
                                                         <input type="radio" id="ptwo" checked className="radio-input"
                                                             name="radio-group"/>
-                                                        <label for="ptwo" className="radio-label"> <span
+                                                        <label htmlFor="ptwo" className="radio-label"> <span
                                                                 className="radio-border"></span> 13.25%
                                                         </label>
                                                     </div>
                                                     <div>
                                                         <input type="radio" id="pthree" checked className="radio-input"
                                                             name="radio-group"/>
-                                                        <label for="pthree" className="radio-label"> <span
+                                                        <label htmlFor="pthree" className="radio-label"> <span
                                                                 className="radio-border"></span> 13.5%
                                                         </label>
                                                     </div>
                                                     <div>
                                                         <input type="radio" id="pfour" checked className="radio-input"
                                                             name="radio-group"/>
-                                                        <label for="pfour" className="radio-label"> <span
+                                                        <label htmlFor="pfour" className="radio-label"> <span
                                                                 className="radio-border"></span> 14% </label>
                                                     </div>
                                                 </div>
@@ -228,12 +228,12 @@ const LoanDetails = () => {
                                         <div className="acus__content">
                                             <form action="#" method="post">
                                                 <div className="input input--secondary">
-                                                    <label for="anNumTwo">Annual return rate:</label>
+                                                    <label htmlFor="anNumTwo">Annual return rate:</label>
                                                     <input type="number" name="an__num__two" id="anNumTwo" placeholder="7.00%"
                                                         required="required" />
                                                 </div>
                                                 <div className="input input--secondary">
-                                                    <label for="anNumIn">Invest</label>
+                                                    <label htmlFor="anNumIn">Invest</label>
                                                     <input type="number" name="an__num_in" id="anNumIn" placeholder="€ 500"
                                                         required="required" />
                                                 </div>
@@ -291,16 +291,16 @@ const LoanDetails = () => {
                                     <div className="group birinit">
                                         <h6>Share via Social </h6>
                                         <div className="social text-start">
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-facebook-f"></i>
                                             </a>
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-twitter"></i>
                                             </a>
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-instagram"></i>
                                             </a>
-                                            <a href="javascript:void(0)">
+                                            <a href="#!">
                                                 <i className="fab fa-linkedin-in"></i>
                                             </a>
                                         </div>
@@ -330,12 +330,12 @@ const LoanDetails = () => {
                                         <hr />
                                         <h6>Investment Note</h6>
                                         <p>Property Share's Detailed Investment Note</p>
-                                        <a href="javascript:void(0)" className="button">DOWNLOAD INVESTMENT NOTE <i
+                                        <a href="#!" className="button">DOWNLOAD INVESTMENT NOTE <i
                                                 className="fa-solid fa-download"></i></a>
                                         <h6>Legal Title Report</h6>
                                         <p>Detailed Report on the Title diligence of the
                                             property by Amarchand Mangaldas</p>
-                                        <a href="javascript:void(0)" className="button">DOWNLOAD TITLE REPORT <i
+                                        <a href="#!" className="button">DOWNLOAD TITLE REPORT <i
                                                 className="fa-solid fa-download"></i></a>
                                     </div>
                                 </div>

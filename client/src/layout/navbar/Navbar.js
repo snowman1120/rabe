@@ -1,6 +1,8 @@
-import {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
+import { logout } from 'actions/auth';
+import { isEmpty } from 'utils/validation';
 
-const Navbar = () => {
+const Navbar = ({isAuthenticated, firstName, lastName, avatar, logout}) => {
     return (
         <div>
             {/* <!-- ==== header start ==== --> */}
@@ -11,11 +13,31 @@ const Navbar = () => {
                             <img src="assets/images/logo.png" alt="Logo" className="logo" />
                         </a>
                         <div className="navbar__out order-2 order-xl-3">
-                            <div className="nav__group__btn">
-                                <a href="login" className="log d-none d-sm-block"> Log In </a>
-                                <a href="registration" className="button button--effect d-none d-sm-block"> Join Now <i
-                                        className="fa-solid fa-arrow-right-long"></i> </a>
-                            </div>
+                            {
+                                isAuthenticated ? 
+                                (<>
+                                    <ul className="navbar-nav nav__group__btn">
+                                        <li className="nav-item dropdown">
+                                            <a className="nav-link dropdown-toggle" href="#!" id="navbarHomeDropdown"
+                                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <img className="avatar" src={isEmpty(avatar) ? "assets/images/profile.jpg" : avatar} alt="avatar" />
+                                                {`${firstName} ${lastName}`}
+                                            </a>
+                                            <ul className="dropdown-menu" aria-labelledby="navbarHomeDropdown">
+                                                <li><a className="dropdown-item" href="/profile">Profile</a></li>
+                                                <li><a className="dropdown-item" href="#!" onClick={logout}>Log out</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </>) :
+                                (<>
+                                    <div className="nav__group__btn">
+                                        <a href="login" className="log d-none d-sm-block"> Log In </a>
+                                        <a href="registration" className="button button--effect d-none d-sm-block"> Join Now <i
+                                                className="fa-solid fa-arrow-right-long"></i> </a>
+                                    </div>
+                                </>)
+                            }
                             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
                                 aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle Primary Nav">
                                 <span className="icon-bar top-bar"></span>
@@ -26,7 +48,7 @@ const Navbar = () => {
                         <div className="collapse navbar-collapse order-3 order-xl-2" id="primaryNav">
                             <ul className="navbar-nav">
                                 <li className="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarHomeDropdown"
+                                    <a className="nav-link dropdown-toggle" href="#!" id="navbarHomeDropdown"
                                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Home
                                     </a>
@@ -37,7 +59,7 @@ const Navbar = () => {
                                     </ul>
                                 </li>
                                 <li className="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarPropertyDropdown"
+                                    <a className="nav-link dropdown-toggle" href="#!" id="navbarPropertyDropdown"
                                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Properties
                                     </a>
@@ -48,7 +70,7 @@ const Navbar = () => {
                                     </ul>
                                 </li>
                                 <li className="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarLoanDropdown"
+                                    <a className="nav-link dropdown-toggle" href="#!" id="navbarLoanDropdown"
                                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Loan
                                     </a>
@@ -63,7 +85,7 @@ const Navbar = () => {
                                     <a className="nav-link" href="list-your-property">List your property</a>
                                 </li>
                                 <li className="nav-item dropdown">
-                                    <a className="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdown"
+                                    <a className="nav-link dropdown-toggle" href="#!" id="navbarDropdown"
                                         role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Pages
                                     </a>
@@ -106,4 +128,11 @@ const Navbar = () => {
     )
 }
 
-export default Navbar;
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth && state.auth.isAuthenticated,
+    firstName: state.auth.user && state.auth.user.firstName,
+    lastName: state.auth.user && state.auth.user.lastName,
+    avatar: state.auth.user && state.auth.user.avatar
+});
+
+export default connect(mapStateToProps, {logout}) (Navbar);

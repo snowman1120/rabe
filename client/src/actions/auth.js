@@ -1,5 +1,4 @@
 import api from '../utils/api';
-import { setAlert } from './alert';
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
@@ -7,7 +6,15 @@ import {
   AUTH_ERROR,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT
+  LOGOUT,
+
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_FAIL,
+
+  CHANGE_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_FAIL,
+
+  SET_PROFILE
 } from './types';
 
 /*
@@ -44,21 +51,23 @@ export const register = (formData) => async (dispatch) => {
     });
     dispatch(loadUser());
   } catch (err) {
-    const errors = err.response.data.errors;
+    const serverErrors = err.response.data.errors;
+    let errors = {};
 
-    if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
     }
 
     dispatch({
-      type: REGISTER_FAIL
+      type: REGISTER_FAIL,
+      payload: errors
     });
   }
 };
 
 // Login User
-export const login = (email, password) => async (dispatch) => {
-  const body = { email, password };
+export const login = (data) => async (dispatch) => {
+  const body = data;
 
   try {
     const res = await api.post('/auth', body);
@@ -70,17 +79,79 @@ export const login = (email, password) => async (dispatch) => {
 
     dispatch(loadUser());
   } catch (err) {
-    const errors = err.response.data.errors;
+    const serverErrors = err.response.data.errors;
+    let errors = {};
 
-    if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
     }
 
     dispatch({
-      type: LOGIN_FAIL
+      type: LOGIN_FAIL,
+      payload: errors
     });
   }
 };
+
+// Update User
+export const update = (data) => async (dispatch) => {
+  const body = data;
+
+  try {
+    const res = await api.put('/users', body);
+
+    dispatch({
+      type: UPDATE_PROFILE_SUCCESS,
+      payload: res.data
+    });
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: UPDATE_PROFILE_FAIL,
+      payload: errors
+    });
+  }
+};
+
+// Update User
+export const changePassword = (data) => async (dispatch) => {
+  const body = data;
+
+  try {
+    const res = await api.put('/users/changepassword', body);
+
+    dispatch({
+      type: CHANGE_PASSWORD_SUCCESS,
+      payload: res.data
+    });
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: CHANGE_PASSWORD_FAIL,
+      payload: errors
+    });
+  }
+};
+
+// Set Profile
+export const setProfile = (profile) => async (dispatch) => {
+  dispatch({
+    type: SET_PROFILE,
+    payload: profile
+  })
+}
 
 // Logout
 export const logout = () => ({ type: LOGOUT });

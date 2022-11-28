@@ -72,10 +72,10 @@ const BusinessLoan = () => {
                                     <option value="grid">Date</option>
                                     <option value="list">Price</option>
                                 </select>
-                                <a href="javascript:void(0)" className="grid__btnn grid__vieww grid__btnn__active">
+                                <a href="#!" className="grid__btnn grid__vieww grid__btnn__active">
                                     <i className="fa-solid fa-grip"></i>
                                 </a>
-                                <a href="javascript:void(0)" className="grid__btnn grid__listt">
+                                <a href="#!" className="grid__btnn grid__listt">
                                     <i className="fa-solid fa-bars"></i>
                                 </a>
                             </div>

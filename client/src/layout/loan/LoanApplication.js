@@ -39,17 +39,17 @@ const LoanApplication = () => {
                         </div>
                         <form action="#" name="property__alert__from" method="post">
                             <div class="input input--secondary">
-                                <label for="alertAltcom">Company Name*</label>
+                                <label htmlFor="alertAltcom">Company Name*</label>
                                 <input type="email" name="alertAlt__com" id="alertAltcom" placeholder="Enter Your Company"
                                     required="required" />
                             </div>
                             <div class="input input--secondary">
-                                <label for="alertAltRegistrationMail">Company Email*</label>
+                                <label htmlFor="alertAltRegistrationMail">Company Email*</label>
                                 <input type="email" name="alertAlt__registration__email" id="alertAltRegistrationMail"
                                     placeholder="Enter Your Email" required="required" />
                             </div>
                             <div class="input input--secondary input__alt">
-                                <label for="alertAltNumber">Phone*</label>
+                                <label htmlFor="alertAltNumber">Phone*</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <select class="number__code__select" id="numberAltCodeSelectAlert">
@@ -106,21 +106,21 @@ const LoanApplication = () => {
                                 <div class="radio__group">
                                     <div>
                                         <input type="radio" id="pone" checked class="radio-input" name="radio-group"/>
-                                        <label for="pone" class="radio-label"> <span class="radio-border"></span> 13% </label>
+                                        <label htmlFor="pone" class="radio-label"> <span class="radio-border"></span> 13% </label>
                                     </div>
                                     <div>
                                         <input type="radio" id="ptwo" checked class="radio-input" name="radio-group"/>
-                                        <label for="ptwo" class="radio-label"> <span class="radio-border"></span> 13.25%
+                                        <label htmlFor="ptwo" class="radio-label"> <span class="radio-border"></span> 13.25%
                                         </label>
                                     </div>
                                     <div>
                                         <input type="radio" id="pthree" checked class="radio-input" name="radio-group"/>
-                                        <label for="pthree" class="radio-label"> <span class="radio-border"></span> 13.5%
+                                        <label htmlFor="pthree" class="radio-label"> <span class="radio-border"></span> 13.5%
                                         </label>
                                     </div>
                                     <div>
                                         <input type="radio" id="pfour" checked class="radio-input" name="radio-group"/>
-                                        <label for="pfour" class="radio-label"> <span class="radio-border"></span> 14% </label>
+                                        <label htmlFor="pfour" class="radio-label"> <span class="radio-border"></span> 14% </label>
                                     </div>
                                 </div>
                             </div>

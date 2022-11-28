@@ -1,7 +1,8 @@
 
-import { Route, Routes, Redirect } from 'react-router-dom';
+import { Route, Routes, Switch, Redirect } from 'react-router-dom';
 
 //import Test from 'layouts/test/Test';
+import PrivateRoute from 'utils/PrivateRoute';
 import Home from 'layout/home/Home';
 import Home2 from 'layout/home/Home2';
 import Home3 from 'layout/home/Home3';
@@ -20,6 +21,11 @@ import ContactUs from 'layout/contact-us/ContactUs';
 
 import Login from 'layout/auth/Login';
 import Registration from 'layout/auth/Registration';
+
+import Profile from 'layout/profile/Profile';
+import ChangePassword from 'layout/profile/ChangePassword';
+
+import Error404 from 'layout/error/404';
 
 const RouterBranch = () => {
     return (
@@ -42,6 +48,11 @@ const RouterBranch = () => {
             
             <Route path='/login' element={<Login/>} />
             <Route path='/registration' element={<Registration/>} />
+
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+
+            <Route path="*" element={<Error404 />} />
         </Routes>
     )
 }
