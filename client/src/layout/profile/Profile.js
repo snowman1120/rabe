@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import validator from 'validator';
 import { Navigate } from 'react-router-dom';
 
+import SuccessModal from 'components/SuccessModal';
 import ImageUpload from './ImageUpload';
 
 import {isEmpty} from 'utils/validation';
@@ -10,6 +11,7 @@ import {isEmpty} from 'utils/validation';
 import {update, setProfile} from 'actions/auth';
 
 const Profile = ({serverErrors, update, setProfile, user, isAuthenticated}) => {
+    const [modalShow, setModalShow] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -59,8 +61,12 @@ const Profile = ({serverErrors, update, setProfile, user, isAuthenticated}) => {
 
         if(isEmpty(t_errors)) {
             // Send request
-            update(formData);
+            update(formData, success);
         }
+    }
+
+    const success = () => {
+        setModalShow(true);
     }
 
     const onChangeProfile = (profile) => {
@@ -121,7 +127,7 @@ const Profile = ({serverErrors, update, setProfile, user, isAuthenticated}) => {
                                     <a href="/">Delete my account</a>
                                 </p>
                                 <div className="input__button">
-                                    <button type="submit" className="button button--effect" onClick={onSubmit}>Submit</button>
+                                    <button type="submit" className="button button--effect" onClick={onSubmit}>Change my profile</button>
                                     {!isEmpty(errors.msg) ? <div className="error__message">{errors.msg}</div> : ''}
                                 </div>
                             </div>
@@ -130,6 +136,17 @@ const Profile = ({serverErrors, update, setProfile, user, isAuthenticated}) => {
                 </div>
             </section>
             {/* <!-- ==== #registration section end ==== --> */}
+            <SuccessModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                message="You have successfully updated your profile"
+                goto={{
+                    description_1: 'Click',
+                    url: '/list-your-property',
+                    name: 'here',
+                    description_2: 'to see your property list'
+                }}
+            />
         </div>
     )
 }

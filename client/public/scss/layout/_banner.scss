@@ -182,6 +182,13 @@
     }
   }
   
+  .post__banner {
+    padding: 100px 0px 270px;
+    @include responsive(md) {
+      padding: 80px 0px 250px;
+    }
+  }
+  
   /* ==== 
    --------- (4.3) banner styles end ---------
    ==== */

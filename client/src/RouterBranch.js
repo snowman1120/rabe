@@ -8,7 +8,7 @@ import Home2 from 'layout/home/Home2';
 import Home3 from 'layout/home/Home3';
 
 import Properties from 'layout/property/Properties';
-import PropertyDetails from 'layout/property/PropertyDetails';
+import PropertyDetails from 'layout/propertyDetails/PropertyDetails';
 import PropertyAlert from 'layout/property/PropertyAlert';
 
 import BusinessLoan from 'layout/loan/BusinessLoan';
@@ -25,6 +25,9 @@ import Registration from 'layout/auth/Registration';
 import Profile from 'layout/profile/Profile';
 import ChangePassword from 'layout/profile/ChangePassword';
 
+import PostProperty from 'layout/postProperty/PostProperty';
+
+import KeyRisks from 'layout/keyRisks/KeyRisks';
 import Error404 from 'layout/error/404';
 
 const RouterBranch = () => {
@@ -51,6 +54,10 @@ const RouterBranch = () => {
 
             <Route path="/profile" element={<Profile />} />
             <Route path="/change-password" element={<ChangePassword />} />
+
+            <Route path="/post-property" element={<PostProperty />} />
+
+            <Route path="/key-risks" element={<KeyRisks />} />
 
             <Route path="*" element={<Error404 />} />
         </Routes>

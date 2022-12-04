@@ -29,61 +29,28 @@ import {
   
     switch (type) {
         case USER_LOADED:
-            return {
-                ...state,
-                isAuthenticated: true,
-                loading: false,
-                user: payload
-            };
         case SET_PROFILE:
-            return {
-                ...state,
-                isAuthenticated: true,
-                loading: false,
-                user: payload
-                };
-        case REGISTER_SUCCESS, LOGIN_SUCCESS:
-            return {
-                ...state,
-                ...payload,
-                isAuthenticated: true,
-                loading: false
-            };
-        case LOGIN_FAIL:
-            return {
-                ...state,
-                ...payload,
-                isAuthenticated: true,
-                loading: false
-            };
-        case REGISTER_FAIL:
-            return {
-                ...state,
-                isAuthenticated: false,
-                errors: payload
-            }
-        case LOGIN_FAIL:
-            return {
-                ...state,
-                isAuthenticated: false,
-                errors: payload
-            }
-        case UPDATE_PROFILE_FAIL:
-            return {
-                ...state,
-                isAuthenticated: false,
-                errors: payload
-            }
-        case CHANGE_PASSWORD_FAIL:
-            return {
-                ...state,
-                isAuthenticated: false,
-                errors: payload
-            }
         case UPDATE_PROFILE_SUCCESS:
             return {
                 ...state,
+                isAuthenticated: true,
+                loading: false,
                 user: payload
+            }
+        case REGISTER_SUCCESS:
+        case LOGIN_SUCCESS: 
+            return {
+                ...state,
+                ...payload,
+                loading: false
+            };
+        case REGISTER_FAIL:
+        case LOGIN_FAIL:
+        case UPDATE_PROFILE_FAIL:
+        case CHANGE_PASSWORD_FAIL:
+            return {
+                ...state,
+                errors: payload
             }
         case CHANGE_PASSWORD_SUCCESS:
         case ACCOUNT_DELETED:

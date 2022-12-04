@@ -64,7 +64,7 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
                 <div className="container">
                     <div className="registration__area">
                         <h4 className="neutral-top">Log in</h4>
-                        <p>Don't have an account? <a href="registration">Register here.</a></p>
+                        <p>Don't have an account? <a href="registration">Sign up here.</a></p>
                         <div name="login__form" className="form__login">
                             <div className="input input--secondary">
                                 <label htmlFor="loginMail">Email*</label>

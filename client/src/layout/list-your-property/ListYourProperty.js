@@ -77,7 +77,7 @@ const ListYourProperty = () => {
                                         your property quickly and easily!</p>
 
                                     <p><a href="contact-us.html">Let us know about your property</a></p>
-                                    <a href="login.html" className="button button--effect">Submit Your Property</a>
+                                    <a href="post-property" className="button button--effect">Submit Your Property</a>
                                 </div>
                             </div>
                             <div className="col-lg-6">

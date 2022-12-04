@@ -30,6 +30,22 @@ const UserSchema = new mongoose.Schema({
     enum: ['admin', 'seller', 'agent'],
     default: 'seller'
   },
+  postalCode: {
+    type: String,
+  },
+  licenseNumber: {
+    type: String,
+  },
+  stateLicensed: {
+    type: String,
+  },
+  yearsOfExprerience: {
+    type: String,
+  },
+  affiliations: {
+    type: String,
+  },
+  propertyies: [],
   date: {
     type: Date,
     default: Date.now

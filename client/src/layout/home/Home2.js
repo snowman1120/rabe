@@ -44,14 +44,14 @@ const Home2 = () => {
                         <div className="row d-flex align-items-center">
                             <div className="col-lg-12 col-xl-6">
                                 <div className="property__search__wrapper">
-                                    <form action="#" method="post">
+                                    <div className='search-form'>
                                         <div className="input">
                                             <input type="search" name="property__search" id="propertySearch"
                                                 placeholder="Search for properties" />
                                             <i className="fa-solid fa-magnifying-glass"></i>
                                         </div>
                                         <button type="submit" className="button button--effect">Search</button>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                             <div className="col-lg-6 col-xl-3">

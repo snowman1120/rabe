@@ -1,11 +1,30 @@
-import Iframe from 'react-iframe';
+import {useEffect} from 'react';
+import {connect} from 'react-redux';
 
-const PropertyDetails = () => {
+import Table from 'react-bootstrap/Table';
+
+import { numberWithCommas } from 'utils/helper';
+import Loading from 'components/Loading';
+import {getProperty, updateRemainTime} from 'actions/property';
+
+const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
+    useEffect(() => {
+        const propertyID = localStorage.getItem('propertyID');
+        getProperty(propertyID);
+
+        if(!countingdown) updateRemainTime();
+    }, []);
+
+    useEffect(() => {
+
+    }, [property]);
+
     return (
         <div>
+            <Loading showYou={loading} />
             {/* <!-- ==== details section start ==== --> */}
             <div className="property__details__banner bg__img clear__top"
-                data-background="./assets/images/banner/property-details-banner.png">
+                data-background="assets/images/banner/property-details-banner.png">
             </div>
             <section className="p__details faq section__space__bottom">
                 <div className="container">
@@ -15,17 +34,46 @@ const PropertyDetails = () => {
                                 <div className="p__details__content">
                                     <a href="#gallery" className="button button--effect button--secondary"><i
                                             className="fa-solid fa-images"></i> Browse Gallery</a>
-                                    <div className="intro">
+                                    {/* <div className="intro">
                                         <h3>Los Angeles</h3>
                                         <p><i className="fa-solid fa-location-dot"></i> 8706 Herrick Ave, Los Angeles
                                         </p>
+                                    </div> */}
+                                    <div className="group__one"></div>
+                                    <div className="group__two">
+                                        <h4>Property Information</h4>
+                                        <Table striped>
+                                            <tbody>
+                                                <tr>
+                                                    <td className='text-center'><b>Type of Property</b></td>
+                                                    <td className='text-center'>{property.propertyType ? property.propertyType.name : ''}</td>
+                                                </tr>
+                                                {
+                                                    property && property.unit ? 
+                                                    <tr>
+                                                        <td className='text-center'><b>Unit#</b></td>
+                                                        <td className='text-center'>{property ? property.unit : ''}</td>
+                                                    </tr>
+                                                    : ''
+                                                }
+                                                <tr>
+                                                    <td className='text-center'><b>Year Built</b></td>
+                                                    <td className='text-center'>{property ? property.yearBuilt : ''}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className='text-center'><b>Number of bedrooms</b></td>
+                                                    <td className='text-center'>{property ? property.bedrooms : ''}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td className='text-center'><b>Number of bathrooms</b></td>
+                                                    <td className='text-center'>{property ? property.bathrooms : ''}</td>
+                                                </tr>
+                                            </tbody>
+                                        </Table>
                                     </div>
-                                    <div className="group__one">
-                                        <h4>Project Description</h4>
-                                        <p>The “Revest“ team is introducing a new buy to let investment opportunity: A19,
-                                            Vilnius I. The invest ment offer consists of administrative premises, which are
-                                            currently being converted into studio apartments/lofts. In this way, the aim is to
-                                            increase the rental income of this real estate project.</p>
+                                    <div className="group__two">
+                                        <h4>Description</h4>
+                                        <p>{property.description}</p>
                                     </div>
                                     <div className="group__two">
                                         <h5>Reasons to invest in the project A19, Vilnius:</h5>
@@ -185,7 +233,7 @@ const PropertyDetails = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="group__one">
+                                    {/* <div className="group__one">
                                         <h4>Key investment risks:</h4>
                                         <p>Risk of falling prices: The price of the property might fall due to the increase in
                                             supply or decrease in demand in the area or other economic factors.Liquidity risk:
@@ -193,36 +241,36 @@ const PropertyDetails = () => {
                                             risk: There is a risk that the asset can lose a tenant and it can take time to find
                                             replacements, which can have impact on the property's cash-flow.</p>
                                         <div className="map__wrapper">
-                                            <Iframe
+                                            <iframe
                                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20342.411046372905!2d-74.16638039276373!3d40.719832743885284!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1649562691355!5m2!1sen!2sbd"
                                                 width="746" height="312" style="border:0;" allowfullscreen="" loading="lazy"
-                                                referrerpolicy="no-referrer-when-downgrade"></Iframe>
+                                                referrerpolicy="no-referrer-when-downgrade"></iframe>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="col-lg-5">
                                 <div className="p__details__sidebar">
                                     <div className="intro">
                                         <div className="countdown__wrapper">
-                                            <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
+                                            <p className="secondary"><i className="fa-solid fa-clock"></i> Left to submit
                                             </p>
                                             <div className="countdown">
                                                 <h5>
-                                                    <span className="days">00</span><span className="ref">d</span>
+                                                    <span className="days">{property.DHMS && property.DHMS.days}</span><span className="ref">d</span>
                                                     <span className="seperator">:</span>
                                                 </h5>
                                                 <h5>
-                                                    <span className="hours"> 00</span><span className="ref">h</span>
+                                                    <span className="hours">{property.DHMS && property.DHMS.hours}</span><span className="ref">h</span>
                                                     <span className="seperator">:</span>
                                                 </h5>
                                                 <h5>
-                                                    <span className="minutes">00</span><span className="ref">m</span>
+                                                    <span className="minutes">{property.DHMS && property.DHMS.minutes}</span><span className="ref">m</span>
                                                     <span className="seperator"></span>
                                                 </h5>
                                             </div>
                                         </div>
-                                        <h5>Available for funding: <span>€134 514</span></h5>
+                                        <h5>Available for funding: <span>${numberWithCommas(property.price)}</span></h5>
                                         <div className="progress__type progress__type--two">
                                             <div className="progress">
                                                 <div className="progress-bar" role="progressbar" aria-valuenow="25"
@@ -267,7 +315,7 @@ const PropertyDetails = () => {
                                                 </div>
                                                 <div className="capital">
                                                     <p>Capital Growth Split:</p>
-                                                    <h5>40% <a href="blog.html"><i className="fa-solid fa-circle-info"></i></a>
+                                                    <h5>40% <a href="blog"><i className="fa-solid fa-circle-info"></i></a>
                                                     </h5>
                                                 </div>
                                                 <div className="item__security">
@@ -286,7 +334,7 @@ const PropertyDetails = () => {
                                             </form>
                                         </div>
                                         <p className="text-center neutral-bottom">
-                                            <a href="contact-us.html">Request a free callback</a>
+                                            <a href="contact-us">Request a free callback</a>
                                         </p>
                                     </div>
                                     <div className="group brini">
@@ -298,9 +346,9 @@ const PropertyDetails = () => {
                                         <p>Duis quis orci vehicula, fermentum tortor vitae, imperdiet sem. Quisque iaculis eu
                                             odio in lobortis. Sed vel ex non erat pellentesque lobortis vel vitae diam. Donec
                                             gravida eleifend pellentesque. Curabitur dictum blandit accumsan.</p>
-                                        <a href="blog.html">Read More</a>
+                                        <a href="blog">Read More</a>
                                     </div>
-                                    <div className="group birinit">
+                                    {/* <div className="group birinit">
                                         <h6>Share via Social </h6>
                                         <div className="social text-start">
                                             <a href="#!">
@@ -316,8 +364,8 @@ const PropertyDetails = () => {
                                                 <i className="fab fa-linkedin-in"></i>
                                             </a>
                                         </div>
-                                    </div>
-                                    <div className="group alt__brin">
+                                    </div> */}
+                                    {/* <div className="group alt__brin">
                                         <h5>Key Updates <i className="fa-solid fa-bell"></i></h5>
                                         <hr />
                                         <div className="singl__wrapper">
@@ -325,19 +373,19 @@ const PropertyDetails = () => {
                                                 <img src="assets/images/check.png" alt="Check" />
                                                 <div>
                                                     <p>30-Aug-2022</p>
-                                                    <a href="terms-conditions.html">Term Sheet Signed</a>
+                                                    <a href="terms-conditions">Term Sheet Signed</a>
                                                 </div>
                                             </div>
                                             <div className="singl">
                                                 <img src="assets/images/check.png" alt="Check" />
                                                 <div>
                                                     <p>30-Aug-2022</p>
-                                                    <a href="privacy-policy.html">Listing Live</a>
+                                                    <a href="privacy-policy">Listing Live</a>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="group alt__brin__last">
+                                    </div> */}
+                                    {/* <div className="group alt__brin__last">
                                         <h5>Reports</h5>
                                         <hr />
                                         <h6>Investment Note</h6>
@@ -349,7 +397,7 @@ const PropertyDetails = () => {
                                             property by Amarchand Mangaldas</p>
                                         <a href="#!" className="button">DOWNLOAD TITLE REPORT <i
                                                 className="fa-solid fa-download"></i></a>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -370,58 +418,22 @@ const PropertyDetails = () => {
                                 </div>
                                 <div className="col-lg-4">
                                     <div className="text-start text-lg-end">
-                                        <a href="contact-us.html" className="button button--secondary button--effect">Request
+                                        <a href="contact-us" className="button button--secondary button--effect">Request
                                             info</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="row p__gallery__single">
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/one.png">
-                                    <img src="assets/images/gallery/one.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/two.png">
-                                    <img src="assets/images/gallery/two.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/three.png">
-                                    <img src="assets/images/gallery/three.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/four.png">
-                                    <img src="assets/images/gallery/four.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/five.png">
-                                    <img src="assets/images/gallery/five.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/six.png">
-                                    <img src="assets/images/gallery/six.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/seven.png">
-                                    <img src="assets/images/gallery/seven.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/eight.png">
-                                    <img src="assets/images/gallery/eight.png" alt="Property Image" />
-                                </a>
-                            </div>
-                            <div className="col-md-6 col-lg-4 gallery__single__two">
-                                <a href="assets/images/gallery/nine.png">
-                                    <img src="assets/images/gallery/nine.png" alt="Property Image" />
-                                </a>
-                            </div>
+                            {
+                                property.photos ? property.photos.map(photo => (
+                                    <div key={photo} className="col-md-6 col-lg-4 gallery__single__two">
+                                        <a href={photo}>
+                                            <img src={photo} alt="Property Image" />
+                                        </a>
+                                    </div>
+                                )) : ''
+                            }
                         </div>
                     </div>
                 </div>
@@ -429,7 +441,7 @@ const PropertyDetails = () => {
             {/* <!-- ==== property gallery two section end ==== --> */}
 
             {/* <!-- ==== all properties in grid section start ==== --> */}
-            <section className="properties__grid section__space">
+            {/* <section className="properties__grid section__space">
                 <div className="container">
                     <div className="properties__grid__area wow fadeInUp">
                         <div className="title__with__cta">
@@ -439,7 +451,7 @@ const PropertyDetails = () => {
                                 </div>
                                 <div className="col-lg-4">
                                     <div className="text-start text-lg-end">
-                                        <a href="properties.html" className="button button--secondary button--effect">Browse All
+                                        <a href="properties" className="button button--secondary button--effect">Browse All
                                             Properties</a>
                                     </div>
                                 </div>
@@ -450,7 +462,7 @@ const PropertyDetails = () => {
                                 <div className="col-md-6 col-xl-4">
                                     <div className="property__grid__single column__space--secondary">
                                         <div className="img__effect">
-                                            <a href="property-details.html">
+                                            <a href="property-details">
                                                 <img src="assets/images/property/grid-one.jpg" alt="Property" />
                                             </a>
                                         </div>
@@ -499,8 +511,8 @@ const PropertyDetails = () => {
                                                     </div>
                                                 </div>
                                                 <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
-                                                        Invest Now
+                                                    <a href="property-details" className="button button--effect">
+                                                        Submit Now
                                                     </a>
                                                 </div>
                                             </div>
@@ -510,7 +522,7 @@ const PropertyDetails = () => {
                                 <div className="col-md-6 col-xl-4">
                                     <div className="property__grid__single column__space--secondary">
                                         <div className="img__effect">
-                                            <a href="property-details.html">
+                                            <a href="property-details">
                                                 <img src="assets/images/property/grid-two.jpg" alt="Property" />
                                             </a>
                                         </div>
@@ -559,7 +571,7 @@ const PropertyDetails = () => {
                                                     </div>
                                                 </div>
                                                 <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
+                                                    <a href="property-details" className="button button--effect">
                                                         Invest Now
                                                     </a>
                                                 </div>
@@ -570,7 +582,7 @@ const PropertyDetails = () => {
                                 <div className="col-md-6 col-xl-4">
                                     <div className="property__grid__single">
                                         <div className="img__effect">
-                                            <a href="property-details.html">
+                                            <a href="property-details">
                                                 <img src="assets/images/property/grid-three.jpg" alt="Property" />
                                             </a>
                                         </div>
@@ -619,7 +631,7 @@ const PropertyDetails = () => {
                                                     </div>
                                                 </div>
                                                 <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
+                                                    <a href="property-details" className="button button--effect">
                                                         Invest Now
                                                     </a>
                                                 </div>
@@ -631,7 +643,7 @@ const PropertyDetails = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             {/* <!-- ==== #all properties in grid section end ==== --> */}
 
             {/* <!-- ==== market section start ==== --> */}
@@ -651,7 +663,7 @@ const PropertyDetails = () => {
                                         Does the Rest</h2>
                                     <p>Transparent Real Estate Investing Through Revest.Join us and
                                         experience a smarter,better way to invest in real estate</p>
-                                    <a href="properties.html" className="button button--effect">Start Exploring</a>
+                                    <a href="properties" className="button button--effect">Start Exploring</a>
                                     <img src="assets/images/arrow.png" alt="Go to" />
                                 </div>
                             </div>
@@ -664,4 +676,10 @@ const PropertyDetails = () => {
     )
 }
 
-export default PropertyDetails;
+const mapStateToProps = (state) => ({
+    property: state.property.property,
+    loading: state.property.loading,
+    countingdown: state.property.countingdown
+});
+
+export default connect(mapStateToProps, {getProperty}) (PropertyDetails);

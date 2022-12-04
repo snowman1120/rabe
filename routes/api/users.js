@@ -7,6 +7,7 @@ const auth = require('../../middleware/auth');
 const config = require('config');
 const { check, validationResult } = require('express-validator');
 const normalize = require('normalize-url');
+const { postcodeValidator, postcodeValidatorExistsForCountry } = require('postcode-validator');
 
 const fs = require('fs-extra');
 const path = require('path');
@@ -25,52 +26,109 @@ router.post(
   '/',
   check('firstName', 'FirstName is required').notEmpty(),
   check('lastName', 'LastName is required').notEmpty(),
+  check('phoneNumber', 'Phone number is required').notEmpty(),
   check('email', 'Enter a valid email').isEmail(),
   check(
     'password',
     'Enter a password with 8 or more characters'
   ).isLength({ min: 8 }),
   async (req, res) => {
-    const errors = validationResult(req);
+    let errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { role, firstName, lastName, email, password } = req.body;
+    if(!validatePhoneNumber.validate(req.body.phoneNumber)) {
+      return res.status(400).json({ errors: [
+        {
+          param: 'phoneNumber',
+          msg: 'Phone number is not valid' 
+        }
+      ] });
+    }
 
-    try {
-      let user = await User.findOne({ email });
+    const { role, email, password, passConfirm } = req.body;
+    if(password !== passConfirm) {
+      return res.status(400).json({errors: [...errors.array(), {
+        param: 'password',
+        msg: 'The password and the password confirmation do not match.'
+      }]})
+    }
 
-      if (user) {
-        return res
-          .status(400)
-          .json({ errors: [
-            ...errors.array(),
-            {
-              param: 'msg',
-              msg: 'An account with this email address already exists.' 
-            }]
-          });
-      }
+    user = await User.findOne({ email });
 
-      const avatar = normalize(
-        gravatar.url(email, {
-          s: '200',
-          r: 'pg',
-          d: 'mm'
-        }),
-        { forceHttps: true }
-      );
+    if (user) {
+      return res
+        .status(400)
+        .json({ errors: [
+          ...errors.array(),
+          {
+            param: 'email',
+            msg: 'An account with this email address already exists.' 
+          }]
+        });
+    }
+
+    if(role === 'seller') {
+      const { firstName, lastName, phoneNumber } = req.body;
 
       user = new User({
         role,
         firstName,
         lastName,
         email,
-        avatar,
+        phoneNumber,
         password
       });
+    } else if(role === 'agent') {
+      const { firstName, lastName, email, phoneNumber, postalCode, stateLicensed, licenseNumber, yearsOfExprerience, affiliations } = req.body;
 
+      errors = errors.array();
+      if(!postalCode) {
+        errors.push({
+          param: 'postalCode',
+          msg: 'Postal Code is required' 
+        })
+      }
+      if(!stateLicensed) {
+        errors.push({
+          param: 'stateLicensed',
+          msg: 'State Licensed is required' 
+        })
+      }
+      if(!licenseNumber) {
+        errors.push({
+          param: 'licenseNumber',
+          msg: 'License Number is required' 
+        })
+      }
+      if(!postcodeValidator(postalCode, 'CA')) {
+        errors.push({
+          param: 'postalCode',
+          msg: 'Postal code is not valid' 
+        })
+      }
+
+      if(errors.length > 0) {
+        return res.status(400).json({ errors });
+      }
+
+      user = new User({
+        role,
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        password,
+        postalCode,
+        licenseNumber,
+        stateLicensed,
+        yearsOfExprerience,
+        affiliations
+      });
+    }
+
+    try {
       const salt = await bcrypt.genSalt(SALT);
 
       user.password = await bcrypt.hash(password, salt);

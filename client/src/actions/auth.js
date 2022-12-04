@@ -94,7 +94,7 @@ export const login = (data) => async (dispatch) => {
 };
 
 // Update User
-export const update = (data) => async (dispatch) => {
+export const update = (data, success) => async (dispatch) => {
   const body = data;
 
   try {
@@ -104,6 +104,7 @@ export const update = (data) => async (dispatch) => {
       type: UPDATE_PROFILE_SUCCESS,
       payload: res.data
     });
+    success();
   } catch (err) {
     const serverErrors = err.response.data.errors;
     let errors = {};

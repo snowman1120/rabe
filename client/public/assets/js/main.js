@@ -88,22 +88,30 @@
       // property list and grid tabs
       $(".grid__view").on("click", function () {
         $(".property__grid__area__wrapper__inner").addClass(
-          "col-xl-4 col-md-6",
+          "col-xl-3 col-lg-4 col-md-6 col-sm-12",
           400
         );
         $(".property__grid__area__wrapper__inner__two").removeClass("col-xl-5");
         $(".property__grid__area__wrapper__inner__three").removeClass("col-xl-7");
         $(".property__list__wrapper").addClass("property__grid");
+
+        $('.property-desc').addClass('d-none');
+        $('.property-info').removeClass('col-md-3 col-xs-12');
+        $('.property-rooms').addClass('text-end mtm-26');
       });
   
       $(".grid__list").on("click", function () {
         $(".property__grid__area__wrapper__inner").removeClass(
-          "col-xl-4 col-md-6",
+          "col-xl-3 col-lg-4 col-md-6 col-sm-12",
           400
         );
         $(".property__grid__area__wrapper__inner__two").addClass("col-xl-5");
         $(".property__grid__area__wrapper__inner__three").addClass("col-xl-7");
         $(".property__list__wrapper").removeClass("property__grid");
+
+        $('.property-desc').removeClass('d-none');
+        $('.property-info').addClass('col-md-3 col-xs-12');
+        $('.property-rooms').removeClass('text-end mtm-26');
       });
   
       $(".grid__btn").on("click", function () {

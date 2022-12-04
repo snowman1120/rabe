@@ -66,26 +66,26 @@
     "use strict";
   
     jQuery(document).ready(function () {
-      // select location
-      $(".location__select").niceSelect();
+      // // select location
+      // $(".location__select").niceSelect();
   
-      // select property
-      $(".property__select").niceSelect();
+      // // select property
+      // $(".property__select").niceSelect();
   
-      // select language
-      $(".language-select").niceSelect();
+      // // select language
+      // $(".language-select").niceSelect();
   
-      // select number code
-      $(".number__code__select").niceSelect();
+      // // select number code
+      // $(".number__code__select").niceSelect();
   
-      // select number code two
-      $("#coutrySelect").niceSelect();
+      // // select number code two
+      // $("#coutrySelect").niceSelect();
   
-      // select number code three
-      $("#coutryAltSelect").niceSelect();
+      // // select number code three
+      // $("#coutryAltSelect").niceSelect();
   
-      // select number code four
-      $(".grid__select").niceSelect();
+      // // select number code four
+      // $(".grid__select").niceSelect();
   
       // hero section video popup
       if (document.querySelector(".video__popup") !== null) {
@@ -100,12 +100,12 @@
       }
   
       // invest time left countdown
-      if (document.querySelector(".countdown") !== null) {
-        $(".countdown").downCount({
-          date: "03/13/2023 11:59:59",
-          offset: +10,
-        });
-      }
+      // if (document.querySelector(".countdown") !== null) {
+      //   $(".countdown").downCount({
+      //     date: "03/13/2023 11:59:59",
+      //     offset: +10,
+      //   });
+      // }
   
       // testimonial slider
       $(".testimonial__item__wrapper").not(".slick-initialized").slick({
@@ -154,7 +154,7 @@
         });
   
       // select language type
-      $("#typeSelect").niceSelect();
+      //$("#typeSelect").niceSelect();
   
       // project gallery
       $(".image__gallery__area").magnificPopup({
@@ -322,10 +322,10 @@
       new WOW().init();
   
       // select dashboard language
-      $(".select-dashboard-language").niceSelect();
+      //$(".select-dashboard-language").niceSelect();
   
       // select balance report
-      $(".select-balance-report").niceSelect();
+      //$(".select-balance-report").niceSelect();
   
       // investment chart
       var investmentOptions = {
@@ -509,7 +509,7 @@
       }
   
       // select payment method
-      $("#methodSelect").niceSelect();
+      //$("#methodSelect").niceSelect();
     });
   })(jQuery);
   
