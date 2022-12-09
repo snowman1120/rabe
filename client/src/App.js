@@ -39,7 +39,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
-        <div style={{backgroundColor : "#eee"}}>
+        <div>
             <Navbar />
             <RouterBranch />
             <Footer />

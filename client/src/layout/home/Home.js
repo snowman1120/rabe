@@ -1,11 +1,9 @@
-import {useState, useEffect} from 'react';
 
 const Main = () => {
     return (
         <div>
             {/* <!-- ==== hero section start ==== --> */}
             <section className="hero pos__rel over__hi bg__img" data-background="./assets/images/hero/light-bg.png">
-                <h1 style={{color: 'red', marginLeft:100}}>This is my first gift for you.</h1>
                 <div className="container">
                     <div className="hero__area">
                         <div className="row">
@@ -41,14 +39,14 @@ const Main = () => {
                         <div className="row d-flex align-items-center">
                             <div className="col-lg-12 col-xl-6">
                                 <div className="property__search__wrapper">
-                                    <form action="#" method="post">
+                                    <div className='search-form'>
                                         <div className="input">
                                             <input type="search" name="property__search" id="propertySearch"
                                                 placeholder="Search for properties" />
                                             <i className="fa-solid fa-magnifying-glass"></i>
                                         </div>
                                         <button type="submit" className="button button--effect">Search</button>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                             <div className="col-lg-6 col-xl-3">
@@ -988,7 +986,7 @@ const Main = () => {
                         <img src="assets/images/video-illustration.png" alt="Video Illustration" />
                         <div className="video__btn">
                             <a className="video__popup" href="https://www.youtube.com/watch?v=LCihLrSehCo" target="_blank"
-                                title="YouTube video player">
+                                title="YouTube video player" rel="noreferrer">
                                 <i className="fa-solid fa-play"></i>
                             </a>
                         </div>

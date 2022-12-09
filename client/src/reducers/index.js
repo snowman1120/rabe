@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
-import alert from './alert';
 import auth from './auth';
-import profile from './profile';
-import post from './post';
+import property from './property';
+import propertyType from './propertyType';
+import bids from './bids';
 
 export default combineReducers({
-  alert,
   auth,
-  profile,
-  post
+  property,
+  propertyType,
+  bids
 });

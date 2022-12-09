@@ -1,5 +1,85 @@
+/* eslint-disable no-sparse-arrays */
+import {useState, useEffect, useRef} from 'react';
+import {connect} from 'react-redux';
 
-const Properties = () => {
+import PropertyItem from './PropertyItem';
+import Loading from 'components/Loading';
+
+import { getProperties, getPropertyTypes, removeProperties } from 'actions/property';
+import {updateRemainTime} from 'actions/property';
+
+import $ from 'jquery';
+
+window.jQuery = window.$ = $;
+//require("jquery-nice-select");
+const LIMIT = 8;
+
+const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes, countingdown, getProperties, updateRemainTime, removeProperties}) => {
+    const locationRef = useRef();
+    const typeRef = useRef();
+    const sortRef = useRef();
+    
+    const [filterData, setFilterData] = useState({
+        searchWord: null,
+        location: null,
+        propertyType: null,
+        sortBy: 'date'
+    });
+
+    useEffect(() => {
+        getPropertyTypes();
+        getPropertiesFromServer(filterData, 0);
+        if(!countingdown) updateRemainTime();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const onChangeSelect = (e) => {
+        let value = null;
+        if(e.target.value !== 'root') value = e.target.value;
+        setFilterData({...filterData, [e.target.name]: value});
+        removeProperties();
+        getPropertiesFromServer({...filterData, [e.target.name]: value}, 0);
+    }
+
+    const onChangePropertyTypes = (e) => {
+        if(e.target.value === 'root') {
+            setFilterData({...filterData, [e.target.name]: null});
+            removeProperties();
+            getPropertiesFromServer({...filterData, propertyType: null}, 0);
+        } else {
+            const propertyTypeIdx = propertyTypes.findIndex(type => type.name === e.target.value);
+            if(propertyTypeIdx > 0) {
+                setFilterData({...filterData, propertyType: propertyTypes[propertyTypeIdx]._id});
+                removeProperties();
+                getPropertiesFromServer({...filterData, propertyType: propertyTypes[propertyTypeIdx]._id}, 0);
+            }
+        }
+    }
+
+    useEffect(() => {
+        const propertyTypeIdx = propertyTypes.findIndex(type => type.name === $(typeRef.current).val());
+        if(propertyTypeIdx > 0)
+            setFilterData({...filterData, propertyType: propertyTypes[propertyTypeIdx]._id});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [propertyTypes]);
+
+    const onChangeInput = (e) => {
+        setFilterData({...filterData, [e.target.name]: e.target.value});
+    }
+
+    const onClickSearch = (e) => {
+        removeProperties();
+        getProperties(filterData, {skip: 0, limit: LIMIT});
+    }
+
+    const getPropertiesFromServer = (filter, skip) => {
+        getProperties(filter, {skip, limit: LIMIT});
+    }
+
+    const onLoadMore = () => {
+        getPropertiesFromServer(filterData, properties.length);
+    }
+
     return (
         <div>
             {/* <!-- ==== banner section start ==== --> */}
@@ -19,20 +99,20 @@ const Properties = () => {
                         <div className="row d-flex align-items-center">
                             <div className="col-lg-12 col-xl-6">
                                 <div className="property__search__wrapper">
-                                    <form action="#" method="post">
+                                    <div className='search-form'>
                                         <div className="input">
-                                            <input type="search" name="property__search" id="propertySearch"
-                                                placeholder="Search for properties" />
+                                            <input type="search" name="searchWord" id="propertySearch"
+                                                placeholder="Search for properties" onChange={onChangeInput} />
                                             <i className="fa-solid fa-magnifying-glass"></i>
                                         </div>
-                                        <button type="submit" className="button button--effect">Search</button>
-                                    </form>
+                                        <button type="submit" className="button button--effect" onClick={onClickSearch}>Search</button>
+                                    </div>
                                 </div>
                             </div>
                             <div className="col-lg-6 col-xl-3">
                                 <div className="property__select__wrapper">
-                                    <select className="location__select">
-                                        <option data-display="Location">Select Location</option>
+                                    <select className="location__select" id="location" name="location" ref={locationRef} onChange={onChangeSelect}>
+                                        <option data-display="Location" value="root">Select Location</option>
                                         <option value="angeles">Los Angeles</option>
                                         <option value="francis">San Francisco, CA</option>
                                         <option value="weldon">The Weldon</option>
@@ -42,10 +122,9 @@ const Properties = () => {
                             </div>
                             <div className="col-lg-6 col-xl-3">
                                 <div className="property__select__wrapper">
-                                    <select className="property__select">
-                                        <option data-display="Property">Property Type</option>
-                                        <option value="commercial">Commercial</option>
-                                        <option value="residential">Residential</option>
+                                    <select className="property__select" name="propertyType" ref={typeRef} onChange={onChangePropertyTypes}>
+                                        <option data-display="Property" value="root">Property Type</option>
+                                        {propertyTypes.map(type => <option value={type.name} key={type.name}>{type.name}</option>)}
                                     </select>
                                 </div>
                             </div>
@@ -59,741 +138,29 @@ const Properties = () => {
             <section className="properties__filter section__space__bottom">
                 <div className="container wow fadeInUp">
                     <div className="properties__filter__wrapper">
-                        <h6>Showing <span>505</span> properties</h6>
+                        <h6>Showing <span>{properties.length} / {count}</span> properties</h6>
                         <div className="grid__wrapper">
-                            <select className="grid__select">
-                                <option data-display="Sort By">Sort By</option>
-                                <option value="grid">Date</option>
-                                <option value="list">Price</option>
+                            <select className="grid__select" name="sortBy" id='sortBy' ref={sortRef} onChange={onChangeSelect}>
+                                <option data-display="Sort By" value="root">Sort By</option>
+                                <option value="date">Date</option>
+                                <option value="price">Price</option>
                             </select>
-                            <a href="javascript:void(0)" className="grid__btn grid__view grid__btn__active">
+                            <a href="#!" className="grid__btn grid__view grid__btn__active">
                                 <i className="fa-solid fa-grip"></i>
                             </a>
-                            <a href="javascript:void(0)" className="grid__btn grid__list">
+                            <a href="#!" className="grid__btn grid__list">
                                 <i className="fa-solid fa-bars"></i>
                             </a>
                         </div>
                     </div>
                     <div className="row property__grid__area__wrapper">
-                        <div className="col-xl-4 col-md-6 property__grid__area__wrapper__inner">
-                            <div className="property__list__wrapper property__grid">
-                                <div className="row d-flex align-items-center">
-                                    <div className="property__grid__area__wrapper__inner__two">
-                                        <div className="property__item__image column__space--secondary">
-                                            <div className="img__effect">
-                                                <a href="property-details.html">
-                                                    <img src="assets/images/property/los.png" alt="Los Angeles" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="property__grid__area__wrapper__inner__three">
-                                        <div className="property__item__content">
-                                            <div className="item__head">
-                                                <div className="item__head__left">
-                                                    <h4>Los Angeles</h4>
-                                                    <p><i className="fa-solid fa-location-dot"></i> 8706 Herrick Ave, Los Angeles
-                                                    </p>
-                                                </div>
-                                                <div className="item__head__right">
-                                                    <div className="countdown__wrapper">
-                                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
-                                                        </p>
-                                                        <div className="countdown">
-                                                            <h5>
-                                                                <span className="days">00</span><span className="ref">d</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="hours"> 00</span><span className="ref">h</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="minutes">00</span><span className="ref">m</span>
-                                                                <span className="seperator"></span>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="progress__type progress__type--two">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <div className="project__info">
-                                                    <p className="project__has"><span className="project__has__investors">159
-                                                            Investors</span> | <span className="project__has__investors__amount"><i
-                                                                className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                            className="project__has__investors__percent">(64.73%)</span></p>
-                                                    <p className="project__goal">
-                                                        <i className="fa-solid fa-dollar-sign"></i> 3,00,000 Goal
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Maximum Term</p>
-                                                    <h6>36 Months</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Distribution</p>
-                                                    <h6>Monthly</h6>
-                                                </div>
-                                            </div>
-                                            <div className="item__footer">
-                                                <div className="item__security">
-                                                    <div className="icon__box">
-                                                        <img src="assets/images/home.png" alt="Security" />
-                                                    </div>
-                                                    <div className="item__security__content">
-                                                        <p className="secondary">Security</p>
-                                                        <h6>1st-Rank Mortgage</h6>
-                                                    </div>
-                                                </div>
-                                                <div className="item__cta__group">
-                                                    <a href="registration.html" className="button button--effect">Invest Now</a>
-                                                    <a href="property-details.html"
-                                                        className="button button--secondary button--effect">Details</a>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-4 col-md-6 property__grid__area__wrapper__inner">
-                            <div className="property__list__wrapper property__grid">
-                                <div className="row d-flex align-items-center">
-                                    <div className="property__grid__area__wrapper__inner__two">
-                                        <div className="property__item__image column__space--secondary">
-                                            <div className="img__effect">
-                                                <a href="property-details.html">
-                                                    <img src="assets/images/property/lily.png" alt="Los Angeles" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="property__grid__area__wrapper__inner__three">
-                                        <div className="property__item__content">
-                                            <div className="item__head">
-                                                <div className="item__head__left">
-                                                    <h4>San Francisco, CA</h4>
-                                                    <p><i className="fa-solid fa-location-dot"></i> 3335 21 St, San Francisco
-                                                    </p>
-                                                </div>
-                                                <div className="item__head__right">
-                                                    <div className="countdown__wrapper">
-                                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
-                                                        </p>
-                                                        <div className="countdown">
-                                                            <h5>
-                                                                <span className="days">00</span><span className="ref">d</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="hours"> 00</span><span className="ref">h</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="minutes">00</span><span className="ref">m</span>
-                                                                <span className="seperator"></span>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="progress__type progress__type--two">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <div className="project__info">
-                                                    <p className="project__has"><span className="project__has__investors">159
-                                                            Investors</span> | <span className="project__has__investors__amount"><i
-                                                                className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                            className="project__has__investors__percent">(64.73%)</span></p>
-                                                    <p className="project__goal">
-                                                        <i className="fa-solid fa-dollar-sign"></i> 3,00,000 Goal
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Maximum Term</p>
-                                                    <h6>36 Months</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Distribution</p>
-                                                    <h6>Monthly</h6>
-                                                </div>
-                                            </div>
-                                            <div className="item__footer">
-                                                <div className="item__security">
-                                                    <div className="icon__box">
-                                                        <img src="assets/images/home.png" alt="Security" />
-                                                    </div>
-                                                    <div className="item__security__content">
-                                                        <p className="secondary">Security</p>
-                                                        <h6>1st-Rank Mortgage</h6>
-                                                    </div>
-                                                </div>
-                                                <div className="item__cta__group">
-                                                    <a href="registration.html" className="button button--effect">Invest Now</a>
-                                                    <a href="property-details.html"
-                                                        className="button button--secondary button--effect">Details</a>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-4 col-md-6 property__grid__area__wrapper__inner">
-                            <div className="property__list__wrapper property__grid">
-                                <div className="row d-flex align-items-center">
-                                    <div className="property__grid__area__wrapper__inner__two">
-                                        <div className="property__item__image column__space--secondary">
-                                            <div className="img__effect">
-                                                <a href="property-details.html">
-                                                    <img src="assets/images/property/san.png" alt="Los Angeles" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="property__grid__area__wrapper__inner__three">
-                                        <div className="property__item__content">
-                                            <div className="item__head">
-                                                <div className="item__head__left">
-                                                    <h4>San Diego</h4>
-                                                    <p><i className="fa-solid fa-location-dot"></i> 356 La Jolla, San Diego
-                                                    </p>
-                                                </div>
-                                                <div className="item__head__right">
-                                                    <div className="countdown__wrapper">
-                                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
-                                                        </p>
-                                                        <div className="countdown">
-                                                            <h5>
-                                                                <span className="days">00</span><span className="ref">d</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="hours"> 00</span><span className="ref">h</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="minutes">00</span><span className="ref">m</span>
-                                                                <span className="seperator"></span>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="progress__type progress__type--two">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <div className="project__info">
-                                                    <p className="project__has"><span className="project__has__investors">159
-                                                            Investors</span> | <span className="project__has__investors__amount"><i
-                                                                className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                            className="project__has__investors__percent">(64.73%)</span></p>
-                                                    <p className="project__goal">
-                                                        <i className="fa-solid fa-dollar-sign"></i> 3,00,000 Goal
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Maximum Term</p>
-                                                    <h6>36 Months</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Distribution</p>
-                                                    <h6>Monthly</h6>
-                                                </div>
-                                            </div>
-                                            <div className="item__footer">
-                                                <div className="item__security">
-                                                    <div className="icon__box">
-                                                        <img src="assets/images/home.png" alt="Security" />
-                                                    </div>
-                                                    <div className="item__security__content">
-                                                        <p className="secondary">Security</p>
-                                                        <h6>1st-Rank Mortgage</h6>
-                                                    </div>
-                                                </div>
-                                                <div className="item__cta__group">
-                                                    <a href="registration.html" className="button button--effect">Invest Now</a>
-                                                    <a href="property-details.html"
-                                                        className="button button--secondary button--effect">Details</a>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row property__grid__area__wrapper mt-30">
-                        <div className="col-xl-4 col-md-6 property__grid__area__wrapper__inner">
-                            <div className="property__list__wrapper property__grid">
-                                <div className="row d-flex align-items-center">
-                                    <div className="property__grid__area__wrapper__inner__two">
-                                        <div className="property__item__image column__space--secondary">
-                                            <div className="img__effect">
-                                                <a href="property-details.html">
-                                                    <img src="assets/images/property/los.png" alt="Los Angeles" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="property__grid__area__wrapper__inner__three">
-                                        <div className="property__item__content">
-                                            <div className="item__head">
-                                                <div className="item__head__left">
-                                                    <h4>Los Angeles</h4>
-                                                    <p><i className="fa-solid fa-location-dot"></i> 8706 Herrick Ave, Los Angeles
-                                                    </p>
-                                                </div>
-                                                <div className="item__head__right">
-                                                    <div className="countdown__wrapper">
-                                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
-                                                        </p>
-                                                        <div className="countdown">
-                                                            <h5>
-                                                                <span className="days">00</span><span className="ref">d</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="hours"> 00</span><span className="ref">h</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="minutes">00</span><span className="ref">m</span>
-                                                                <span className="seperator"></span>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="progress__type progress__type--two">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <div className="project__info">
-                                                    <p className="project__has"><span className="project__has__investors">159
-                                                            Investors</span> | <span className="project__has__investors__amount"><i
-                                                                className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                            className="project__has__investors__percent">(64.73%)</span></p>
-                                                    <p className="project__goal">
-                                                        <i className="fa-solid fa-dollar-sign"></i> 3,00,000 Goal
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Maximum Term</p>
-                                                    <h6>36 Months</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Distribution</p>
-                                                    <h6>Monthly</h6>
-                                                </div>
-                                            </div>
-                                            <div className="item__footer">
-                                                <div className="item__security">
-                                                    <div className="icon__box">
-                                                        <img src="assets/images/home.png" alt="Security" />
-                                                    </div>
-                                                    <div className="item__security__content">
-                                                        <p className="secondary">Security</p>
-                                                        <h6>1st-Rank Mortgage</h6>
-                                                    </div>
-                                                </div>
-                                                <div className="item__cta__group">
-                                                    <a href="registration.html" className="button button--effect">Invest Now</a>
-                                                    <a href="property-details.html"
-                                                        className="button button--secondary button--effect">Details</a>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-4 col-md-6 property__grid__area__wrapper__inner">
-                            <div className="property__list__wrapper property__grid">
-                                <div className="row d-flex align-items-center">
-                                    <div className="property__grid__area__wrapper__inner__two">
-                                        <div className="property__item__image column__space--secondary">
-                                            <div className="img__effect">
-                                                <a href="property-details.html">
-                                                    <img src="assets/images/property/lily.png" alt="Los Angeles" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="property__grid__area__wrapper__inner__three">
-                                        <div className="property__item__content">
-                                            <div className="item__head">
-                                                <div className="item__head__left">
-                                                    <h4>The Lily</h4>
-                                                    <p><i className="fa-solid fa-location-dot"></i> Colorado Springs, CO
-                                                    </p>
-                                                </div>
-                                                <div className="item__head__right">
-                                                    <div className="countdown__wrapper">
-                                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
-                                                        </p>
-                                                        <div className="countdown">
-                                                            <h5>
-                                                                <span className="days">00</span><span className="ref">d</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="hours"> 00</span><span className="ref">h</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="minutes">00</span><span className="ref">m</span>
-                                                                <span className="seperator"></span>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="progress__type progress__type--two">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <div className="project__info">
-                                                    <p className="project__has"><span className="project__has__investors">159
-                                                            Investors</span> | <span className="project__has__investors__amount"><i
-                                                                className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                            className="project__has__investors__percent">(64.73%)</span></p>
-                                                    <p className="project__goal">
-                                                        <i className="fa-solid fa-dollar-sign"></i> 3,00,000 Goal
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Maximum Term</p>
-                                                    <h6>36 Months</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Distribution</p>
-                                                    <h6>Monthly</h6>
-                                                </div>
-                                            </div>
-                                            <div className="item__footer">
-                                                <div className="item__security">
-                                                    <div className="icon__box">
-                                                        <img src="assets/images/home.png" alt="Security" />
-                                                    </div>
-                                                    <div className="item__security__content">
-                                                        <p className="secondary">Security</p>
-                                                        <h6>1st-Rank Mortgage</h6>
-                                                    </div>
-                                                </div>
-                                                <div className="item__cta__group">
-                                                    <a href="registration.html" className="button button--effect">Invest Now</a>
-                                                    <a href="property-details.html"
-                                                        className="button button--secondary button--effect">Details</a>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-4 col-md-6 property__grid__area__wrapper__inner">
-                            <div className="property__list__wrapper property__grid">
-                                <div className="row d-flex align-items-center">
-                                    <div className="property__grid__area__wrapper__inner__two">
-                                        <div className="property__item__image column__space--secondary">
-                                            <div className="img__effect">
-                                                <a href="property-details.html">
-                                                    <img src="assets/images/property/weldon.png" alt="Los Angeles" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="property__grid__area__wrapper__inner__three">
-                                        <div className="property__item__content">
-                                            <div className="item__head">
-                                                <div className="item__head__left">
-                                                    <h4>The Weldon</h4>
-                                                    <p><i className="fa-solid fa-location-dot"></i> Gastonia, NC
-                                                    </p>
-                                                </div>
-                                                <div className="item__head__right">
-                                                    <div className="countdown__wrapper">
-                                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
-                                                        </p>
-                                                        <div className="countdown">
-                                                            <h5>
-                                                                <span className="days">00</span><span className="ref">d</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="hours"> 00</span><span className="ref">h</span>
-                                                                <span className="seperator">:</span>
-                                                            </h5>
-                                                            <h5>
-                                                                <span className="minutes">00</span><span className="ref">m</span>
-                                                                <span className="seperator"></span>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="progress__type progress__type--two">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <div className="project__info">
-                                                    <p className="project__has"><span className="project__has__investors">159
-                                                            Investors</span> | <span className="project__has__investors__amount"><i
-                                                                className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                            className="project__has__investors__percent">(64.73%)</span></p>
-                                                    <p className="project__goal">
-                                                        <i className="fa-solid fa-dollar-sign"></i> 3,00,000 Goal
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Maximum Term</p>
-                                                    <h6>36 Months</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Distribution</p>
-                                                    <h6>Monthly</h6>
-                                                </div>
-                                            </div>
-                                            <div className="item__footer">
-                                                <div className="item__security">
-                                                    <div className="icon__box">
-                                                        <img src="assets/images/home.png" alt="Security" />
-                                                    </div>
-                                                    <div className="item__security__content">
-                                                        <p className="secondary">Security</p>
-                                                        <h6>1st-Rank Mortgage</h6>
-                                                    </div>
-                                                </div>
-                                                <div className="item__cta__group">
-                                                    <a href="registration.html" className="button button--effect">Invest Now</a>
-                                                    <a href="property-details.html"
-                                                        className="button button--secondary button--effect">Details</a>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details.html" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {
+                            loading ? <Loading showYou={true} /> :
+                            (properties.map((property, index) => <PropertyItem key={index} property={property} />))
+                        }
                     </div>
                     <div className="cta__btn">
-                        <a href="property-details.html" className="button button--effect">Load More</a>
+                        {count !== properties.length ? <a href="#!" className="button button--effect" onClick={onLoadMore}>Load More</a> : ''}
                     </div>
                 </div>
             </section>
@@ -802,4 +169,12 @@ const Properties = () => {
     )
 }
 
-export default Properties;
+const mapStateToProps = (state) => ({
+    count: state.property.count,
+    properties: state.property.properties,
+    propertyTypes: state.propertyType.propertyTypes,
+    loading: state.property.loading,
+    countingdown: state.property.countingdown
+});
+
+export default connect(mapStateToProps, { getPropertyTypes, getProperties, updateRemainTime, removeProperties}) (Properties);

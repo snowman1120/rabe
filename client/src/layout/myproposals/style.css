@@ -1,0 +1,49 @@
+.proposal-table th {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.proposal-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.proposal-item td {
+    vertical-align: middle;
+}
+
+.proposal-item:hover {
+    background-color: rgba(0,0,0,.08);
+    transition: all 0.2s;
+}
+
+.proposal-item .proposal-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.proposal-item .proposal-status.pending {
+    background-color: #5927e3;
+    color: white;
+}
+
+.proposal-item .proposal-status.winning {
+    background-color: chartreuse;
+}
+
+.proposal-item .proposal-status.not-win {
+    background-color: brown;
+    color: white;
+}
+
+.proposal-item th, .proposal-item td, .proposal-item span {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.proposal-item td .countdown {
+    width: fit-content;
+    margin: auto;
+}

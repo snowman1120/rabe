@@ -38,16 +38,16 @@ const Footer = () => {
                                     <p>Revest is a platform offering anyone the ability to invest and potentially earn money
                                         from property at the click of a button</p>
                                     <div className="social">
-                                        <a href="javascript:void(0)">
+                                        <a href="#!">
                                             <i className="fa-brands fa-facebook-f"></i>
                                         </a>
-                                        <a href="javascript:void(0)">
+                                        <a href="#!">
                                             <i className="fa-brands fa-twitter"></i>
                                         </a>
-                                        <a href="javascript:void(0)">
+                                        <a href="#!">
                                             <i className="fa-brands fa-instagram"></i>
                                         </a>
-                                        <a href="javascript:void(0)">
+                                        <a href="#!">
                                             <i className="fa-brands fa-linkedin-in"></i>
                                         </a>
                                     </div>

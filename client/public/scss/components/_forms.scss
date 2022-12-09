@@ -34,7 +34,7 @@
     }
     input,
     textarea {
-      padding: 9px 30px;
+      padding: 9px 15px;
       background-color: $white;
       color: $theme-color;
       border: 1px solid rgb(195, 199, 228);
@@ -52,7 +52,7 @@
     textarea {
       min-height: 200px;
       width: 100%;
-      border-radius: 10px;
+      border-radius: 5px;
       overflow-y: auto;
       @include responsive(sm) {
         border-radius: 5px;
@@ -297,10 +297,63 @@
   }
 
   .error__message {
-    margin-top: 15px;
+    margin-top: 5px;
     font-size: 15px;
     color: $error-color;
   }
+
+  .notification_message {
+    margin-top: 20px;
+    font-size: 17px;
+    color: $quinary-color;
+  }
+
+  .single-image-upload-area {
+    text-align: center;
+    .form-group.preview {
+      width: 70%;
+      height: auto;
+      min-height: 250px;
+      margin: auto;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      margin-top: 30px;
+      margin-bottom: 30px;
+      cursor: pointer;
+      
+      img {
+        width: 100%;
+      }
+    }
+    .form-group {
+      text-align: center;
+    }
+    .upload {
+      width: 70%;
+    }
+  }
+
+  // select {
+  //   background-color: transparent;
+  //   border: none;
+  //   outline: none;
+  //   height: auto !important;
+  //   line-height: 70px !important;
+  //   padding-left: 15px;
+  //   padding-right: 20px;
+  //   width: 100%;
+  //   border: 1px solid rgb(195, 199, 228);
+  //   border-radius: 5px;
+  //   height: 45px !important;
+  //   display: flex;
+  //   align-items: center;
+  // }
+
+  select {
+    border-radius: 5px;
+  }
+  
   /* ==== 
    --------- (3.3) forms styles end ---------
    ==== */

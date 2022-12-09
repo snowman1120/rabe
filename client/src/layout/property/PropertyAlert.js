@@ -40,26 +40,26 @@ const PropertyAlert = () => {
                             <div className="row">
                                 <div className="col-sm-6">
                                     <div className="input input--secondary">
-                                        <label for="alertFirstName">First Name*</label>
+                                        <label htmlFor="alertFirstName">First Name*</label>
                                         <input type="text" name="alert__first__name" id="alertFirstName"
                                             placeholder="Enter Your First Name" required="required" />
                                     </div>
                                 </div>
                                 <div className="col-sm-6">
                                     <div className="input input--secondary">
-                                        <label for="alertLastName">Last Name*</label>
+                                        <label htmlFor="alertLastName">Last Name*</label>
                                         <input type="text" name="alert__last__name" id="alertLastName"
                                             placeholder="Enter Your Last Name" required="required" />
                                     </div>
                                 </div>
                             </div>
                             <div className="input input--secondary">
-                                <label for="alertRegistrationMail">Email*</label>
+                                <label htmlFor="alertRegistrationMail">Email*</label>
                                 <input type="email" name="alert__registration__email" id="alertRegistrationMail"
                                     placeholder="Enter your email" required="required" />
                             </div>
                             <div className="input input--secondary input__alt">
-                                <label for="alertNumber">Phone*</label>
+                                <label htmlFor="alertNumber">Phone*</label>
                                 <div className="input-group">
                                     <div className="input-group-prepend">
                                         <select className="number__code__select" id="numberCodeSelectAlert">

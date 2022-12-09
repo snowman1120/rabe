@@ -72,26 +72,26 @@ const ContactUs = () => {
                                 <div className="row">
                                     <div className="col-sm-6">
                                         <div className="input input--secondary">
-                                            <label for="askFirstName">First Name*</label>
+                                            <label htmlFor="askFirstName">First Name*</label>
                                             <input type="text" name="ask__first__name" id="askFirstName"
                                                 placeholder="Enter Your First Name" required="required" />
                                         </div>
                                     </div>
                                     <div className="col-sm-6">
                                         <div className="input input--secondary">
-                                            <label for="askLastName">Last Name*</label>
+                                            <label htmlFor="askLastName">Last Name*</label>
                                             <input type="text" name="ask__last__name" id="askLastName"
                                                 placeholder="Enter Your Last Name" required="required" />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="input input--secondary">
-                                    <label for="askRegistrationMail">Email*</label>
+                                    <label htmlFor="askRegistrationMail">Email*</label>
                                     <input type="email" name="ask__registration__email" id="askRegistrationMail"
                                         placeholder="Enter your email" required="required" />
                                 </div>
                                 <div className="input input--secondary input__alt">
-                                    <label for="askNumber">Phone*</label>
+                                    <label htmlFor="askNumber">Phone*</label>
                                     <div className="input-group">
                                         <div className="input-group-prepend">
                                             <select className="number__code__select" id="numberCodeSelectAlert">
@@ -108,12 +108,12 @@ const ContactUs = () => {
                                     </div>
                                 </div>
                                 <div className="input input--secondary">
-                                    <label for="askSubject">Subject*</label>
+                                    <label htmlFor="askSubject">Subject*</label>
                                     <input type="text" name="ask__subject" id="askSubject" placeholder="Write Subject"
                                         required="required" />
                                 </div>
                                 <div className="input input--secondary">
-                                    <label for="askMessage">Message*</label>
+                                    <label htmlFor="askMessage">Message*</label>
                                     <textarea name="ask_message" id="askMessage" required="required"
                                         placeholder="Write Message"></textarea>
                                 </div>

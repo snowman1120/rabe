@@ -13,7 +13,7 @@ select,
 label,
 blockquote,
 span {
-  @include font(18px, 30px, 400, $theme-color);
+  @include font(15px, 25px, 400, $theme-color);
   &.neutral-top {
     margin-top: -7px;
     @include responsive(sm) {
@@ -174,6 +174,7 @@ h4 > .counterThree {
   @include font(32px, 42px, 700, $theme-color);
   &.neutral-top {
     margin-top: -7px;
+    margin-bottom: 10px;
   }
   &.neutral-bottom {
     margin-bottom: -1px;
@@ -252,6 +253,10 @@ button {
     border: 0px;
     outline: 0px;
   }
+}
+
+p.gm-style-mot {
+  text-align: center;
 }
 
 /* ==== 
