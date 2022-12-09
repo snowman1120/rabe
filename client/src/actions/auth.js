@@ -14,7 +14,8 @@ import {
   CHANGE_PASSWORD_SUCCESS,
   CHANGE_PASSWORD_FAIL,
 
-  SET_PROFILE
+  SET_PROFILE,
+  GET_USER_FULL_INFO,
 } from './types';
 
 /*
@@ -146,6 +147,26 @@ export const changePassword = (data) => async (dispatch) => {
   }
 };
 
+// Update User
+export const getUserFullInfo = (userID, success) => async (dispatch) => {
+  try {
+    const res = await api.get(`/users/${userID}`);
+    success(res.data);
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: CHANGE_PASSWORD_FAIL,
+      payload: errors
+    });
+  }
+};
+
 // Set Profile
 export const setProfile = (profile) => async (dispatch) => {
   dispatch({
@@ -155,4 +176,9 @@ export const setProfile = (profile) => async (dispatch) => {
 }
 
 // Logout
-export const logout = () => ({ type: LOGOUT });
+export const logout = () => async (dispatch) => {
+  dispatch({
+    type: LOGOUT
+  });
+  window.location.href = '/';
+}

@@ -27,8 +27,13 @@ import ChangePassword from 'layout/profile/ChangePassword';
 
 import PostProperty from 'layout/postProperty/PostProperty';
 
+import MyProperties from 'layout/myproperties/MyProperties';
+import MyProposals from 'layout/myproposals/MyProposals';
+
 import KeyRisks from 'layout/keyRisks/KeyRisks';
 import Error404 from 'layout/error/404';
+
+import Test from 'layout/Test';
 
 const RouterBranch = () => {
     return (
@@ -38,7 +43,7 @@ const RouterBranch = () => {
             <Route path="/home3" element={<Home3 />} />
 
             <Route path='/properties' element={<Properties />} />
-            <Route path='/property-details' element={<PropertyDetails />} />
+            <Route path='/property-details/:propertyID' element={<PropertyDetails />} />
             <Route path='/property-alert' element={<PropertyAlert />} />
 
             <Route path='/business-loan' element={<BusinessLoan/>} />
@@ -56,8 +61,13 @@ const RouterBranch = () => {
             <Route path="/change-password" element={<ChangePassword />} />
 
             <Route path="/post-property" element={<PostProperty />} />
+            
+            <Route path="/my-properties" element={<MyProperties />} />
+            <Route path="/my-proposals" element={<MyProposals />} />
 
             <Route path="/key-risks" element={<KeyRisks />} />
+
+            <Route path="/test" element={<Test />} />
 
             <Route path="*" element={<Error404 />} />
         </Routes>

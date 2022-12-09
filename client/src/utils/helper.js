@@ -26,3 +26,7 @@ export const convertSeconds2DHMS = (time) => {
         days, hours, minutes, seconds
     }
 }
+
+export const mile2km = (mile) => {
+    return 1.609344 * mile;
+}

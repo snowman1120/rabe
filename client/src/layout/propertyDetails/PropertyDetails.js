@@ -1,44 +1,166 @@
-import {useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import Table from 'react-bootstrap/Table';
 
 import { numberWithCommas } from 'utils/helper';
 import Loading from 'components/Loading';
-import {getProperty, updateRemainTime} from 'actions/property';
+import {getProperty, updateRemainTime, getDistance2property} from 'actions/property';
+import {bidToProperty, updateBid, getListingNow} from 'actions/bids';
 
-const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
+import SuccessModal from 'components/SuccessModal';
+import ConfirmModal from './ConfirmModal';
+import CongrateModal from './CongrateModal';
+
+import $ from 'jquery';
+window.jQuery = window.$ = $;
+
+const MAX_LEFT_DAYS = 5;
+
+const PropertyDetails = ({
+    loading, 
+    property, 
+    countingdown, 
+    serverErrors, 
+    getProperty, 
+    getDistance2property, 
+    bidToProperty, 
+    updateBid, 
+    getListingNow,
+    updateRemainTime,
+    isAuthenticated, 
+    user
+}) => {
+    const [distance, setDistance] = useState(Infinity);
+    const [commission, setCommissioin] = useState(7);
+    const {propertyID} = useParams();
+
+    const [errors, setErrors] = useState({
+        commission: false,
+        msg: ''
+    });
+
+    const [successModalShow, setSuccessModalShow] = useState(false);
+    const [confirmModalShow, setConfirmModalShow] = useState(false);
+    const [congrateModalShow, setCongrateModalShow] = useState(false);
+
     useEffect(() => {
-        const propertyID = localStorage.getItem('propertyID');
-        getProperty(propertyID);
-
         if(!countingdown) updateRemainTime();
-    }, []);
+    }, [countingdown]);
 
     useEffect(() => {
+        setErrors(serverErrors);
+    }, [serverErrors]);
 
-    }, [property]);
+    useEffect(() => {
+        if(isAuthenticated === null) return;
+        //const propertyID = localStorage.getItem('propertyID');
+        getProperty(propertyID, user && user._id);
+    }, [isAuthenticated, user]);
+
+    useEffect(async () => {
+        if(user && user.role === 'agent') {
+            try {
+                const distance = await getDistance();
+                if(!distance) setDistance(Infinity);
+                else setDistance(distance);
+        
+                if(property && property.bid) {
+                    setCommissioin(property.bid.commission);
+                }
+
+                $('.progress-bar').width(`${(property.DHMS.days * 86400 + property.DHMS.hours * 3600 + property.DHMS.minutes * 60) * 100 / (MAX_LEFT_DAYS * 86400)}%`)
+            } catch(err) {
+                console.log(err.message);
+            }
+        }
+    }, [property])
+
+    const getDistance = async () => {
+        if(!isAuthenticated || !user || user.role !== 'agent' || !property.postalCode) return;
+        return await getDistance2property(user.postalCode, property.postalCode);
+    }
+
+    const onChangeCommission = (e) => {
+        let value = parseFloat(e.target.value);
+        if(value < 1.5 || value > 7) {
+            setErrors({...errors, commission: true});
+        } else {
+            setErrors({...errors, commission: false});
+        }
+        setCommissioin(value);
+    }
+
+    const onClickBid = (e) => {
+        if(commission < 1.5 || commission > 7) {
+            setErrors({...errors, commission: true});
+            return;
+        }
+        bidToProperty(property._id, commission, successBid);
+    }
+
+    const onClickUpdate = (e) => {
+        if(commission < 1.5 || commission > 7) {
+            setErrors({...errors, commission: true});
+            return;
+        }
+        updateBid(property._id, commission, successBid);
+    }
+
+    const onGetListingNow = () => {
+        setConfirmModalShow(true);
+    }
+
+    const handleListingNow = () => {
+        getListingNow(property._id, property.commission, successGetNow);
+        setConfirmModalShow(false);
+    }
+
+    const successBid = () => {
+        setSuccessModalShow(true);
+    }
+
+    const successGetNow = () => {
+        setCongrateModalShow(true);
+    }
 
     return (
         <div>
+            <SuccessModal 
+                show={successModalShow}
+                onHide={() => setSuccessModalShow(false)}
+                message={property.bid ? "You have successfully changed" : "You have successfully bid on the property"}
+                goto={{
+                    description_1: 'Click',
+                    url: '/properties',
+                    name: 'here',
+                    description_2: 'to see the property list'
+                }}/>
+            
+            <ConfirmModal 
+                show={confirmModalShow}
+                onHide={() => setConfirmModalShow(false)}
+                onConfirm={handleListingNow}
+                percentage={property.commission}
+            />
+            <CongrateModal 
+                show={congrateModalShow}
+                onHide={() => setCongrateModalShow(false)}
+            />
             <Loading showYou={loading} />
             {/* <!-- ==== details section start ==== --> */}
             <div className="property__details__banner bg__img clear__top"
-                data-background="assets/images/banner/property-details-banner.png">
+                data-background="/assets/images/banner/property-details-banner.png">
             </div>
             <section className="p__details faq section__space__bottom">
                 <div className="container">
                     <div className="p__details__area">
                         <div className="row">
-                            <div className="col-lg-7">
+                            <div className={(isAuthenticated && user && user.role === 'agent' && property.status === 'inprogress') ? "col-lg-7" : ""}>
                                 <div className="p__details__content">
                                     <a href="#gallery" className="button button--effect button--secondary"><i
                                             className="fa-solid fa-images"></i> Browse Gallery</a>
-                                    {/* <div className="intro">
-                                        <h3>Los Angeles</h3>
-                                        <p><i className="fa-solid fa-location-dot"></i> 8706 Herrick Ave, Los Angeles
-                                        </p>
-                                    </div> */}
                                     <div className="group__one"></div>
                                     <div className="group__two">
                                         <h4>Property Information</h4>
@@ -47,16 +169,13 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
                                                 <tr>
                                                     <td className='text-center'><b>Type of Property</b></td>
                                                     <td className='text-center'>{property.propertyType ? property.propertyType.name : ''}</td>
-                                                </tr>
-                                                {
+                                                </tr>{
                                                     property && property.unit ? 
-                                                    <tr>
+                                                    (<tr>
                                                         <td className='text-center'><b>Unit#</b></td>
                                                         <td className='text-center'>{property ? property.unit : ''}</td>
-                                                    </tr>
-                                                    : ''
-                                                }
-                                                <tr>
+                                                    </tr>)
+                                                    : <></>}<tr>
                                                     <td className='text-center'><b>Year Built</b></td>
                                                     <td className='text-center'>{property ? property.yearBuilt : ''}</td>
                                                 </tr>
@@ -68,6 +187,10 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
                                                     <td className='text-center'><b>Number of bathrooms</b></td>
                                                     <td className='text-center'>{property ? property.bathrooms : ''}</td>
                                                 </tr>
+                                                <tr>
+                                                    <td className='text-center'><b>Price</b></td>
+                                                    <td className='text-center'>{property ? `$${numberWithCommas(property.price)}` : ''}</td>
+                                                </tr>
                                             </tbody>
                                         </Table>
                                     </div>
@@ -75,185 +198,13 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
                                         <h4>Description</h4>
                                         <p>{property.description}</p>
                                     </div>
-                                    <div className="group__two">
-                                        <h5>Reasons to invest in the project A19, Vilnius:</h5>
-                                        <ul>
-                                            <li><img src="assets/images/check.png" alt="Check" /> Lofts in an attractive area -
-                                                in the center of Vilnius;</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> ixed, attractive annual rental
-                                                income;</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> The fixed interest is indexed
-                                                to inflation;</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> The fixed interest is indexed
-                                                to inflation;</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> Variable capital gains;</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> The premises were appraised by
-                                                an independent valuer at 347 000 EUR</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> The project owner is an
-                                                experienced real estate administrator.</li>
-                                        </ul>
-                                    </div>
-                                    <div className="terms">
-                                        <h5>Financial terms of the investment:</h5>
-                                        <div className="terms__wrapper">
-                                            <div className="terms__single">
-                                                <img src="assets/images/icons/loan.png" alt="Maximum Loan" />
-                                                <p>Maximum loan term</p>
-                                                <h5 className="neutral-bottom">36 Months</h5>
-                                            </div>
-                                            <div className="terms__single">
-                                                <img src="assets/images/icons/charge.png" alt="Charge" />
-                                                <p>Security</p>
-                                                <h5 className="neutral-bottom">1st charge
-                                                    Mortgage</h5>
-                                            </div>
-                                            <div className="terms__single">
-                                                <img src="assets/images/icons/project.png" alt="Annual" />
-                                                <p>Annual Return</p>
-                                                <h5 className="neutral-bottom">7%</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="group__two">
-                                        <h5>When investing:</h5>
-                                        <ul>
-                                            <li><img src="assets/images/check.png" alt="Check" /> Up to 4999 € - the annual
-                                                return is 7%.</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> 5000 € – 14999 € - the annual
-                                                return is 7.1%.</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> 15000 € – 29999 € - the annual
-                                                return is 7.2%.</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> 30000 € – 49999 € - the annual
-                                                return is 7.35%.</li>
-                                            <li><img src="assets/images/check.png" alt="Check" /> 50000 € and more - the annual
-                                                return is 7.5%.</li>
-                                        </ul>
-                                    </div>
-                                    <div className="terms">
-                                        <h5>The capital growth distribution:</h5>
-                                        <div className="terms__wrapper">
-                                            <div className="terms__single">
-                                                <img src="assets/images/icons/investor.png" alt="Maximum Loan" />
-                                                <p>Investors</p>
-                                                <h5 className="neutral-bottom">40% - 60%</h5>
-                                            </div>
-                                            <div className="terms__single">
-                                                <img src="assets/images/icons/project.png" alt="Charge" />
-                                                <p>Project</p>
-                                                <h5 className="neutral-bottom">40%</h5>
-                                            </div>
-                                            <div className="terms__single">
-                                                <img src="assets/images/icons/revest.png" alt="Annual" />
-                                                <p>Revest</p>
-                                                <h5 className="neutral-bottom">Up to 20%</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="owner">
-                                        <img src="assets/images/owner.png" alt="Owner" />
-                                        <div>
-                                            <h5>The project owner (borrower)</h5>
-                                            <p>MB „Rego Properties“ - is a company serving as a special vehicle for revest
-                                                investments. The CEO of the company - Andrius Rimdeika is a former investment
-                                                banker, who has worked in investment firms such as ”Morgan Stanley” and “Prime
-                                                investment”.</p>
-                                        </div>
-                                    </div>
-                                    <div className="faq__group">
-                                        <h5 className="atr">Frequently asked questions</h5>
-                                        <div className="accordion" id="accordionExampleFund">
-                                            <div className="accordion-item content__space">
-                                                <h5 className="accordion-header" id="headingFundOne">
-                                                    <span className="icon_box">
-                                                        <img src="assets/images/icons/message.png" alt="Fund" />
-                                                    </span>
-                                                    <button className="accordion-button" type="button" data-bs-toggle="collapse"
-                                                        data-bs-target="#collapseFundOne" aria-expanded="true"
-                                                        aria-controls="collapseFundOne">
-                                                        What is Revest?
-                                                    </button>
-                                                </h5>
-                                                <div id="collapseFundOne" className="accordion-collapse collapse show"
-                                                    aria-labelledby="headingFundOne" data-bs-parent="#accordionExampleFund">
-                                                    <div className="accordion-body">
-                                                        <p>combined with a handful of model sentence structures, to generate
-                                                            Lorem Ipsum
-                                                            which looks reasonable. The generated Lorem Ipsum is therefore
-                                                            always free
-                                                            from
-                                                            repetition, injected humour, or</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="accordion-item content__space">
-                                                <h5 className="accordion-header" id="headingFundTwo">
-                                                    <span className="icon_box">
-                                                        <img src="assets/images/icons/message.png" alt="Fund" />
-                                                    </span>
-                                                    <button className="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseFundTwo"
-                                                        aria-expanded="false" aria-controls="collapseFundTwo">
-                                                        What are the benefits of investing via Revest?
-                                                    </button>
-                                                </h5>
-                                                <div id="collapseFundTwo" className="accordion-collapse collapse"
-                                                    aria-labelledby="headingFundTwo" data-bs-parent="#accordionExampleFund">
-                                                    <div className="accordion-body">
-                                                        <p>combined with a handful of model sentence structures, to generate
-                                                            Lorem Ipsum
-                                                            which looks reasonable. The generated Lorem Ipsum is therefore
-                                                            always free
-                                                            from
-                                                            repetition, injected humour, or</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="accordion-item content__space">
-                                                <h5 className="accordion-header" id="headingFundThree">
-                                                    <span className="icon_box">
-                                                        <img src="assets/images/icons/message.png" alt="Fund" />
-                                                    </span>
-                                                    <button className="accordion-button collapsed" type="button"
-                                                        data-bs-toggle="collapse" data-bs-target="#collapseFundThree"
-                                                        aria-expanded="false" aria-controls="collapseFundThree">
-                                                        What makes Revest different?
-                                                    </button>
-                                                </h5>
-                                                <div id="collapseFundThree" className="accordion-collapse collapse"
-                                                    aria-labelledby="headingFundThree" data-bs-parent="#accordionExampleFund">
-                                                    <div className="accordion-body">
-                                                        <p>combined with a handful of model sentence structures, to generate
-                                                            Lorem Ipsum
-                                                            which looks reasonable. The generated Lorem Ipsum is therefore
-                                                            always free
-                                                            from
-                                                            repetition, injected humour, or</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* <div className="group__one">
-                                        <h4>Key investment risks:</h4>
-                                        <p>Risk of falling prices: The price of the property might fall due to the increase in
-                                            supply or decrease in demand in the area or other economic factors.Liquidity risk:
-                                            The borrower might be unable to find a buyer in order to sell the property.Tenant
-                                            risk: There is a risk that the asset can lose a tenant and it can take time to find
-                                            replacements, which can have impact on the property's cash-flow.</p>
-                                        <div className="map__wrapper">
-                                            <iframe
-                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20342.411046372905!2d-74.16638039276373!3d40.719832743885284!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1649562691355!5m2!1sen!2sbd"
-                                                width="746" height="312" style="border:0;" allowfullscreen="" loading="lazy"
-                                                referrerpolicy="no-referrer-when-downgrade"></iframe>
-                                        </div>
-                                    </div> */}
                                 </div>
                             </div>
-                            <div className="col-lg-5">
+                            <div className={(isAuthenticated && user && user.role === 'agent' && property.status === 'inprogress') ? "col-lg-5" : "d-none"}>
                                 <div className="p__details__sidebar">
                                     <div className="intro">
                                         <div className="countdown__wrapper">
-                                            <p className="secondary"><i className="fa-solid fa-clock"></i> Left to submit
+                                            <p className="secondary"><i className="fa-solid fa-clock"></i> Left to bid
                                             </p>
                                             <div className="countdown">
                                                 <h5>
@@ -270,134 +221,40 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
                                                 </h5>
                                             </div>
                                         </div>
-                                        <h5>Available for funding: <span>${numberWithCommas(property.price)}</span></h5>
+                                        <h5>Price : <span>${numberWithCommas(property.price)}</span></h5>
                                         <div className="progress__type progress__type--two">
                                             <div className="progress">
-                                                <div className="progress-bar" role="progressbar" aria-valuenow="25"
+                                                <div className="progress-bar" role="progressbar" 
+                                                    aria-valuenow="25"
                                                     aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                             <div className="project__info">
-                                                <p className="project__has"><span className="project__has__investors">159
-                                                        Investors</span> | <span className="project__has__investors__amount"><i
-                                                            className="fa-solid fa-dollar-sign"></i> 1,94,196</span></p>
-                                                <p className="project__goal">
-                                                    <i className="fa-solid fa-dollar-sign"></i> 3,00,000 Goal
+                                                <p className="project__has">
+                                                    <span className="project__has__investors">{property.bidCount} Bids</span>
+                                                     {/* | <span className="project__has__investors__amount"><i className="fa-solid fa-dollar-sign"></i> 1,94,196</span> */}
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="group brin">
-                                        <h5 className="neutral-top">Occupancy</h5>
-                                        <div className="acus__btns">
-                                            <a href="#!" className="acus__btn acus__btn__active">0%</a>
-                                            <a href="#!" className="acus__btn">20%</a>
-                                            <a href="#!" className="acus__btn">40%</a>
-                                            <a href="#!" className="acus__btn">60%</a>
-                                            <a href="#!" className="acus__btn">80%</a>
-                                            <a href="#!" className="acus__btn">100%</a>
-                                        </div>
                                         <div className="acus__content">
-                                            <form action="#" method="post">
-                                                <div className="input input--secondary">
-                                                    <label htmlFor="anNum">Annual return rate:</label>
-                                                    <input type="number" name="an__num" id="anNum" placeholder="7.00%"
-                                                        required="required" />
-                                                </div>
-                                                <div className="input input--secondary">
-                                                    <label htmlFor="anNumIn">Invest</label>
-                                                    <input type="number" name="an__num_in" id="anNumIn" placeholder="€ 500"
-                                                        required="required" />
-                                                </div>
-                                                <div className="input input--secondary">
-                                                    <label htmlFor="anNumInTwo">Earn</label>
-                                                    <input type="number" name="an__num_in_two" id="anNumInTwo"
-                                                        placeholder="€ 35.00" required="required" />
-                                                </div>
-                                                <div className="capital">
-                                                    <p>Capital Growth Split:</p>
-                                                    <h5>40% <a href="blog"><i className="fa-solid fa-circle-info"></i></a>
-                                                    </h5>
-                                                </div>
-                                                <div className="item__security">
-                                                    <div className="icon__box">
-                                                        <img src="assets/images/home.png" alt="Security" />
+                                            <div>
+                                                {(distance / 1000) > 75 ? '' : (<div className="suby">
+                                                    <div className="input input--secondary mb-0 mt-3 w-100">
+                                                        <input type="number" name="commission" id="commissioin" placeholder="Enter your desired commission" min="1.5" max="7"
+                                                         value={commission}    required="required" onChange={onChangeCommission} />
+                                                        {errors.commission ? <div className="error__message">You must enter a commission between 1.5 and 7</div> : ''}
                                                     </div>
-                                                    <div className="item__security__content">
-                                                        <p className="secondary">Security</p>
-                                                        <h6>1st-Rank Mortgage</h6>
-                                                    </div>
-                                                </div>
-                                                <div className="suby">
-                                                    <h5>500</h5>
-                                                    <button type="submit" className="button button--effect">Invest Now</button>
-                                                </div>
-                                            </form>
+                                                    {property.bid ? <button type="submit" className="button button--effect w-100" onClick={onClickUpdate}>Change Now</button> :
+                                                    <button type="submit" className="button button--effect w-100" onClick={onClickBid}>Bid now</button>}
+                                                    <button type="submit" className="button button--effect w-100 get-listing-button" onClick={onGetListingNow}>Get this listing now for {property.commission}%</button>
+                                                </div>)}
+                                            </div>
                                         </div>
                                         <p className="text-center neutral-bottom">
                                             <a href="contact-us">Request a free callback</a>
                                         </p>
                                     </div>
-                                    <div className="group brini">
-                                        <h5 className="neutral-top">Investment Overview</h5>
-                                        <hr />
-                                        <p>Purpose of the loan To increase the company's working capital, magna a laoreet
-                                            convallis, massa sapien tempor arcu, nec euismod elit justo in lacus. Maecenas
-                                            mattis massa lectus, vel tincidunt augue porta non.</p>
-                                        <p>Duis quis orci vehicula, fermentum tortor vitae, imperdiet sem. Quisque iaculis eu
-                                            odio in lobortis. Sed vel ex non erat pellentesque lobortis vel vitae diam. Donec
-                                            gravida eleifend pellentesque. Curabitur dictum blandit accumsan.</p>
-                                        <a href="blog">Read More</a>
-                                    </div>
-                                    {/* <div className="group birinit">
-                                        <h6>Share via Social </h6>
-                                        <div className="social text-start">
-                                            <a href="#!">
-                                                <i className="fab fa-facebook-f"></i>
-                                            </a>
-                                            <a href="#!">
-                                                <i className="fab fa-twitter"></i>
-                                            </a>
-                                            <a href="#!">
-                                                <i className="fab fa-instagram"></i>
-                                            </a>
-                                            <a href="#!">
-                                                <i className="fab fa-linkedin-in"></i>
-                                            </a>
-                                        </div>
-                                    </div> */}
-                                    {/* <div className="group alt__brin">
-                                        <h5>Key Updates <i className="fa-solid fa-bell"></i></h5>
-                                        <hr />
-                                        <div className="singl__wrapper">
-                                            <div className="singl">
-                                                <img src="assets/images/check.png" alt="Check" />
-                                                <div>
-                                                    <p>30-Aug-2022</p>
-                                                    <a href="terms-conditions">Term Sheet Signed</a>
-                                                </div>
-                                            </div>
-                                            <div className="singl">
-                                                <img src="assets/images/check.png" alt="Check" />
-                                                <div>
-                                                    <p>30-Aug-2022</p>
-                                                    <a href="privacy-policy">Listing Live</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> */}
-                                    {/* <div className="group alt__brin__last">
-                                        <h5>Reports</h5>
-                                        <hr />
-                                        <h6>Investment Note</h6>
-                                        <p>Property Share's Detailed Investment Note</p>
-                                        <a href="#!" className="button">DOWNLOAD INVESTMENT NOTE <i
-                                                className="fa-solid fa-download"></i></a>
-                                        <h6>Legal Title Report</h6>
-                                        <p>Detailed Report on the Title diligence of the
-                                            property by Amarchand Mangaldas</p>
-                                        <a href="#!" className="button">DOWNLOAD TITLE REPORT <i
-                                                className="fa-solid fa-download"></i></a>
-                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -410,7 +267,7 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
             <section className="p__gallery wow fadeInUp" id="gallery">
                 <div className="container">
                     <hr className="divider" />
-                    <div className="p__gallery__area section__space">
+                    <div className="p__gallery__area section__space pt-lg-5 pb-lg-5">
                         <div className="title__with__cta">
                             <div className="row d-flex align-items-center">
                                 <div className="col-lg-8">
@@ -424,8 +281,7 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="row p__gallery__single">
-                            {
+                        <div className="row p__gallery__single">{
                                 property.photos ? property.photos.map(photo => (
                                     <div key={photo} className="col-md-6 col-lg-4 gallery__single__two">
                                         <a href={photo}>
@@ -440,212 +296,6 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
             </section>
             {/* <!-- ==== property gallery two section end ==== --> */}
 
-            {/* <!-- ==== all properties in grid section start ==== --> */}
-            {/* <section className="properties__grid section__space">
-                <div className="container">
-                    <div className="properties__grid__area wow fadeInUp">
-                        <div className="title__with__cta">
-                            <div className="row d-flex align-items-center">
-                                <div className="col-lg-8">
-                                    <h2>Browse Similar Properties</h2>
-                                </div>
-                                <div className="col-lg-4">
-                                    <div className="text-start text-lg-end">
-                                        <a href="properties" className="button button--secondary button--effect">Browse All
-                                            Properties</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="property__grid__wrapper">
-                            <div className="row">
-                                <div className="col-md-6 col-xl-4">
-                                    <div className="property__grid__single column__space--secondary">
-                                        <div className="img__effect">
-                                            <a href="property-details">
-                                                <img src="assets/images/property/grid-one.jpg" alt="Property" />
-                                            </a>
-                                        </div>
-                                        <div className="property__grid__single__inner">
-                                            <h4>Los Angeles</h4>
-                                            <p className="sub__info"><i className="fa-solid fa-location-dot"></i> 8706 Herrick Ave, Los
-                                                Angeles</p>
-                                            <div className="progress__type">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <p className="project__has"><span className="project__has__investors">159
-                                                        Investors</span> |
-                                                    <span className="project__has__investors__amount"><i
-                                                            className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                        className="project__has__investors__percent">(64.73%)</span>
-                                                </p>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details" className="button button--effect">
-                                                        Submit Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-6 col-xl-4">
-                                    <div className="property__grid__single column__space--secondary">
-                                        <div className="img__effect">
-                                            <a href="property-details">
-                                                <img src="assets/images/property/grid-two.jpg" alt="Property" />
-                                            </a>
-                                        </div>
-                                        <div className="property__grid__single__inner">
-                                            <h4>San Francisco, CA</h4>
-                                            <p className="sub__info"><i className="fa-solid fa-location-dot"></i> 3335 21 St, San
-                                                Francisco</p>
-                                            <div className="progress__type">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <p className="project__has"><span className="project__has__investors">159
-                                                        Investors</span> |
-                                                    <span className="project__has__investors__amount"><i
-                                                            className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                        className="project__has__investors__percent">(64.73%)</span>
-                                                </p>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-6 col-xl-4">
-                                    <div className="property__grid__single">
-                                        <div className="img__effect">
-                                            <a href="property-details">
-                                                <img src="assets/images/property/grid-three.jpg" alt="Property" />
-                                            </a>
-                                        </div>
-                                        <div className="property__grid__single__inner">
-                                            <h4>San Diego</h4>
-                                            <p className="sub__info"><i className="fa-solid fa-location-dot"></i> 356 La Jolla, San
-                                                Diego</p>
-                                            <div className="progress__type">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                                <p className="project__has"><span className="project__has__investors">159
-                                                        Investors</span> |
-                                                    <span className="project__has__investors__amount"><i
-                                                            className="fa-solid fa-dollar-sign"></i> 1,94,196</span> <span
-                                                        className="project__has__investors__percent">(64.73%)</span>
-                                                </p>
-                                            </div>
-                                            <div className="item__info">
-                                                <div className="item__info__single">
-                                                    <p>Annual Return</p>
-                                                    <h6>7.5% + 2%</h6>
-                                                </div>
-                                                <div className="item__info__single">
-                                                    <p>Property Type</p>
-                                                    <h6>Commercial</h6>
-                                                </div>
-                                            </div>
-                                            <div className="invest__cta__wrapper">
-                                                <div className="countdown__wrapper">
-                                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
-                                                    <div className="countdown">
-                                                        <h5>
-                                                            <span className="days">00</span><span className="ref">d</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="hours"> 00</span><span className="ref">h</span>
-                                                            <span className="seperator">:</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <span className="minutes">00</span><span className="ref">m</span>
-                                                            <span className="seperator"></span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div className="invest__cta">
-                                                    <a href="property-details" className="button button--effect">
-                                                        Invest Now
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section> */}
-            {/* <!-- ==== #all properties in grid section end ==== --> */}
-
             {/* <!-- ==== market section start ==== --> */}
             <section className="market section__space over__hi">
                 <div className="container">
@@ -653,7 +303,7 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
                         <div className="row d-flex align-items-center">
                             <div className="col-lg-6 col-xl-5">
                                 <div className="market__thumb thumb__rtl column__space">
-                                    <img src="assets/images/market-illustration.png" alt="Explore the Market" />
+                                    <img src="/assets/images/market-illustration.png" alt="Explore the Market" />
                                 </div>
                             </div>
                             <div className="col-lg-6 col-xl-6 offset-xl-1">
@@ -664,7 +314,7 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
                                     <p>Transparent Real Estate Investing Through Revest.Join us and
                                         experience a smarter,better way to invest in real estate</p>
                                     <a href="properties" className="button button--effect">Start Exploring</a>
-                                    <img src="assets/images/arrow.png" alt="Go to" />
+                                    <img src="/assets/images/arrow.png" alt="Go to" />
                                 </div>
                             </div>
                         </div>
@@ -677,9 +327,12 @@ const PropertyDetails = ({loading, property, countingdown, getProperty}) => {
 }
 
 const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user,
     property: state.property.property,
     loading: state.property.loading,
-    countingdown: state.property.countingdown
+    countingdown: state.property.countingdown,
+    serverErrors: state.bids.errors,
 });
 
-export default connect(mapStateToProps, {getProperty}) (PropertyDetails);
+export default connect(mapStateToProps, {getProperty, getDistance2property, bidToProperty, updateBid, updateRemainTime, getListingNow}) (PropertyDetails);

@@ -4,13 +4,19 @@ import {
     PROPERTY_ERROR,
     ADD_PROPERTY,
     GET_PROPERTY,
+    DISTANCE_ERROR,
 
     LOADING_PROPERTY,
     UPDATE_REMAIN_TIME,
-    COUNTING_DOWN
+    COUNTING_DOWN,
+
+    GET_MY_PROPERTIES,
+    GET_LISTING_NOW
 } from '../actions/types';
 
-    import { convertSeconds2DHMS } from 'utils/helper';
+import { convertSeconds2DHMS } from 'utils/helper';
+
+    const MAX_LEFT_DAYS = 5;
 
     const initialState = {
         count: 0,
@@ -18,14 +24,14 @@ import {
         property: {},
         myProperties: [],
 
-        loading: true,
+        loading: false,
         countingdown: false,
 
         errors: {}
     };
 
     function toDHMS(startTime) {
-        const time = 432000 - Math.floor((Date.now() - startTime) / 1000);
+        const time = MAX_LEFT_DAYS * 86400 - Math.floor((Date.now() - startTime) / 1000);
         const DHMS = convertSeconds2DHMS(time);
         return DHMS;
     }
@@ -91,6 +97,33 @@ import {
                     ...state,
                     countingdown: true
                 }
+            case DISTANCE_ERROR:
+                return {
+                    ...state,
+                    errors: payload
+                }
+            case GET_MY_PROPERTIES:
+                const myPrpperties = payload.map(item => {
+                    return  {...item, DHMS: toDHMS(new Date(item.date))}
+                });
+                return {
+                    ...state,
+                    loading: false,
+                    myProperties: myPrpperties
+                }
+            case GET_LISTING_NOW: {
+                const property = {
+                    ...payload, 
+                    DHMS: toDHMS(new Date(payload.date)),
+                    bidCount: state.property.bidCount + 1
+                };
+                
+                return {
+                    ...state,
+                    loading: false,
+                    property
+                }
+            }
             default:
                 return state;
         }

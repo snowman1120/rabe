@@ -16,7 +16,7 @@ import { addProperty, getPropertyTypes } from 'actions/property';
 window.jQuery = window.$ = $;
 //require("jquery-nice-select");
 
-const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenticated }) => {
+const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTypes, isAuthenticated }) => {
     const selectRef = useRef();
     const unitRef = useRef();
     
@@ -35,7 +35,8 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
         postalCode: '',
         photos: [],
         description: '',
-        price: 0
+        price: 0,
+        commission: 1.5
     });
 
     const [photos, setPhotos] = useState([]);
@@ -44,8 +45,8 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
         propertyType: '',
         unit: '',
         yearBuilt: '',
-        bedrooms: 0,
-        bathrooms: 0,
+        bedrooms: '',
+        bathrooms: '',
         address: '',
         street: '',
         city: '',
@@ -53,7 +54,8 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
         postalCode: '',
         photos: '',
         description: '',
-        price: 0
+        price: '',
+        commission: ''
     });
 
     useEffect(() => {
@@ -61,23 +63,16 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
     }, []);
     
     useEffect(() => {
-        // if(propertyTypes.length <= 0) return;
-        // if(!$(selectRef.current)) return;
-        // $(selectRef.current).niceSelect();
         const propertyTypeIdx = propertyTypes.findIndex(type => type.name === $(selectRef.current).val());
         if(propertyTypeIdx >= 0) {
             setFormData({...formData, propertyType: propertyTypes[propertyTypeIdx]._id});
             switchUnitStatus();
         }
-        
-        // $(selectRef.current).on('change', (e) => {
-        //     const propertyTypeIdx = propertyTypes.findIndex(type => type.name === e.target.value);
-        //     if(propertyTypeIdx > 0) {
-        //         setFormData({...formData, propertyType: propertyTypes[propertyTypeIdx]._id});
-        //         switchUnitStatus();
-        //     }
-        // });
     }, [propertyTypes]);
+
+    useEffect(() => {
+        setErrors(serverErrors);
+    }, [serverErrors]);
 
     const switchUnitStatus = () => {
         const propertyTypeIdx = propertyTypes.findIndex((type) => type.name === $(selectRef.current).val());
@@ -91,6 +86,14 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
 
     const onChangeInput = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value});
+        if(e.target.name === 'commission') {
+            let value = parseFloat(e.target.value);
+            if(value < 1.5 || value > 7) {
+                setErrors({...errors, commission: true});
+            } else {
+                setErrors({...errors, commission: false});
+            }
+        }
     }
 
     const onChangeType = (e) => {
@@ -160,6 +163,13 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
             }
         });
         setFormData({...formData, address})
+        if(!address.postalCode) {
+            return setErrors({...errors, address: 'Enter a correct address'});
+        }
+        if(!address.country || address.country.long != 'Canada') {
+            return setErrors({...errors, address: 'Enter a correct address'});
+        }
+        setErrors({...errors, address: null});
     }
 
     const onChangePhotos = (photos) => {
@@ -167,6 +177,22 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
     }
 
     const successSaveInfo = (property) => {
+        setFormData({
+            propertyType: propertyTypes[0]._id,
+            unit: '',
+            yearBuilt: '',
+            bedrooms: '',
+            bathrooms: '',
+            address: '',
+            street: '',
+            city: '',
+            state: '',
+            postalCode: '',
+            photos: [],
+            description: '',
+            price: 0,
+            commission: 1.5
+        })
         uploadPhotos(property);
     }
 
@@ -212,6 +238,10 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
         if(isEmpty(formData.bathrooms)) t_errors = {...t_errors, bathrooms: 'Required field'};
         if(isEmpty(formData.price)) t_errors = {...t_errors, price: 'Required field'};
 
+        const commission = parseFloat(formData.commission);
+        if(commission < 1.5 || commission > 7) {
+            t_errors = {...t_errors, commission: 'You must enter a commission between 1.5 and 7'};
+        }
         if(isEmpty(t_errors)) {
             addProperty(formData, successSaveInfo);
         } else {
@@ -288,8 +318,7 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
                             </div>
                         </div>
                         <div>
-                            <Address onChange={onChangeAddress} />
-                            {!isEmpty(errors.description) ? <div className="error__message">{errors.description}</div> : ''}
+                            <Address onChange={onChangeAddress} error={errors.address} />
                         </div>
                         <div className='row'>
                             <ImageUploader onChange={onChangePhotos} />
@@ -300,7 +329,7 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
                                 <div className="input input--secondary">
                                     {/* <label htmlFor="description">Property Description</label> */}
                                     <textarea type="text" name="description" id="description" placeholder="Property Description"
-                                        required="required" onChange={onChangeInput} >{formData.description}</textarea>
+                                        required="required" onChange={onChangeInput} value={formData.description} ></textarea>
                                     {!isEmpty(errors.description) ? <div className="error__message">{errors.description}</div> : ''}
                                 </div>
                             </div>
@@ -308,9 +337,14 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
                         <h4> Price </h4>
                         
                         <div className="input input--secondary">
-                            <input type="number" name="price" id="price" placeholder="Price"
+                            <input type="number" name="price" id="price" placeholder="Price" value={formData.price}
                                 required="required" onChange={onChangeInput} />
                             {!isEmpty(errors.price) ? <div className="error__message">{errors.price}</div> : ''}
+                        </div>
+                        <h4> Get this listing now </h4>
+                        <div className="input input--secondary">
+                            <input type="number" name="commission" id="commission" placeholder="Commission" onChange={onChangeInput} value={formData.commission} />
+                            {!isEmpty(errors.commission) ? <div className="error__message">{errors.commission}</div> : ''}
                         </div>
 
                         <div className='row' style={{justifyContent: 'right'}}>
@@ -318,6 +352,7 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
                                 <button type="submit" className="button button--effect" onClick={onSubmit}> Post Now </button>
                             </div>
                         </div>
+                        {!isEmpty(errors.msg) ? <div className="error__message">{errors.msg}</div> : ''}
                     </div>
                 </div>
             </div>
@@ -340,7 +375,7 @@ const PostProperty = ({ addProperty, getPropertyTypes, propertyTypes, isAuthenti
 }
 
 const mapStateToProps = (state) => ({
-    serverErrors: state.auth.errors,
+    serverErrors: state.property.errors,
     isAuthenticated: state.auth.isAuthenticated,
     propertyTypes: state.propertyType.propertyTypes
 });

@@ -4735,8 +4735,8 @@
   }
   
   .p__details__content {
-    position: sticky;
-    top: 100px;
+    // position: sticky;
+    // top: 100px;
     .intro {
       margin-top: 170px;
       @include responsive(lg) {
@@ -4952,6 +4952,7 @@
   .p__details__sidebar {
     position: sticky;
     top: 100px;
+    margin-top: 200px;
     @include responsive(md) {
       margin-top: 30px;
     }
@@ -7414,7 +7415,31 @@
     }
   }
 
-  
+  .get-listing-button {
+    width: 100%;
+    background: white;
+    color: #5927e3;
+    border: 2px solid #5927e3;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    &:hover {
+      width: 100%;
+      background: white;
+      color: #5927e3;
+      border: 2px solid #5927e3;
+      margin-top: 10px;
+    }
+  }
+
+  .avatar-lg {
+    width: 100px;
+    height: 100px;
+  }
+
+  .no-proposal-msg {
+    text-align: center;
+    font-size: 20px;
+  }
   
   /* ==== 
    --------- (4.4) all sections styles end ---------

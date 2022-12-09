@@ -1,5 +1,4 @@
 import api from '../utils/api';
-import { setAlert } from './alert';
 import {
   GET_PROPERTIES,
   PROPERTY_ERROR,
@@ -12,7 +11,10 @@ import {
   PROPERTY_TYPES_ERROR,
   UPDATE_REMAIN_TIME,
   COUNTING_DOWN,
-  REMOVE_PROPERTIES
+  REMOVE_PROPERTIES,
+  DISTANCE_ERROR,
+
+  GET_MY_PROPERTIES
 } from './types';
 
 export const updateRemainTime = () => async (dispatch) => {
@@ -45,12 +47,43 @@ export const getProperties = (filter, {skip, limit}) => async (dispatch) => {
       count: res.data.count
     });
   } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
     dispatch({
       type: PROPERTY_ERROR,
-      payload: { msg: err.message }
+      payload: errors
     });
   }
 };
+
+// Get my properties
+export const getMyProperties = () => async (dispatch) => {
+    try {
+      dispatch({
+        type: LOADING_PROPERTY
+      });
+      const res = await api.get(`/my_properties`);
+      dispatch({
+        type: GET_MY_PROPERTIES,
+        payload: res.data
+      });
+    } catch(err) {
+      const serverErrors = err.response.data.errors;
+      let errors = {};
+  
+      if (serverErrors) {
+        serverErrors.forEach((error) => errors[error.param] = error.msg);
+      }
+      dispatch({
+        type: PROPERTY_ERROR,
+        payload: errors
+      });
+    }
+}
 
 export const removeProperties = () => (dispatch) => {
   dispatch({
@@ -91,32 +124,45 @@ export const deleteProperty = (id) => async (dispatch) => {
       type: DELETE_PROPERTY,
       payload: id
     });
-
-    dispatch(setAlert('Property Removed', 'success'));
   } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
     dispatch({
       type: PROPERTY_ERROR,
-      payload: { msg: err.message }
+      payload: errors
     });
   }
 };
 
 // Get property
-export const getProperty = (id) => async (dispatch) => {
+export const getProperty = (propertyID, userID) => async (dispatch) => {
   try {
     dispatch({
       type: LOADING_PROPERTY
     });
-    const res = await api.get(`/property/1/${id}`);
+    const res = await api.get(`/property/1/${propertyID}/${userID}`);
 
+    const {property, bid, bidCount} = res.data;
+    property.bid = bid;
+    property.bidCount = bidCount;
     dispatch({
       type: GET_PROPERTY,
-      payload: res.data
+      payload: property
     });
   } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
     dispatch({
       type: PROPERTY_ERROR,
-      payload: { msg: err.message }
+      payload: errors
     });
   }
 };
@@ -131,9 +177,35 @@ export const getPropertyTypes = () => async (dispatch) => {
         payload: res.data
       });
     } catch (err) {
+      const serverErrors = err.response.data.errors;
+      let errors = {};
+
+      if (serverErrors) {
+        serverErrors.forEach((error) => errors[error.param] = error.msg);
+      }
       dispatch({
-        type: PROPERTY_TYPES_ERROR,
-        payload: { msg: err.message }
+        type: PROPERTY_ERROR,
+        payload: errors
       });
     }
   };
+
+// get Distance from agent to a property
+export const getDistance2property = (originPostalCode, destPostalCode) => async (dispatch) => {
+  try {
+    const res = await api.get(`/property/distance/${originPostalCode}/${destPostalCode}`);
+    return res.data.distance;
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+    dispatch({
+      type: PROPERTY_ERROR,
+      payload: errors
+    });
+    return false;
+  }
+}

@@ -1,8 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const path = require('path');
-
-const auth = require('./middleware/auth');
+const cors = require('cors');
 
 const formData = require('express-form-data')
 
@@ -13,6 +12,7 @@ connectDB();
 app.use(formData.parse())
 // Init Middleware
 app.use(express.json());
+app.use(cors({origin: '*'}));
 //app.use(fileUpload());
 
 // Define Routes
@@ -20,6 +20,8 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/property', require('./routes/api/property'));
 app.use('/api/property_type', require('./routes/api/propertyType'));
+app.use('/api/bids', require('./routes/api/bids'));
+app.use('/api/my_properties', require('./routes/api/myproperties'));
 
 process.env.NODE_ENV = "production";
 

@@ -1,7 +1,11 @@
 import React, { useState, useRef } from "react";
 import { StandaloneSearchBox, LoadScript, GoogleMap, Marker } from "@react-google-maps/api";
 
-const PlaceComponent = ({ onChange }) => {
+import { isEmpty } from "utils/validation";
+
+import GOOGLE_MAP_API_KEY from 'google_map_api_key';
+
+const Address = ({ error, onChange }) => {
 
   const containerStyle = {
     width: '100%',
@@ -30,7 +34,7 @@ const PlaceComponent = ({ onChange }) => {
   }
 
     return (
-        <LoadScript googleMapsApiKey="AIzaSyAliBiaosgqAOwnqmoYu8yO5f94xfsNZVM" libraries={["places"]}>
+        <LoadScript googleMapsApiKey={GOOGLE_MAP_API_KEY} libraries={["places"]}>
             <StandaloneSearchBox
                 onLoad={ref => inputRef.current = ref}
                 onPlacesChanged={handlePlaceChanged}
@@ -38,7 +42,8 @@ const PlaceComponent = ({ onChange }) => {
               <div className="input input--secondary">
                   {/* <label htmlFor="firstName"> Address </label> */}
                   <h4> Address </h4>
-                  <input type="text" name="firstName" id="firstName" placeholder="Enter Location" />
+                  <input type="text" name="address" id="address" placeholder="Enter Location" />
+                  {!isEmpty(error) ? <div className="error__message">{error}</div> : ''}
               </div>
             </StandaloneSearchBox>
             <GoogleMap
@@ -55,4 +60,4 @@ const PlaceComponent = ({ onChange }) => {
     );
 };
 
-export default PlaceComponent;
+export default Address;

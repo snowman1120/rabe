@@ -21,7 +21,7 @@ router.post(
     }
 
     try {
-      const user = await User.findById(req.user.id).select('-password');
+      const user = await User.findById(req.user.id).select('-password').select('-email').select('-phoneNumber');
       if(user.role !== 'admin') {
         return res.status(400). json('Access denied. You are not a administrator.');
       }
@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
     res.json(propertyTypes);
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ errors: [...errors.array(), {param: 'msg', msg: 'Server Error'}] });
+    res.status(500).json({ errors: [{param: 'msg', msg: 'Server Error'}] });
   }
 });
 
@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
 // @access   Private
 router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select('-password').select('-email').select('-phoneNumber');
       if(user.role !== 'admin') {
         return res.status(400). json('Access denied. You are not a administrator.');
     }

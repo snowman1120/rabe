@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const config = require('config');
 //const db = config.get('mongoURI');
 const db = "mongodb+srv://snowman:19901120snowmanstar@snowman.ysxlzte.mongodb.net/test"
+// const db = "mongodb://localhost:27017/rabe"
 
 const connectDB = async () => {
   try {

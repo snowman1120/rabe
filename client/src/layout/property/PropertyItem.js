@@ -5,8 +5,8 @@ import $ from 'jquery';
 window.jQuery = window.$ = $;
 const PropertyItem = ({property}) => {
     const gotoDetailPage = (e) => {
-        localStorage.setItem('propertyID', property._id);
-        return window.location.href = '/property-details';
+        //localStorage.setItem('propertyID', property._id);
+        return window.location.href = `/property-details/${property._id}`;
     }
 
     // useEffect(() => {

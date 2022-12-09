@@ -95,12 +95,6 @@ const SellerReg = ({serverErrors, register}) => {
                     {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
                 </div>
                 <div className="input input--secondary">
-                    <label htmlFor="registrationPhoneNumber">Phone Number*</label>
-                    <input type="text" name="phoneNumber" id="registrationPhoneNumber"
-                        placeholder="Enter your phone number" required="required" onChange={onChangeInput} />
-                    {!isEmpty(errors.phoneNumber) ? <div className="error__message">{errors.phoneNumber}</div> : ''}
-                </div>
-                <div className="input input--secondary">
                     <label htmlFor="regiPass">Password*</label>
                     <input type="password" name="password" id="regiPass" placeholder="Password"
                         required="required" onChange={onChangeInput} />
@@ -111,6 +105,12 @@ const SellerReg = ({serverErrors, register}) => {
                     <input type="password" name="passConfirm" id="passCon" placeholder="Password Confirm"
                         required="required" onChange={onChangeInput} />
                     {!isEmpty(errors.passConfirm) ? <div className="error__message">{errors.passConfirm}</div> : ''}
+                </div>
+                <div className="input input--secondary">
+                    <label htmlFor="registrationPhoneNumber">Phone Number*</label>
+                    <input type="text" name="phoneNumber" id="registrationPhoneNumber"
+                        placeholder="Enter your phone number" required="required" onChange={onChangeInput} />
+                    {!isEmpty(errors.phoneNumber) ? <div className="error__message">{errors.phoneNumber}</div> : ''}
                 </div>
                 <div className="checkbox">
                     <label>

@@ -192,7 +192,7 @@ router.put(
         { _id: req.user.id },
         { $set: changePasswordFields },
         { new: true, upsert: true, setDefaultsOnInsert: true }
-      ).select('-password');
+      ).select('-password').select('-email').select('-phoneNumber');
       return res.json(profile);
     } catch (err) {
       console.error(err.message);
@@ -269,7 +269,7 @@ router.put(
         { _id: req.user.id },
         { $set: changePasswordFields },
         { new: true, upsert: true, setDefaultsOnInsert: true }
-      ).select('-password');
+      ).select('-password').select('-email').select('-phoneNumber');
 
       return res.status(200).end();
     } catch (err) {
@@ -299,7 +299,7 @@ router.post(
     }
 
     const destPath = `client/build/assets/images/avatar/${path.basename(req.files.avatar.path)}`;
-    const dbPath = 'assets/images/avatar/' + path.basename(req.files.avatar.path);
+    const dbPath = '/assets/images/avatar/' + path.basename(req.files.avatar.path);
     fs.copyFile(req.files.avatar.path, destPath, async function(err) {
       if (err) {
         res.status(400).send('Something went wrong');
@@ -310,7 +310,7 @@ router.post(
         { _id: user.id },
         { $set: {avatar: dbPath} },
         { new: true, upsert: true, setDefaultsOnInsert: true }
-      ).select('-password');
+      ).select('-password').select('-email').select('-phoneNumber');
       res.json(profile);
     });
   }

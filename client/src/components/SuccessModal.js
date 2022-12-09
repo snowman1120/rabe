@@ -17,7 +17,7 @@ const SuccessModal = ( props ) => {
           <Modal.Body>
             <div className='success-modal'>
                 <div className="success-modal-mark">
-                    <img src='assets/images/icons/success-green-check-mark-icon.png' alt='' />
+                    <img src='/assets/images/icons/success-green-check-mark-icon.png' alt='' />
                 </div>
                 <p className='success-modal-message'>{props.message ? props.message : ''}</p>
                 <p className='success-modal-note'>

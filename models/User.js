@@ -45,11 +45,10 @@ const UserSchema = new mongoose.Schema({
   affiliations: {
     type: String,
   },
-  propertyies: [],
   date: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('user', UserSchema);
+module.exports = mongoose.model('users', UserSchema);

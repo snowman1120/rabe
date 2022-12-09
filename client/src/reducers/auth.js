@@ -12,7 +12,7 @@ import {
     UPDATE_PROFILE_FAIL,
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_FAIL,
-    SET_PROFILE
+    SET_PROFILE,
   } from '../actions/types';
   
   const initialState = {

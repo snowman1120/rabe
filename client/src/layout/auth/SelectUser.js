@@ -1,7 +1,5 @@
 import {useState, useEffect} from 'react';
 
-//import './Auth.css';
-
 import $ from 'jquery';
 window.jQuery = window.$ = $;
 

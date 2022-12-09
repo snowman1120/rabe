@@ -4,12 +4,16 @@ const { check, validationResult } = require('express-validator');
 const auth = require('../../middleware/auth');
 
 const Property = require('../../models/Property');
+const Bids = require('../../models/Bids');
 const User = require('../../models/User');
 const checkObjectId = require('../../middleware/checkObjectId');
 
 const path = require('path');
 const fs = require('fs');
-const url = require('url');
+const axios = require('axios');
+
+GOOGLE_MAP_API_KEY = "AIzaSyAliBiaosgqAOwnqmoYu8yO5f94xfsNZVM";
+const MAX_LEFT_DAYS = 5;
 
 // @route    POST api/property
 // @desc     Create a property
@@ -29,11 +33,35 @@ router.post(
     }
 
     try {
-      const user = await User.findById(req.user.id).select('-password');
+      const user = await User.findById(req.user.id).select('-password').select('-email').select('-phoneNumber');
       const {name, description, propertyType, unit, yearBuilt, bedrooms, bathrooms, address, price} = req.body;
+      let commission = parseFloat(req.body.commission);
+
+      if(!address.postalCode) {
+        return res.status(400).json({ errors: [...errors.array(), 
+                {param: 'msg', msg: 'Enter a correct address'},
+                {param: 'address', msg: 'Enter a correct address'}
+              ] });
+      }
+      if(!address.country || address.country.long != 'Canada') {
+        return res.status(400).json({ errors: [...errors.array(), 
+                {param: 'msg', msg: 'Enter a correct address'},
+                {param: 'address', msg: 'Enter a correct address'}
+              ] });
+      }
+
+      commission = parseFloat(commission);
+      if(commission < 1.5 || commission > 7) {
+        return res.status(400).json({ errors: [...errors.array(), 
+                {param: 'msg', msg: 'You must enter a commission between 1.5 and 7'},
+                {param: 'commission', msg: 'You must enter a commission between 1.5 and 7'}
+              ] });
+      }
       const newProperty = new Property({
         user: req.user.id,
-        name, description, propertyType, unit, yearBuilt, bedrooms, bathrooms, address, price
+        name, description, propertyType, unit, yearBuilt, bedrooms, bathrooms, address, price, commission,
+        postalCode: address.postalCode.long,
+        city: address.areaLevel_1.long
       });
 
       const property = await newProperty.save();
@@ -59,7 +87,7 @@ router.post(
     try {
       photos.forEach(photo => {
         const destPath = `client/build/assets/images/upload/${path.basename(photo.path)}`;
-        const dbPath = 'assets/images/upload/' + path.basename(photo.path);
+        const dbPath = '/assets/images/upload/' + path.basename(photo.path);
         photoPathes.push(dbPath);
         fs.copyFileSync(photo.path, destPath);
       })
@@ -84,7 +112,9 @@ router.post(
 router.get('/filter/:query', async (req, res) => {
   try {
     const {searchWord, location, propertyType, sortBy, skip, limit} = req.query;
-    let query = {};
+    let query = {
+      status: 'inprogress'
+    };
     if(searchWord != "") query.description = {"$regex": searchWord, "$options": "i"};
     if(location != "") query.location = {areaLevel_1: location};
     if(propertyType != "") query.propertyType = propertyType;
@@ -92,8 +122,12 @@ router.get('/filter/:query', async (req, res) => {
     let sort = {};
     if(sortBy === 'date') sort = {date: -1};
     if(sortBy === 'price') sort = {price: -1};
+
+    //query.date = {$gte: new Date((new Date()).getTime() - 432000000)}
     const properties = await Property.find(query,
-      function(err, docs) { }
+      function(err, docs) {
+        return false
+      }
     )
     .sort(sort)
     .populate("propertyType")
@@ -113,22 +147,29 @@ router.get('/filter/:query', async (req, res) => {
 // @route    GET api/property/:id
 // @desc     Get property by ID
 // @access   Public
-router.get('/1/:id', checkObjectId('id'), async (req, res) => {
+router.get('/1/:propertyID/:userID', async (req, res) => {
   try {
-    const property = await Property.findById(req.params.id)
+    let property = await Property.findById(req.params.propertyID)
                         .populate('propertyType')
                         .select('-user')
                         .select('-address');
 
-    if (!property) {
-      return res.status(404).json({ msg: 'Property not found' });
+    const address = property.address;
+    delete property.address;                 
+    if (!property || !address.postalCode || !address.areaLevel_1) {
+      return res.status(404).json({ msg: 'Not found property' });
     }
 
-    res.json(property);
+    let bid = null;
+    if(req.params.userID && req.params.userID !== "null") 
+      bid = await Bids.findOne({user: req.params.userID, property: req.params.propertyID});
+    
+    const bidCount = await Bids.find({property: req.params.propertyID}).countDocuments();
+
+    res.json({property, bid, bidCount});
   } catch (err) {
     console.error(err.message);
-
-    res.status(500).json({ errors: [...errors.array(), {param: 'msg', msg: 'Server Error'}] });
+    res.status(500).json({ errors: {param: 'msg', msg: 'Server Error'} });
   }
 });
 
@@ -154,8 +195,62 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
   } catch (err) {
     console.error(err.message);
 
-    res.status(500).json({ errors: [...errors.array(), {param: 'msg', msg: 'Server Error'}] });
+    res.status(500).json({ errors: [{param: 'msg', msg: 'Server Error'}] });
   }
 });
+
+router.get('/distance/:origin/:dest', auth, async (req, res) => {
+  const originPostalCode = req.params.origin;
+  const destPostalCode = req.params.dest;
+  getDistance2property(originPostalCode, destPostalCode)
+    .then(distance => res.json({distance}))
+    .catch(err => res.status(500).json({ errors: [{param: 'msg', msg: 'Server Error'}] }))
+});
+
+const getDistance2property = (originPostalCode, destPostalCode) => {
+  return new Promise((resolve, reject) => {
+    try {
+        axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${originPostalCode}&destinations=${destPostalCode}&key=${GOOGLE_MAP_API_KEY}`)
+        .then(distance => {
+          if(distance.data && 
+            distance.data.rows && 
+            distance.data.rows.length > 0 && 
+            distance.data.rows[0].elements && 
+            distance.data.rows[0].elements.length > 0 &&
+            distance.data.rows[0].elements[0].distance)
+            return resolve(distance.data.rows[0].elements[0].distance.value);
+          else {
+            return reject(Infinity);
+          }
+        });
+      } catch (err) {
+        return reject(err.message);
+      }
+  })
+}
+
+setInterval(async () => {
+  try {
+    const properties = await Property.find({status: 'inprogress'});
+    properties.forEach(async property => {
+        if((new Date(property.date)).getTime() + MAX_LEFT_DAYS * 86400000 < (new Date()).getTime()) { 
+            property.status = 'ended';
+            let bids = await Bids.find({property: property._id});
+            bids = bids.sort(function(a, b) {return a.commission - b.commission});
+            if(bids.length > 0) {
+              property.winner = {
+                bid: bids[0]._id,
+                user: bids[0].user,
+                commission: bids[0].commission,
+                howWin: 'autowin'
+              }
+            }
+            await property.save();
+        }
+    });
+  } catch (err) {
+      console.log(err.message);
+  }
+}, 60000);
 
 module.exports = router;

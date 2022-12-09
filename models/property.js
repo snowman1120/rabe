@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const PropertySchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+        ref: 'users'
     },
     propertyType: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'propertyType'
+        ref: 'propertytypes'
     },
     unit: {
         type: Number,
@@ -24,6 +24,14 @@ const PropertySchema = new mongoose.Schema({
     bathrooms: {
         type: Number,
         default: 0
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    postalCode: {
+        type: String,
+        required: true
     },
     address: {
         full: {
@@ -76,10 +84,49 @@ const PropertySchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    commission: {
+        type: Number,
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['inprogress', 'ended'],
+        default: 'inprogress'
+    },
+    winner: {
+        bid: {
+            type: mongoose.Schema.Types.ObjectId
+        },
+        user: {
+            type: mongoose.Schema.Types.ObjectId
+        },
+        commission: {
+            type: Number
+        },
+        howWin: {
+            type: String,
+            required: true,
+            enum: ['quickwin', 'autowin'],
+        }
+    },
     date: {
         type: Date,
         default: Date.now
     }
 });
 
-module.exports = mongoose.model('property', PropertySchema);
+// PropertySchema.statics.updateStatus = async function updateStatus () {
+//     try {
+//         const properties = await this.find({status: 'inprogress'});
+//         properties.forEach(async property => {
+//             if((new Date(property.date)).getTime() + MAX_LEFT_DAYS * 86400000 < (new Date()).getTime()) { 
+//                 property.status = 'ended';
+//                 await property.save();
+//             }
+//         });
+//     } catch (err) {
+//         console.log(err.message);
+//     }
+// }
+
+module.exports = mongoose.model('properties', PropertySchema);
