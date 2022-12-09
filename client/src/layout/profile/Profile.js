@@ -35,6 +35,7 @@ const Profile = ({serverErrors, update, setProfile, user, isAuthenticated}) => {
             email: user ? user.email : '',
             phoneNumber: user ? user.phoneNumber : ''
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     useEffect(() => {

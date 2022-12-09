@@ -31,16 +31,6 @@ const ImageUploader = ({onChange}) => {
   const onError = () => {
     setImages([]);
   };
-  const printjson = () => {
-    document.getElementById("jsonprint").innerHTML = JSON.stringify(
-      images,
-      null,
-      6
-    ).replace(/\n( *)/g, function (match, p1) {
-      return "<br>" + "&nbsp;".repeat(p1.length);
-    });
-    //console.log(images);
-  };
  
   return (
     <div>
@@ -110,7 +100,7 @@ const ImageUploader = ({onChange}) => {
                 </div>
                 <div className="p-2" style={{ textAlign: "left" }}>
                   {imageList.map((image, index) => {
-                    return index == 0 ? '' : (
+                    return index === 0 ? '' : (
                     <div key={index} className="image-item">
                       <img src={image["data_url"]} alt="" onClick={() => onImageUpdate(index)} />
                       <div className="icon-gallery-delete-image" onClick={() => onImageRemove(index)}></div>
@@ -122,9 +112,6 @@ const ImageUploader = ({onChange}) => {
                   <>
                     <hr />
                     <div className="text-start p-2">
-                      {/* <Button onClick={printjson} variant="primary">
-                        Upload
-                      </Button>{" "} */}
                       <Button onClick={onImageRemoveAll} variant="danger">
                         Remove All Images
                       </Button>

@@ -47,6 +47,7 @@ const PropertyDetails = ({
 
     useEffect(() => {
         if(!countingdown) updateRemainTime();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [countingdown]);
 
     useEffect(() => {
@@ -55,26 +56,30 @@ const PropertyDetails = ({
 
     useEffect(() => {
         if(isAuthenticated === null) return;
-        //const propertyID = localStorage.getItem('propertyID');
         getProperty(propertyID, user && user._id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated, user]);
 
-    useEffect(async () => {
-        if(user && user.role === 'agent') {
-            try {
-                const distance = await getDistance();
-                if(!distance) setDistance(Infinity);
-                else setDistance(distance);
-        
-                if(property && property.bid) {
-                    setCommissioin(property.bid.commission);
+    useEffect(() => {
+        async function fetchData() {
+            if(user && user.role === 'agent') {
+                try {
+                    const distance = await getDistance();
+                    if(!distance) setDistance(Infinity);
+                    else setDistance(distance);
+            
+                    if(property && property.bid) {
+                        setCommissioin(property.bid.commission);
+                    }
+    
+                    $('.progress-bar').width(`${(property.DHMS.days * 86400 + property.DHMS.hours * 3600 + property.DHMS.minutes * 60) * 100 / (MAX_LEFT_DAYS * 86400)}%`)
+                } catch(err) {
+                    console.log(err.message);
                 }
-
-                $('.progress-bar').width(`${(property.DHMS.days * 86400 + property.DHMS.hours * 3600 + property.DHMS.minutes * 60) * 100 / (MAX_LEFT_DAYS * 86400)}%`)
-            } catch(err) {
-                console.log(err.message);
             }
         }
+        fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [property])
 
     const getDistance = async () => {
@@ -285,7 +290,7 @@ const PropertyDetails = ({
                                 property.photos ? property.photos.map(photo => (
                                     <div key={photo} className="col-md-6 col-lg-4 gallery__single__two">
                                         <a href={photo}>
-                                            <img src={photo} alt="Property Image" />
+                                            <img src={photo} alt="Property" />
                                         </a>
                                     </div>
                                 )) : ''

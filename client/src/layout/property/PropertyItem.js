@@ -1,18 +1,11 @@
-import { useEffect } from 'react';
 import { numberWithCommas } from 'utils/helper';
 import $ from 'jquery';
 
 window.jQuery = window.$ = $;
 const PropertyItem = ({property}) => {
     const gotoDetailPage = (e) => {
-        //localStorage.setItem('propertyID', property._id);
         return window.location.href = `/property-details/${property._id}`;
     }
-
-    // useEffect(() => {
-    //     $(".grid-list").removeClass("grid__btn__active")
-    //     $(".grid-view").addClass("grid__btn__active");
-    // }, []);
 
     return (
         <div className="col-xl-3 col-lg-4 col-md-6 col-sm-12 property__grid__area__wrapper__inner">

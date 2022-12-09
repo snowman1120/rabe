@@ -1,4 +1,3 @@
-import {useState, useEffect} from 'react';
 
 const Main = () => {
     return (
@@ -987,7 +986,7 @@ const Main = () => {
                         <img src="assets/images/video-illustration.png" alt="Video Illustration" />
                         <div className="video__btn">
                             <a className="video__popup" href="https://www.youtube.com/watch?v=LCihLrSehCo" target="_blank"
-                                title="YouTube video player">
+                                title="YouTube video player" rel="noreferrer">
                                 <i className="fa-solid fa-play"></i>
                             </a>
                         </div>

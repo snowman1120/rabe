@@ -1,9 +1,6 @@
 import {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import validator from 'validator';
-// import { postcodeValidator } from 'postcode-validator';
-
-import $ from 'jquery';
 
 import {isEmpty} from 'utils/validation';
 

@@ -30,6 +30,7 @@ const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes
         getPropertyTypes();
         getPropertiesFromServer(filterData, 0);
         if(!countingdown) updateRemainTime();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onChangeSelect = (e) => {
@@ -59,6 +60,7 @@ const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes
         const propertyTypeIdx = propertyTypes.findIndex(type => type.name === $(typeRef.current).val());
         if(propertyTypeIdx > 0)
             setFilterData({...filterData, propertyType: propertyTypes[propertyTypeIdx]._id});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [propertyTypes]);
 
     const onChangeInput = (e) => {

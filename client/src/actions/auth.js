@@ -15,7 +15,6 @@ import {
   CHANGE_PASSWORD_FAIL,
 
   SET_PROFILE,
-  GET_USER_FULL_INFO,
 } from './types';
 
 /*

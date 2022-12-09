@@ -1,4 +1,3 @@
-import {useState, useEffect} from 'react';
 
 const Home2 = () => {
     return (
@@ -608,7 +607,7 @@ const Home2 = () => {
                                         <div className="port__cta__group">
                                             <a href="properties.html" className="button button--effect">Start Exploring</a>
                                             <a href="https://www.youtube.com/watch?v=LCihLrSehCo" target="_blank"
-                                                className="button button--secondary button--effect video__popup"><i
+                                                className="button button--secondary button--effect video__popup" rel="noreferrer"><i
                                                     className="fa-solid fa-play"></i>
                                                 How It Works</a>
                                         </div>

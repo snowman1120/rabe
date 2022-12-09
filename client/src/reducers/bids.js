@@ -6,7 +6,6 @@ import {
     DELETE_BID,
     BID_ERROR,
     UPDATE_REMAIN_TIME,
-    GET_LISTING_NOW,
 
     GET_CONTACT_INFO
 } from '../actions/types';
@@ -30,7 +29,7 @@ function toDHMS(startTime) {
 }
 
 function bidReducer(state = initialState, action) {
-    const { type, payload, count } = action;
+    const { type, payload } = action;
 
     switch (type) {
         case LOADING_BIDS:

@@ -12,11 +12,13 @@ import {getBidsForProperty} from 'actions/bids';
 const MyProperties = ({loading, properties, countingdown, getMyProperties, updateRemainTime, isAuthenticated}) => {
     useEffect(() => {
         if(!countingdown) updateRemainTime();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [countingdown]);
 
     useEffect(() => {
         if(isAuthenticated === null) return;
         getMyProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated]);
 
     if(isAuthenticated === false) {

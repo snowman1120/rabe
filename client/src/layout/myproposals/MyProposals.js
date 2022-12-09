@@ -32,6 +32,7 @@ const MyProposals = ({loading, isAuthenticated, bids, countingdown, getBidsForAg
     useEffect(() => {
         if(isAuthenticated === null) return;
         getBidsForAgent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated]);
 
     useEffect(() => {
@@ -51,6 +52,7 @@ const MyProposals = ({loading, isAuthenticated, bids, countingdown, getBidsForAg
 
     useEffect(() => {
         if(!countingdown) updateRemainTime();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [countingdown]);
 
     const onViewInfo = (userID, propertyID,) => {

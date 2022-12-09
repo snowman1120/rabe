@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 
 import $ from 'jquery';
 window.jQuery = window.$ = $;

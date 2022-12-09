@@ -1,8 +1,6 @@
 
-import { Route, Routes, Switch, Redirect } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
-//import Test from 'layouts/test/Test';
-import PrivateRoute from 'utils/PrivateRoute';
 import Home from 'layout/home/Home';
 import Home2 from 'layout/home/Home2';
 import Home3 from 'layout/home/Home3';
@@ -10,12 +8,6 @@ import Home3 from 'layout/home/Home3';
 import Properties from 'layout/property/Properties';
 import PropertyDetails from 'layout/propertyDetails/PropertyDetails';
 import PropertyAlert from 'layout/property/PropertyAlert';
-
-import BusinessLoan from 'layout/loan/BusinessLoan';
-import LoanDetails from 'layout/loan/LoanDetails';
-import LoanApplication from 'layout/loan/LoanApplication';
-
-import ListYourProperty from 'layout/list-your-property/ListYourProperty';
 
 import ContactUs from 'layout/contact-us/ContactUs';
 
@@ -45,12 +37,6 @@ const RouterBranch = () => {
             <Route path='/properties' element={<Properties />} />
             <Route path='/property-details/:propertyID' element={<PropertyDetails />} />
             <Route path='/property-alert' element={<PropertyAlert />} />
-
-            <Route path='/business-loan' element={<BusinessLoan/>} />
-            <Route path='/business-loan-details' element={<LoanDetails/>} />
-            <Route path='/loan-application' element={<LoanApplication/>} />
-            
-            <Route path='/list-your-property' element={<ListYourProperty/>} />
             
             <Route path='/contact-us' element={<ContactUs/>} />
             

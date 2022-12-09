@@ -10,7 +10,7 @@ const BidItem = ({bid, property, getContactInfoForSeller}) => {
 
     const [contactModalShow, setContactModalShow] = useState(false);
     const onViewContactInfo = (userID, property) => {
-        if(!property .winner || property.winner.user !== userID) return;
+        if(!property.winner || property.winner.user !== userID) return;
         getContactInfoForSeller(userID, property._id, viewContactInfo);
     }
 
