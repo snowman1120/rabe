@@ -244,7 +244,29 @@ setInterval(async () => {
                 commission: bids[0].commission,
                 howWin: 'autowin'
               }
+
+              // Notification to winner
+              const winner = await User.findOne({_id: bids[0].user});
+              const winNotification = {
+                type: 'WIN_BID',
+                message: `You have won a real estate bid.`,
+                property: property._id,
+                bid: bids[0]._id
+              };
+              winner.notifications.push(winNotification);
+              await winner.save();
             }
+
+            // Notification to seller
+            const seller = await User.findOne({_id: property.user});
+            const notification = {
+              type: 'ENDED_YOUR_PROPERTY',
+              message: `Bidding on your property has ended.`,
+              property: property._id,
+            }
+            seller.notifications.push(notification);
+            await seller.save();
+            
             await property.save();
         }
     });

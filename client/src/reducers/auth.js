@@ -13,6 +13,8 @@ import {
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_FAIL,
     SET_PROFILE,
+    MARK_ALL_READ_NOTIFICATION,
+    MARK_ALL_READ_FAIL
   } from '../actions/types';
   
   const initialState = {
@@ -20,6 +22,7 @@ import {
     isAuthenticated: null,
     loading: true,
     user: null,
+    socket: null,
 
     errors: {}
   };
@@ -29,6 +32,13 @@ import {
   
     switch (type) {
         case USER_LOADED:
+            return {
+                ...state,
+                isAuthenticated: true,
+                loading: false,
+                user: payload.user,
+                socket: payload.socket
+            }
         case SET_PROFILE:
         case UPDATE_PROFILE_SUCCESS:
             return {
@@ -48,9 +58,17 @@ import {
         case LOGIN_FAIL:
         case UPDATE_PROFILE_FAIL:
         case CHANGE_PASSWORD_FAIL:
+        case MARK_ALL_READ_FAIL:
             return {
                 ...state,
                 errors: payload
+            }
+        case MARK_ALL_READ_NOTIFICATION:
+            let user = state.user;
+            user.notifications = [];
+            return {
+                ...state,
+                user
             }
         case CHANGE_PASSWORD_SUCCESS:
         case ACCOUNT_DELETED:

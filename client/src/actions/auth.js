@@ -15,7 +15,13 @@ import {
   CHANGE_PASSWORD_FAIL,
 
   SET_PROFILE,
+
+  MARK_ALL_READ_NOTIFICATION,
+  MARK_ALL_READ_FAIL
 } from './types';
+
+import socketIO from "socket.io-client";
+import {SERVER_ADDRESS} from 'utils/constants';
 
 /*
   NOTE: we don't need a config object for axios as the
@@ -29,10 +35,22 @@ export const loadUser = () => async (dispatch) => {
   try {
     const res = await api.get('/auth');
 
+    const socket = socketIO.connect(SERVER_ADDRESS);
+
     dispatch({
       type: USER_LOADED,
-      payload: res.data
+      payload: {
+        user: res.data,
+        socket
+      }
     });
+
+    socket.emit("message", 
+      {
+        userName: `${res.data.firstName} ${res.data.lastName}`, 
+        id: `${res.data._id}`
+      }
+    )
   } catch (err) {
     dispatch({
       type: AUTH_ERROR
@@ -172,6 +190,28 @@ export const setProfile = (profile) => async (dispatch) => {
     type: SET_PROFILE,
     payload: profile
   })
+}
+
+// Set Profile
+export const markAllReadNotification = () => async (dispatch) => {
+  try {
+    const res = await api.put(`/users/mark-all-read`);
+    dispatch({
+      type: MARK_ALL_READ_NOTIFICATION,
+    });
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: MARK_ALL_READ_FAIL,
+      payload: errors
+    });
+  }
 }
 
 // Logout

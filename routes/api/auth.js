@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const auth = require('../../middleware/auth');
@@ -13,8 +14,35 @@ const User = require('../../models/User');
 // @access   Private
 router.get('/', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
+    // const user = await User.findById(req.user.id).select('-password');
+    const user = await User.aggregate([
+      {
+        $match: { _id: mongoose.Types.ObjectId(req.user.id) }
+      },
+      {
+        $project: {
+          notifications: {
+            $filter: {
+              input: "$notifications",
+              as: 'notification',
+              cond: { $eq: ["$$notification.isRead", false]}
+            }
+          },
+          firstName: 1,
+          lastName: 1,
+          avatar: 1,
+          role: 1,
+          postalCode: 1,
+          date: 1,
+          // email: 0,
+          // password: 0,
+          // phoneNumber: 0,
+        }
+      }
+    ]);
+
+    if(user && user.length > 0) return res.json(user[0]);
+    return res.status(500).send('User Not Found.');
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

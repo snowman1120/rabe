@@ -1,14 +1,27 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const path = require('path');
+const {connectSocket} = require('./config/socket');
 const cors = require('cors');
 
 const formData = require('express-form-data')
 
 const app = express();
+const http = require('http').Server(app);
+const socketIO = require('socket.io')(http, {
+  cors: {
+      origin: "*"
+  }
+});
+
+const {setSocket} = require('./utils/socket');
+// Set socket
+setSocket(socketIO);
 
 // Connect Database
 connectDB();
+// Connect Socket
+connectSocket(socketIO);
 app.use(formData.parse())
 // Init Middleware
 app.use(express.json());
@@ -22,6 +35,7 @@ app.use('/api/property', require('./routes/api/property'));
 app.use('/api/property_type', require('./routes/api/propertyType'));
 app.use('/api/bids', require('./routes/api/bids'));
 app.use('/api/my_properties', require('./routes/api/myproperties'));
+app.use('/api/stripe', require('./routes/api/stripe'));
 
 process.env.NODE_ENV = "production";
 
@@ -41,4 +55,4 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+http.listen(PORT, () => console.log(`Server started on port ${PORT}`));

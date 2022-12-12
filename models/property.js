@@ -105,7 +105,7 @@ const PropertySchema = new mongoose.Schema({
         },
         howWin: {
             type: String,
-            required: true,
+            defualt: 'autowin',
             enum: ['quickwin', 'autowin'],
         }
     },

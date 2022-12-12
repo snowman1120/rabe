@@ -9,6 +9,8 @@ const User = require('../../models/User');
 const Property = require('../../models/Property');
 const checkObjectId = require('../../middleware/checkObjectId');
 
+const { sendMessage } = require('../../utils/socket');
+
 // GET api/bid/user
 // Get bids for user
 router.get('/agent', auth, async (req, res) => {
@@ -140,7 +142,19 @@ router.post(
             commission: req.body.commission
         });
     
-        newBid.save().then(bid => res.json(bid));
+        newBid.save().then(async bid => {
+            const property = await Property.findOne({_id: req.body.property});
+            const seller = await User.findOne({_id: property.user});
+            const notification = {
+                type: 'BID_ON_YOUR_PROPERTY',
+                message: `${user.firstName} ${user.lastName} bid on your property`,
+                property: req.body.propertyID,
+                bid: bid._id
+            }
+            seller.notifications.push(notification);
+            await seller.save();
+            res.json(bid)
+        });
     } catch(err) {
         console.log(err.message);
         return res.status(500).json({ errors: [...errors.array(),
@@ -270,8 +284,33 @@ router.post(
                     commission: req.body.commission,
                     howWin: 'quickwin'
                 }
-                property.save(() => res.json({property, bid}));
-              })
+                await property.save();
+                const winNotification = {
+                    type: 'WIN_BID',
+                    message: `You have won a real estate bid.`,
+                    property: property._id,
+                    bid: bid._id
+                };
+                user.notifications.push(winNotification);
+                await user.save();
+
+                // Notification seller
+                const seller = await User.findOne({_id: property.user});
+                const notification = {
+                    type: 'ENDED_YOUR_PROPERTY',
+                    message: `Bidding on your property has ended.`,
+                    property: property._id,
+                }
+                seller.notifications.push(notification);
+                await seller.save();
+
+                sendMessage({
+                    id: seller._id,
+                    type: 'ENDED_YOUR_PROPERTY',
+                    message: 'Bidding on your property has ended.'
+                })
+                res.json({property, bid})
+              });
           } else {
             const newBid = new Bids({
                 user: user._id,
@@ -288,7 +327,33 @@ router.post(
                   commission: req.body.commission,
                   howWin: 'quickwin'
               }
-              property.save(() => res.json({property, bid}));
+              await property.save();
+              const winNotification = {
+                    type: 'WIN_BID',
+                    message: `You have won a real estate bid.`,
+                    property: property._id,
+                    bid: bid._id
+              };
+              user.notifications.push(winNotification);
+              await user.save();
+
+              // Notification seller
+              const seller = await User.findOne({_id: property.user});
+              const notification = {
+                    type: 'ENDED_YOUR_PROPERTY',
+                    message: `Bidding on your property has ended.`,
+                    property: property._id,
+              }
+              seller.notifications.push(notification);
+
+              sendMessage({
+                id: seller._id,
+                type: 'ENDED_YOUR_PROPERTY',
+                message: 'Bidding on your property has ended.'
+              })
+              await seller.save();
+              
+              res.json({property, bid});
             });
           }
       } catch(err) {
