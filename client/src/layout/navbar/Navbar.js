@@ -2,7 +2,47 @@ import {connect} from 'react-redux';
 import { logout } from 'actions/auth';
 import { isEmpty } from 'utils/validation';
 
-const Navbar = ({isAuthenticated, user, avatar, logout}) => {
+import {convertSeconds2DHMS} from 'utils/helper';
+import {markAllReadNotification} from 'actions/auth';
+import $ from 'jquery';
+import { useEffect } from 'react';
+
+const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllReadNotification, logout}) => {
+    
+    useEffect(() => {
+        if(!socket) return;
+        socket.on('ENDED_YOUR_PROPERTY', (data) => {
+            console.log(data)
+        })
+    }, [socket]);
+    
+    const handlePopupNotification = () => {
+        $(".notification__wrapper").toggleClass("notification__wrapper__active");
+
+        if(socket) {
+            socket.emit("message", 
+                {
+                text: "This is a message from snowman", 
+                name: "snowman", 
+                id: `${socket.id}${Math.random()}`
+                }
+            )
+        }
+    }
+
+    const getNotificationTime = (date) => {
+        const time = ((new Date()).getTime() - (new Date(date)).getTime()) / 1000;
+        const DHMS = convertSeconds2DHMS(time);
+        if(DHMS.days !== '00') return `${parseInt(DHMS.days)} days ago`;
+        if(DHMS.hours !== '00') return `${parseInt(DHMS.hours)} hours ago`;
+        if(DHMS.minutes !== '00') return `${parseInt(DHMS.minutes)} minutes ago`;
+        return '1 minute ago';
+    }
+
+    const handleMarkAllRead = () => {
+        markAllReadNotification();
+    }
+
     return (
         <div>
             {/* <!-- ==== header start ==== --> */}
@@ -16,6 +56,35 @@ const Navbar = ({isAuthenticated, user, avatar, logout}) => {
                             {
                                 isAuthenticated ? 
                                 (<>
+                                    <div className="notification-area" onClick={handlePopupNotification}>
+                                        <a href="#!" className="icon__wrapper notification__icon">
+                                            <i className="fa-solid fa-bell"></i>
+                                            <span className={notifications && notifications.length > 0 ? '' : 'd-none'}>{notifications && notifications.length}</span>
+                                        </a>
+                                        <div className="notification__wrapper">
+                                            <div className="notification__head">
+                                                <p className="text-center">{notifications && notifications.length} New</p>
+                                                <p className="text-center">Notification</p>
+                                            </div>
+                                            <div className="notification__single-wrapper">
+                                                {
+                                                    notifications && notifications.length > 0 ?
+                                                    notifications.map(notification => (
+                                                        <div key={notification._id} className="notification__single">
+                                                            <a href="#!">
+                                                                <p>{notification.message}
+                                                                </p>
+                                                            </a>
+                                                            <p className="time">{getNotificationTime(notification.date)}</p>
+                                                        </div>
+                                                    )) : ''
+                                                }
+                                            </div>
+                                            <div className="mark__read">
+                                                <a href="#!" onClick={handleMarkAllRead}>Mark all as read</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <ul className="navbar-nav nav__group__btn">
                                         <li className="nav-item dropdown d-none d-sm-block">
                                             <a className="nav-link dropdown-toggle" href="#!" id="navbarHomeDropdown"
@@ -106,7 +175,9 @@ const Navbar = ({isAuthenticated, user, avatar, logout}) => {
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth && state.auth.isAuthenticated,
     user: state.auth.user && state.auth.user,
-    avatar: state.auth.user && state.auth.user.avatar
+    socket: state.auth.user && state.auth.socket,
+    avatar: state.auth.user && state.auth.user.avatar,
+    notifications: state.auth.user && state.auth.user.notifications
 });
 
-export default connect(mapStateToProps, {logout}) (Navbar);
+export default connect(mapStateToProps, {logout, markAllReadNotification}) (Navbar);

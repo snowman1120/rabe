@@ -3,7 +3,7 @@ import { StandaloneSearchBox, LoadScript, GoogleMap, Marker } from "@react-googl
 
 import { isEmpty } from "utils/validation";
 
-import GOOGLE_MAP_API_KEY from 'google_map_api_key';
+import {GOOGLE_MAP_API_KEY} from 'utils/constants';
 
 const Address = ({ error, onChange }) => {
 

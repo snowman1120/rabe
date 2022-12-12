@@ -58,8 +58,9 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
     });
 
     useEffect(() => {
+        if(isAuthenticated === null) return;
         getPropertyTypes();
-    }, []);
+    }, [isAuthenticated]);
     
     useEffect(() => {
         const propertyTypeIdx = propertyTypes.findIndex(type => type.name === $(selectRef.current).val());
@@ -165,7 +166,7 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
         if(!address.postalCode) {
             return setErrors({...errors, address: 'Enter a correct address'});
         }
-        if(!address.country || address.country.long != 'Canada') {
+        if(!address.country || address.country.long !== 'Canada') {
             return setErrors({...errors, address: 'Enter a correct address'});
         }
         setErrors({...errors, address: null});
@@ -242,6 +243,8 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
             t_errors = {...t_errors, commission: 'You must enter a commission between 1.5 and 7'};
         }
         if(isEmpty(t_errors)) {
+            //return <Navigate to="/stripe" />;
+            window.location.href = '/stripe';
             addProperty(formData, successSaveInfo);
         } else {
             setErrors(t_errors);

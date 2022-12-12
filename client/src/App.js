@@ -11,13 +11,13 @@ import store from './store';
 import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 
+import Navbar from 'layout/navbar/Navbar';
+import Footer from 'layout/footer/Footer';
+
 // Bootstrap CSS
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 //import './App.css';
-
-import Navbar from 'layout/navbar/Navbar';
-import Footer from 'layout/footer/Footer';
 
 const App = () => {
   useEffect(() => {

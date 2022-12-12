@@ -274,7 +274,7 @@ router.put(
       return res.status(200).end();
     } catch (err) {
       console.error(err.message);
-      return res.status(500).send('Server Error');
+      return res.status(400).json({ errors: [{param: 'msg', msg: 'Server Error.' }]});
     }
   }
 );
@@ -296,6 +296,7 @@ router.post(
       }
     } catch(err) {
       console.log(err)
+      return res.status(400).json({ errors: [{param: 'msg', msg: 'Server Error.' }]});
     }
 
     const destPath = `client/build/assets/images/avatar/${path.basename(req.files.avatar.path)}`;
@@ -315,5 +316,23 @@ router.post(
     });
   }
 );
+
+// notifications mark all read
+// @access Private
+router.put('/mark-all-read', auth, async (req, res) => {
+  try {
+    const user = await User.findOne({_id: req.user.id});
+    if(!user.notifications) return res.end();
+    user.notifications = user.notifications.map(notification => {
+      notification.isRead = true;
+      return notification;
+    });
+    await user.save();
+    res.status(200).end();
+  } catch(err) {
+    console.log(err.message);
+    return res.status(400).json({ errors: [{param: 'msg', msg: 'Server Error.' }]});
+  }
+});
 
 module.exports = router;

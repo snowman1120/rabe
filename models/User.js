@@ -45,6 +45,31 @@ const UserSchema = new mongoose.Schema({
   affiliations: {
     type: String,
   },
+  notifications: [
+    {
+      type: {
+        type: String,
+        enum: ['BID_ON_YOUR_PROPERTY', 'ENDED_YOUR_PROPERTY', 'NEW_PROPERTY', 'WIN_BID']
+      },
+      message: {
+        type: String
+      },
+      property: {
+        type: mongoose.Schema.Types.ObjectId,
+      },
+      bid: {
+        type: mongoose.Schema.Types.ObjectId
+      },
+      isRead: {
+        type: Boolean,
+        default: false
+      },
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
   date: {
     type: Date,
     default: Date.now
