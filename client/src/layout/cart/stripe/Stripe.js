@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import {Navigate} from 'react-router-dom';
-import {connect} from 'react-redux';
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
 import CheckoutForm from "./CheckoutForm";
+
+import {STRIPE_PUBLISHABLE_KEY} from 'utils/constants';
 
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
 // This is a public sample test API key.
 // Don’t submit any personally identifiable information in requests made with this key.
 // Sign in to see your own test API key embedded in code samples.
-const stripePromise = loadStripe("pk_test_YVzIqUTwiCYcEXO1DPqDrM98");
+const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
-const Stripe = ({isAuthenticated, user}) => {
+const Stripe = (props) => {
   const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
@@ -35,23 +35,15 @@ const Stripe = ({isAuthenticated, user}) => {
     appearance,
   };
 
-  if (isAuthenticated === false || !user || user.role !== 'seller') {
-    return <Navigate to="/" />;
-  }
-
   return (
     <div className="stripe">
       {clientSecret && (
         <Elements options={options} stripe={stripePromise}>
-          <CheckoutForm />
+          <CheckoutForm {...props} />
         </Elements>
       )}
     </div>
   );
 }
 
-const mapStateToProps = (state) => ({
-  isAuthenticated: state.auth.isAuthenticated,
-  user: state.auth.user
-});
-export default connect(mapStateToProps, {}) (Stripe);
+export default Stripe;

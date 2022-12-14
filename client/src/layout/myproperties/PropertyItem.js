@@ -28,7 +28,7 @@ const PropertyItem = ({property}) => {
                                     {property && property.status === 'inprogress' ? (
                                         <div className="countdown__wrapper">
                                             <p className="secondary">
-                                                <i className="fa-solid fa-clock"></i> Left to invest
+                                                <i className="fa-solid fa-clock"></i> Left to bid
                                             </p>
                                             <div className="countdown">
                                                 <h6>

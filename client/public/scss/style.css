@@ -2001,7 +2001,7 @@ header {
 .navbar__out {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 15px;
 }
 @media only screen and (max-width: 767px) {
   .navbar__out {
@@ -11704,8 +11704,6 @@ header {
 }
 
 .stripe {
-  margin-bottom: 10vh;
-  margin-top: 20vh;
   /* Buttons and links */
   /* spinner/processing state, errors */
 }

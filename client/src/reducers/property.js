@@ -11,6 +11,7 @@ import {
     COUNTING_DOWN,
 
     GET_MY_PROPERTIES,
+    GET_CART,
     GET_LISTING_NOW
 } from '../actions/types';
 
@@ -23,6 +24,7 @@ import { convertSeconds2DHMS } from 'utils/helper';
         properties: [],
         property: {},
         myProperties: [],
+        cart: [],
 
         loading: false,
         countingdown: false,
@@ -110,6 +112,12 @@ import { convertSeconds2DHMS } from 'utils/helper';
                     ...state,
                     loading: false,
                     myProperties: myPrpperties
+                }
+            case GET_CART:
+                return {
+                    ...state,
+                    loading: false,
+                    cart: payload
                 }
             case GET_LISTING_NOW: {
                 const property = {

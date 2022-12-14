@@ -35,6 +35,7 @@ app.use('/api/property', require('./routes/api/property'));
 app.use('/api/property_type', require('./routes/api/propertyType'));
 app.use('/api/bids', require('./routes/api/bids'));
 app.use('/api/my_properties', require('./routes/api/myproperties'));
+app.use('/api/cart', require('./routes/api/cart'));
 app.use('/api/stripe', require('./routes/api/stripe'));
 
 process.env.NODE_ENV = "production";
@@ -42,8 +43,8 @@ process.env.NODE_ENV = "production";
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static('client/build'));
-  app.use(express.static('admin/build'));
+  app.use(express.static('/client/build'));
+  app.use(express.static('/admin/build'));
 
   app.get('/admin/*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'admin', 'build', 'index.html'));

@@ -93,9 +93,10 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                                 {`${user.firstName} ${user.lastName}`}
                                             </a>
                                             <ul className="dropdown-menu" aria-labelledby="navbarHomeDropdown">
+                                                <li><a className="dropdown-item" href="/profile">Profile</a></li>
                                                 <li><a className="dropdown-item" href={user && user.role === 'seller' ? "/my-properties" : "/my-proposals"}>
                                                     {user && user.role === 'seller' ? "My Properties" : "My Proposals"}</a></li>
-                                                <li><a className="dropdown-item" href="/profile">Profile</a></li>
+                                                <li><a className="dropdown-item" href="/cart">Cart</a></li>
                                                 <li><a className="dropdown-item" href="#!" onClick={logout}>Log out</a></li>
                                             </ul>
                                         </li>
@@ -145,9 +146,10 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                                     {`${user.firstName} ${user.lastName}`}
                                             </a>
                                             <ul className="dropdown-menu d-block d-sm-none" aria-labelledby="navbarDropdown">
+                                                <li><a className="dropdown-item" href="/profile">Profile</a></li>
                                                 <li><a className="dropdown-item" href={user && user.role === 'seller' ? "/my-properties" : "/my-proposals"}>
                                                     {user && user.role === 'seller' ? "My Properties" : "My Proposals"}</a></li>
-                                                <li><a className="dropdown-item" href="/profile">Profile</a></li>
+                                                <li><a className="dropdown-item" href="/cart">Cart</a></li>
                                                 <li><a className="dropdown-item" href="#!" onClick={logout}>Log out</a></li>
                                             </ul>
                                         </li>

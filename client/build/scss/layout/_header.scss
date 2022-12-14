@@ -637,6 +637,179 @@
     background-color: $white;
     box-shadow: $primary-shadow;
   }
+
+  .header {
+    .notification-area {
+      position: relative;
+      margin-top: 10px;
+      .icon__wrapper {
+        line-height: 0px;
+        display: inline-block;
+        position: relative;
+        margin-right: 10px;
+        i {
+          font-size: 24px;
+          color: $theme-color;
+          @include responsive(sm) {
+            font-size: 20px;
+          }
+        }
+        span {
+          position: absolute;
+          top: -5px;
+          right: -10px;
+          font-size: 12px;
+          width: 20px;
+          height: 20px;
+          line-height: 20px;
+          text-align: center;
+          font-size: 10px;
+          font-weight: 600;
+          color: #0f1954;
+          background-color: #f29170;
+          border-radius: 50%;
+          @include responsive(sm) {
+            font-size: 8px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+      .notification__wrapper {
+        position: absolute;
+        top: calc(100% + 15px);
+        right: 0%;
+        width: 276px;
+        height: 360px;
+        background-color: $primary-color;
+        border-radius: 10px;
+        visibility: hidden;
+        opacity: 0;
+        box-shadow: $primary-shadow;
+        transition: $primary-transition;
+        @include responsive(xl) {
+          top: calc(100% + 40px);
+        }
+        @include responsive(sm) {
+          right: -100px;
+          width: 240px;
+          height: 300px;
+        }
+        .notification__head {
+          padding: 12px 20px;
+          text-align: center;
+          background-color: $primary-color;
+          border-radius: 10px 10px 0px 0px;
+          @include responsive(sm) {
+            padding: 8px 15px;
+          }
+          p {
+            font-size: 18px;
+            font-weight: 600;
+            color: $white;
+            @include responsive(sm) {
+              font-size: 16px;
+            }
+            &:first-of-type {
+              font-size: 16px;
+              color: $quinary-color;
+              margin-bottom: 0px;
+              font-weight: 500;
+              @include responsive(sm) {
+                font-size: 14px;
+              }
+            }
+          }
+        }
+        .notification__single-wrapper {
+          height: 220px;
+          overflow-y: auto;
+          background-color: $secondary-color;
+          @include responsive(sm) {
+            height: 183px;
+          }
+          &::-webkit-scrollbar {
+            width: 5px;
+          }
+          &::-webkit-scrollbar-track {
+            background-color: $white;
+            border-radius: 10px;
+          }
+          &::-webkit-scrollbar-thumb {
+            background-color: $quinary-color;
+            border-radius: 10px;
+          }
+        }
+        .notification__single {
+          padding: 25px 20px 23px;
+          border-top: 1px solid #ffffff50;
+          @include responsive(sm) {
+            padding: 15px 15px 13px;
+          }
+          &:nth-of-type(1) {
+            border-top: 0px solid transparent;
+          }
+          h6 {
+            margin-bottom: 10px;
+            color: $white;
+            @include responsive(sm) {
+              margin-bottom: 5px;
+            }
+          }
+          p {
+            color: $white;
+            font-size: 14px;
+            @include responsive(sm) {
+              font-size: 12px;
+            }
+          }
+          .time {
+            margin-top: 10px;
+            text-align: right;
+            font-size: 14px;
+            @include responsive(sm) {
+              margin-top: 5px;
+            }
+          }
+        }
+        .mark__read {
+          position: absolute;
+          bottom: 0px;
+          left: 0px;
+          right: 0px;
+          padding: 20px 20px 19px;
+          border-top: 1px solid #ffffff50;
+          text-align: right;
+          background-color: $primary-color;
+          border-radius: 0px 0px 10px 10px;
+          @include responsive(sm) {
+            padding: 15px 15px;
+          }
+          a {
+            display: inline-block;
+            line-height: 1;
+            font-size: 16px;
+            font-weight: 400;
+            color: $quinary-color;
+            @include responsive(sm) {
+              font-size: 14px;
+            }
+            &:hover {
+              color: $white;
+            }
+          }
+        }
+      }
+      .notification__wrapper__active {
+        visibility: visible;
+        opacity: 1;
+        top: calc(100% + 5px);
+        @include responsive(xl) {
+          top: calc(100% + 30px);
+        }
+      }
+    }
+  }
   /* ==== 
    --------- (4.1) header styles end ---------
    ==== */

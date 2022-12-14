@@ -12,7 +12,8 @@ import {
   COUNTING_DOWN,
   REMOVE_PROPERTIES,
 
-  GET_MY_PROPERTIES
+  GET_MY_PROPERTIES,
+  GET_CART
 } from './types';
 
 export const updateRemainTime = () => async (dispatch) => {
@@ -83,6 +84,51 @@ export const getMyProperties = () => async (dispatch) => {
     }
 }
 
+// Get my cart
+export const getCart = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: LOADING_PROPERTY
+    });
+    const res = await api.get(`/cart`);
+    dispatch({
+      type: GET_CART,
+      payload: res.data
+    });
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+    dispatch({
+      type: PROPERTY_ERROR,
+      payload: errors
+    });
+  }
+}
+
+// Post property
+export const postProperty = (propertyID, onResult) => async (dispatch) => {
+  try {
+    const res = await api.post(`/property/post-property`, {propertyID});
+    onResult({success: true});
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+    dispatch({
+      type: PROPERTY_ERROR,
+      payload: errors
+    });
+    onResult({success: false});
+  }
+}
+
 export const removeProperties = () => (dispatch) => {
   dispatch({
     type: REMOVE_PROPERTIES
@@ -90,7 +136,7 @@ export const removeProperties = () => (dispatch) => {
 }
 
 // Add property
-export const addProperty = (formData, successSaveInfo) => async (dispatch) => {
+export const addProperty = (formData, callback) => async (dispatch) => {
   try {
     const res = await api.post('/property', formData);
 
@@ -98,7 +144,7 @@ export const addProperty = (formData, successSaveInfo) => async (dispatch) => {
       type: ADD_PROPERTY,
       payload: res.data
     });
-    successSaveInfo(res.data);
+    callback({success: true, property: res.data});
   } catch (err) {
     const serverErrors = err.response.data.errors;
     let errors = {};
@@ -110,6 +156,7 @@ export const addProperty = (formData, successSaveInfo) => async (dispatch) => {
       type: PROPERTY_ERROR,
       payload: errors
     });
+    callback({success: false, data: null});
   }
 };
 

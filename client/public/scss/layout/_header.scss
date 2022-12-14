@@ -69,7 +69,7 @@
   .navbar__out {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 15px;
     @include responsive(sm) {
       gap: 20px;
     }
