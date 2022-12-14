@@ -88,6 +88,8 @@ router.post(
       photos.forEach(photo => {
         const destPath = `client/build/assets/images/upload/${path.basename(photo.path)}`;
         const dbPath = '/assets/images/upload/' + path.basename(photo.path);
+
+        console.log(destPath, dbPath)
         photoPathes.push(dbPath);
         fs.copyFileSync(photo.path, destPath);
       })
@@ -95,7 +97,7 @@ router.post(
       console.log(err)
       return res.status(400).send('Something went wrong');
     }
-    console.log(req.params.id)
+
     await Property.findOneAndUpdate(
       { _id: req.params.id }, 
       { $set: { photos: photoPathes } },
@@ -123,7 +125,8 @@ router.get('/filter/:query', async (req, res) => {
     if(sortBy === 'date') sort = {date: -1};
     if(sortBy === 'price') sort = {price: -1};
 
-    //query.date = {$gte: new Date((new Date()).getTime() - 432000000)}
+    query.payStatus = true;
+
     const properties = await Property.find(query,
       function(err, docs) {
         return false
@@ -149,15 +152,15 @@ router.get('/filter/:query', async (req, res) => {
 // @access   Public
 router.get('/1/:propertyID/:userID', async (req, res) => {
   try {
-    let property = await Property.findById(req.params.propertyID)
+    let property = await Property.findOne({_id: req.params.propertyID})
                         .populate('propertyType')
                         .select('-user')
                         .select('-address');
 
     const address = property.address;
-    delete property.address;                 
+    delete property.address;
     if (!property || !address.postalCode || !address.areaLevel_1) {
-      return res.status(404).json({ msg: 'Not found property' });
+          return res.status(404).json({ msg: 'Not found property' });
     }
 
     let bid = null;
@@ -199,6 +202,32 @@ router.delete('/:id', [auth, checkObjectId('id')], async (req, res) => {
   }
 });
 
+router.post('/post-property', auth, async (req, res) => {
+  try {
+    const user = await User.findOne({_id: req.user.id});
+    if(user.role !== 'seller') {
+      return res.status(400).json({ errors: [...errors.array(), 
+        {param: 'msg', msg: "You don't have this permission."},
+      ] });
+    }
+    const property = await Property.findById(req.body.propertyID);
+    if (!property) {
+      return res.status(404).json({ msg: 'Property not found' });
+    }
+    if(property.payStatus === true) {
+      return res.status(404).json({ msg: 'The property has already posted.' });
+    }
+
+    property.payStatus = true;
+    property.save().then(() => {
+      res.json({success: true})
+    }).catch(err => res.status(400).json({success: false}));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ errors: [{param: 'msg', msg: 'Server Error'}] });
+  }
+})
+
 router.get('/distance/:origin/:dest', auth, async (req, res) => {
   const originPostalCode = req.params.origin;
   const destPostalCode = req.params.dest;
@@ -231,7 +260,7 @@ const getDistance2property = (originPostalCode, destPostalCode) => {
 
 setInterval(async () => {
   try {
-    const properties = await Property.find({status: 'inprogress'});
+    const properties = await Property.find({status: 'inprogress', payStatus: true});
     properties.forEach(async property => {
         if((new Date(property.date)).getTime() + MAX_LEFT_DAYS * 86400000 < (new Date()).getTime()) { 
             property.status = 'ended';

@@ -3,21 +3,14 @@ import {Navigate} from 'react-router-dom';
 
 import {connect} from 'react-redux';
 import PropertyItem from './PropertyItem';
-import BidItem from './BidItem';
 import Loading from 'components/Loading';
 
-import {getMyProperties, updateRemainTime} from 'actions/property';
-import {getBidsForProperty} from 'actions/bids';
+import {getCart} from 'actions/property';
 
-const MyProperties = ({loading, properties, countingdown, getMyProperties, updateRemainTime, isAuthenticated}) => {
-    useEffect(() => {
-        if(!countingdown) updateRemainTime();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [countingdown]);
-
+const Cart = ({loading, cart, getCart, isAuthenticated}) => {
     useEffect(() => {
         if(isAuthenticated === null) return;
-        getMyProperties();
+        getCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated]);
 
@@ -62,23 +55,11 @@ const MyProperties = ({loading, properties, countingdown, getMyProperties, updat
                         <div className="faq__group">
                             <div className="accordion" id="accordionExampleQuestions">
                                 {
-                                    properties.length > 0 ?
-                                    properties.map(property => (
+                                    cart.length > 0 ?
+                                    cart.map(property => (
                                         <div className="accordion-item content__space" key={property._id} >
                                             <PropertyItem property={property} />
-                                            <div className="accordion-collapse collapse show"
-                                                aria-labelledby="headingQuestionsOne" data-bs-parent="#accordionExampleQuestions">
-                                                <div className="accordion-body">
-                                                    {
-                                                        property.bids.length > 0 && Object.keys(property.bids[0]).length > 0 ?
-                                                            property.bids.map(bid => 
-                                                                    Object.keys(bid).length > 0 ? (<BidItem key={bid._id} bid={bid} property={property} />) : '') :
-                                                            <p className='no-proposal-msg'>There are no bids.</p>
-                                                    }
-                                                </div>
-                                            </div>
                                         </div>
-                                        
                                     )) :
                                     (<h3 className="text-center">There are no properties</h3>)
                                 }
@@ -120,9 +101,8 @@ const MyProperties = ({loading, properties, countingdown, getMyProperties, updat
 
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
-    properties: state.property.myProperties,
-    countingdown: state.property.countingdown,
+    cart: state.property.cart,
     loading: state.property.loading,
 });
 
-export default connect(mapStateToProps, {getMyProperties, getBidsForProperty, updateRemainTime}) (MyProperties);
+export default connect(mapStateToProps, {getCart}) (Cart);

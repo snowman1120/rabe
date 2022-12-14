@@ -1,9 +1,15 @@
-const str = 
-`First of all, who knows if this will even work, right?
+const axios = require('axios')
+const stripe = require('stripe')("sk_test_51LvgXwL1HlGOcXfCb05PFJ66YycNyAoMyV9xSEnylHw32zNHjOwYcUbhvQ6UxFzrHm7IlsL6grlgiIHF2c8sF7l000Db9A6Yd9");
 
-By all accounts, it will surely be a
-[url=http://zoomquilt.org]this cool website[/url].
+async function getBalance () {
+    const balance = await stripe.balance.retrieve();
+    //console.log(balance)
 
-But what if html is up in here?`;
+    const rate = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
+    
+    console.log(rate.data.rates['CAD']);
+    console.log('cad'.toUpperCase())
+    
+}
 
-console.log(str.replace(/\[url=([^\]]+)\](.*?)\[\/url\]/gi, "<a href=\"$1\">$2</a>"));
+getBalance();

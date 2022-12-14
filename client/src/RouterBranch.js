@@ -21,8 +21,7 @@ import PostProperty from 'layout/postProperty/PostProperty';
 
 import MyProperties from 'layout/myproperties/MyProperties';
 import MyProposals from 'layout/myproposals/MyProposals';
-
-import Stripe from 'layout/stripe/Stripe';
+import Cart from 'layout/cart/Cart';
 
 import KeyRisks from 'layout/keyRisks/KeyRisks';
 import Error404 from 'layout/error/404';
@@ -52,8 +51,7 @@ const RouterBranch = () => {
             
             <Route path="/my-properties" element={<MyProperties />} />
             <Route path="/my-proposals" element={<MyProposals />} />
-
-            <Route path="/stripe" element={<Stripe />} />
+            <Route path="/cart" element={<Cart />} />
 
             <Route path="/key-risks" element={<KeyRisks />} />
 

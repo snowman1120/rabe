@@ -5,7 +5,9 @@ import {
   useElements
 } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm() {
+import {STRIPE_REDIRECT_URL} from 'utils/constants';
+
+export default function CheckoutForm(props) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -43,8 +45,20 @@ export default function CheckoutForm() {
     });
   }, [stripe]);
 
+  useEffect(() => {
+    if(props.payNow) {
+      const fetchData = async () => {
+        
+      }
+      fetchData();
+    }
+  }, [props.payNow]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    localStorage.setItem('posting_property_id', props.propertyId);
+    localStorage.setItem('pay_time', new Date().getTime());
 
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
@@ -58,8 +72,8 @@ export default function CheckoutForm() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
-      },
+        return_url: STRIPE_REDIRECT_URL,
+      },  
     });
 
     // This point will only be reached if there is an immediate error when
@@ -85,8 +99,7 @@ export default function CheckoutForm() {
       <PaymentElement id="payment-element" options={paymentElementOptions} />
       <button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-          <div className="spinner" id="spinner"></div>
+          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now $89.99"}
         </span>
       </button>
       {/* Show any error or success messages */}

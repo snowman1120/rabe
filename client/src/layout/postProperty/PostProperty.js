@@ -9,6 +9,7 @@ import {isEmpty} from 'utils/validation';
 import Address from './Address';
 import ImageUploader from 'layout/postProperty/ImageUploader';
 import SuccessModal from 'components/SuccessModal';
+import Loading from 'components/Loading';
 
 import { addProperty, getPropertyTypes } from 'actions/property';
 
@@ -19,7 +20,8 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
     const selectRef = useRef();
     const unitRef = useRef();
     
-    const [modalShow, setModalShow] = useState(false);
+    const [successModalShow, setSuccessModalShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         propertyType: '',
@@ -176,24 +178,28 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
         setPhotos(photos);
     }
 
-    const successSaveInfo = (property) => {
-        setFormData({
-            propertyType: propertyTypes[0]._id,
-            unit: '',
-            yearBuilt: '',
-            bedrooms: '',
-            bathrooms: '',
-            address: '',
-            street: '',
-            city: '',
-            state: '',
-            postalCode: '',
-            photos: [],
-            description: '',
-            price: 0,
-            commission: 1.5
-        })
-        uploadPhotos(property);
+    const resultSaveData = ({success, property}) => {
+        if(success) {
+            setFormData({
+                propertyType: propertyTypes[0]._id,
+                unit: '',
+                yearBuilt: '',
+                bedrooms: '',
+                bathrooms: '',
+                address: '',
+                street: '',
+                city: '',
+                state: '',
+                postalCode: '',
+                photos: [],
+                description: '',
+                price: 0,
+                commission: 1.5
+            });
+            uploadPhotos(property);
+        } else {
+            setIsLoading(false);
+        }
     }
 
     const uploadPhotos = async (property) => {
@@ -210,8 +216,7 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
 
         const response = await api.post(`/property/upload/${property._id}`, photoData);
         if(response.data.success) {
-            setModalShow(true);
-
+            setSuccessModalShow(true);
             setFormData({
                 propertyType: '',
                 unit: '',
@@ -227,7 +232,9 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
                 description: '',
                 price: 0
             });
+            setSuccessModalShow(true);
         }
+        setIsLoading(false);
     }
 
     const onSubmit = async () => {
@@ -243,9 +250,8 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
             t_errors = {...t_errors, commission: 'You must enter a commission between 1.5 and 7'};
         }
         if(isEmpty(t_errors)) {
-            //return <Navigate to="/stripe" />;
-            window.location.href = '/stripe';
-            addProperty(formData, successSaveInfo);
+            setIsLoading(true);
+            addProperty(formData, resultSaveData);
         } else {
             setErrors(t_errors);
         }
@@ -270,7 +276,7 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
             </section>
             {/* <!-- ==== #banner section end ==== --> */}
 
-            {/* <!-- ==== dashboard section start ==== --> */}
+            {/* <!-- ==== post property section start ==== --> */}
             <div className="post-property section__space__bottom">
                 <div className="container">
                     <div className="post-property__area">
@@ -358,17 +364,18 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
                     </div>
                 </div>
             </div>
-            {/* <!-- ==== #dashboard section end ==== --> */}
-
+            {/* <!-- ==== #post property section end ==== --> */}
+            
+            <Loading showYou={isLoading} />
             <SuccessModal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-                message="You have successfully posted your property"
+                show={successModalShow}
+                onHide={() => setSuccessModalShow(false)}
+                message="Your property successfully saved in you cart. Please pay to post."
                 goto={{
                     description_1: 'Click',
-                    url: '/properties',
+                    url: '/cart',
                     name: 'here',
-                    description_2: 'to see the property list'
+                    description_2: 'to see your cart'
                 }}
             />
         </div>

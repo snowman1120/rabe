@@ -1,4 +1,5 @@
 node_modules/
+./test.js
 config/production.json
 config/default.json
 client/.eslintcache

@@ -28,7 +28,7 @@ router.get('/', auth, async (req, res) => {
 
         const properties = await Property.aggregate([
             {
-                $match: { user: mongoose.Types.ObjectId(req.user.id) }
+                $match: { user: mongoose.Types.ObjectId(req.user.id), payStatus: true }
             }, {
                 $lookup: {
                     from: 'propertytypes',

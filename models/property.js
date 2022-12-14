@@ -93,6 +93,10 @@ const PropertySchema = new mongoose.Schema({
         enum: ['inprogress', 'ended'],
         default: 'inprogress'
     },
+    payStatus: {
+        type: Boolean,
+        default: false
+    },
     winner: {
         bid: {
             type: mongoose.Schema.Types.ObjectId
@@ -114,19 +118,5 @@ const PropertySchema = new mongoose.Schema({
         default: Date.now
     }
 });
-
-// PropertySchema.statics.updateStatus = async function updateStatus () {
-//     try {
-//         const properties = await this.find({status: 'inprogress'});
-//         properties.forEach(async property => {
-//             if((new Date(property.date)).getTime() + MAX_LEFT_DAYS * 86400000 < (new Date()).getTime()) { 
-//                 property.status = 'ended';
-//                 await property.save();
-//             }
-//         });
-//     } catch (err) {
-//         console.log(err.message);
-//     }
-// }
 
 module.exports = mongoose.model('properties', PropertySchema);
