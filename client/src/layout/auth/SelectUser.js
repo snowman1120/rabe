@@ -31,7 +31,7 @@ const SelectUser = ({onChange}) => {
                 </div>
             </div>
             <div className='next-button-wrapper mt-5'>
-                <button className={'button button--effect d-none d-sm-block next-button ' + (!youare ? 'disabled' : '')} onClick={onClickNext}>Next</button>
+                <button className={'button button--effect d-sm-block next-button ' + (!youare ? 'disabled' : '')} onClick={onClickNext}>Next</button>
             </div>
         </div>
     );
