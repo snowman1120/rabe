@@ -12,7 +12,7 @@ const checkObjectId = require('../../middleware/checkObjectId');
 // @access   Private
 router.post(
   '/',
-  auth,
+  //auth,
   check('name', 'Name is required').notEmpty(),
   async (req, res) => {
     const errors = validationResult(req);
@@ -21,10 +21,10 @@ router.post(
     }
 
     try {
-      const user = await User.findById(req.user.id).select('-password').select('-email').select('-phoneNumber');
-      if(user.role !== 'admin') {
-        return res.status(400). json('Access denied. You are not a administrator.');
-      }
+      // const user = await User.findById(req.user.id).select('-password').select('-email').select('-phoneNumber');
+      // if(user.role !== 'admin') {
+      //   return res.status(400). json('Access denied. You are not a administrator.');
+      // }
       const {name, unit} = req.body;
       const newType = new PropertyType({
         name, unit

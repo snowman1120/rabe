@@ -41,6 +41,10 @@ const SellerReg = ({serverErrors, register}) => {
         setPrivacyPolicy(e.target.checked);
     }
 
+    const onKeyDownInput = (e) => {
+        if(e.keyCode === 13) onSubmit();
+    }
+
     const onSubmit = async () => {
         let t_errors = {};
         Object.keys(formData).forEach((key) => {

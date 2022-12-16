@@ -357,7 +357,7 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
 
                         <div className='row' style={{justifyContent: 'right'}}>
                             <div className="input__button col-md-4 col-xs-12">
-                                <button type="submit" className="button button--effect" onClick={onSubmit}> Post Now </button>
+                                <button type="submit" className="button button--effect" onClick={onSubmit}> Add to cart </button>
                             </div>
                         </div>
                         {!isEmpty(errors.msg) ? <div className="error__message">{errors.msg}</div> : ''}

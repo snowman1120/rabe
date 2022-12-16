@@ -32,6 +32,10 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
     //     setRememberMe(e.target.checked);
     // }
 
+    const onKeyDownInput = (e) => {
+        if(e.keyCode === 13) onSubmit();
+    }
+
     const onSubmit = () => {
         let t_errors = {};
         Object.keys(formData).forEach((key) => {
@@ -69,13 +73,13 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
                             <div className="input input--secondary">
                                 <label htmlFor="loginMail">Email*</label>
                                 <input type="email" name="email" id="loginMail" placeholder="Enter your email"
-                                    required="required" onChange={onChange} />
+                                    required="required" onChange={onChange} onKeyDown={onKeyDownInput} />
                                 {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
                             </div>
                             <div className="input input--secondary">
                                 <label htmlFor="loginPass">Password*</label>
                                 <input type="password" name="password" id="loginPass" placeholder="Password"
-                                    required="required" onChange={onChange} />
+                                    required="required" onChange={onChange} onKeyDown={onKeyDownInput} />
                                 {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
                             </div>
                             {/* <div className="checkbox login__checkbox">

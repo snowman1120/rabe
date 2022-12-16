@@ -51,6 +51,10 @@ const AgentReg = ({serverErrors, register}) => {
         setPrivacyPolicy(e.target.checked);
     }
 
+    const onKeyDownInput = (e) => {
+        if(e.keyCode === 13) onSubmit();
+    }
+
     const onSubmit = async () => {
         let t_errors = {};
         Object.keys(formData).forEach((key) => {
@@ -93,7 +97,7 @@ const AgentReg = ({serverErrors, register}) => {
                             <div className="input input--secondary">
                                 <label htmlFor="firstName">First Name*</label>
                                 <input type="text" name="firstName" id="firstName" placeholder="First Name"
-                                    required="required" onChange={onChangeInput} />
+                                    required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                                 {!isEmpty(errors.firstName) ? <div className="error__message">{errors.firstName}</div> : ''}
                             </div>
                         </div>
@@ -101,7 +105,7 @@ const AgentReg = ({serverErrors, register}) => {
                             <div className="input input--secondary">
                                 <label htmlFor="lastName">Last Name*</label>
                                 <input type="text" name="lastName" id="lastName" placeholder="Last Name"
-                                    required="required" onChange={onChangeInput} />
+                                    required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                                 {!isEmpty(errors.lastName) ? <div className="error__message">{errors.lastName}</div> : ''}
                             </div>
                         </div>
@@ -109,25 +113,25 @@ const AgentReg = ({serverErrors, register}) => {
                     <div className="input input--secondary">
                         <label htmlFor="registrationMail">Email*</label>
                         <input type="email" name="email" id="registrationMail"
-                            placeholder="Enter your email" required="required" onChange={onChangeInput} />
+                            placeholder="Enter your email" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
                     </div>
                     <div className="input input--secondary">
                         <label htmlFor="regiPass">Password*</label>
                         <input type="password" name="password" id="regiPass" placeholder="Password"
-                            required="required" onChange={onChangeInput} />
+                            required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
                     </div>
                     <div className="input input--secondary">
                         <label htmlFor="passCon">Password Confirmation*</label>
                         <input type="password" name="passConfirm" id="passCon" placeholder="Password Confirm"
-                            required="required" onChange={onChangeInput} />
+                            required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.passConfirm) ? <div className="error__message">{errors.passConfirm}</div> : ''}
                     </div>
                     <div className="input input--secondary">
                         <label htmlFor="registrationPhoneNumber">Phone Number*</label>
                         <input type="text" name="phoneNumber" id="registrationPhoneNumber"
-                            placeholder="Enter your phone number" required="required" onChange={onChangeInput} />
+                            placeholder="Enter your phone number" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.phoneNumber) ? <div className="error__message">{errors.phoneNumber}</div> : ''}
                     </div>
                 </div>
@@ -135,31 +139,31 @@ const AgentReg = ({serverErrors, register}) => {
                     <div className="input input--secondary">
                         <label htmlFor="postal-code">Postal Code*</label>
                         <input type="text" name="postalCode" id="postal-code" placeholder="Postal Code"
-                            required="required" onChange={onChangeInput} />
+                            required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.postalCode) ? <div className="error__message">{errors.postalCode}</div> : ''}
                     </div>
                     <div className="input input--secondary">
                         <label htmlFor="agentLicenseNumber">Agent License Number*</label>
                         <input type="text" name="licenseNumber" id="agentLicenseNumber"
-                            placeholder="Enter your licenseNumber" required="required" onChange={onChangeInput} />
+                            placeholder="Enter your licenseNumber" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.licenseNumber) ? <div className="error__message">{errors.licenseNumber}</div> : ''}
                     </div>
                     <div className="input input--secondary">
                         <label htmlFor="stateLicensed">State Licensed*</label>
                         <input type="text" name="stateLicensed" id="stateLicensed"
-                            placeholder="Enter your phone number" required="required" onChange={onChangeInput} />
+                            placeholder="Enter your phone number" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.stateLicensed) ? <div className="error__message">{errors.stateLicensed}</div> : ''}
                     </div>
                     <div className="input input--secondary">
                         <label htmlFor="years-of-experience">Years of Experience</label>
                         <input type="number" name="yearsOfExprerience" id="years-of-experience" placeholder="Years of Experience"
-                            required="required" onChange={onChangeInput} />
+                            required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.yearsOfExprerience) ? <div className="error__message">{errors.yearsOfExprerience}</div> : ''}
                     </div>
                     <div className="input input--secondary">
                         <label htmlFor="affiliations">Affiliations</label>
                         <textarea name="affiliations" id="affiliations" placeholder="Affiliations" style={{minHeight: 'auto'}}
-                            required="required" onChange={onChangeInput}></textarea>
+                            required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}></textarea>
                         {!isEmpty(errors.affiliations) ? <div className="error__message">{errors.affiliations}</div> : ''}
                     </div>
                 </div>

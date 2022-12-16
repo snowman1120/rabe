@@ -25,7 +25,7 @@ const PropertyItem = ({property}) => {
                             <div className="item__head justify-content-center">
                                 <div className="item__head__right">
                                     <div className="countdown__wrapper">
-                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest
+                                        <p className="secondary"><i className="fa-solid fa-clock"></i> Left to bid
                                         </p>
                                         <div className="countdown">
                                             <h6>
