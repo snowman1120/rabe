@@ -65,12 +65,12 @@ const PropertyItem = ({property, postProperty}) => {
             <SuccessModal
                 show={successModalShow}
                 onHide={() => setSuccessModalShow(false)}
-                message="Your property successfully saved in you cart. Please pay to post."
+                message="Your property successfully posted ."
                 goto={{
                     description_1: 'Click',
-                    url: '/cart',
+                    url: '/properties',
                     name: 'here',
-                    description_2: 'to see your cart'
+                    description_2: 'to see property list'
                 }}
             />
             <div className="property__list__wrapper">
