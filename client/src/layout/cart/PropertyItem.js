@@ -65,7 +65,7 @@ const PropertyItem = ({property, postProperty}) => {
             <SuccessModal
                 show={successModalShow}
                 onHide={() => setSuccessModalShow(false)}
-                message="Your property successfully posted ."
+                message="Your property has been successfully posted."
                 goto={{
                     description_1: 'Click',
                     url: '/properties',

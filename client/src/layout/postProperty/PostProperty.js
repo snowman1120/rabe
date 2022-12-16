@@ -370,7 +370,7 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
             <SuccessModal
                 show={successModalShow}
                 onHide={() => setSuccessModalShow(false)}
-                message="Your property successfully saved in you cart. Please pay to post."
+                message="Your property has been successfully saved to your cart."
                 goto={{
                     description_1: 'Click',
                     url: '/cart',
