@@ -89,7 +89,6 @@ router.post(
         const destPath = `client/build/assets/images/upload/${path.basename(photo.path)}`;
         const dbPath = '/assets/images/upload/' + path.basename(photo.path);
 
-        console.log(destPath, dbPath)
         photoPathes.push(dbPath);
         fs.copyFileSync(photo.path, destPath);
       })

@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import StripeModal from './StripeModal';
 import SuccessModal from 'components/SuccessModal';
-import Loading from 'components/Loading';
+//import Loading from 'components/Loading';
 
 import {postProperty} from 'actions/property';
 
@@ -25,12 +25,16 @@ const PropertyItem = ({property, postProperty}) => {
         if(redirectStatus === 'succeeded') {
             const payTime = parseInt(localStorage.getItem('pay_time'));
     
-            if(isNaN(payTime) || new Date().getTime() - payTime > 5000) {
+            // if(isNaN(payTime) || new Date().getTime() - payTime > 5000) {
+            //     window.location.href = '/cart';
+            //     return;
+            // }
+            if(isNaN(payTime)) {
                 window.location.href = '/cart';
                 return;
             }
 
-            localStorage.removeItem('redirect_status');
+            localStorage.removeItem('pay_time');
             localStorage.removeItem('posting_property_id');
             
             //setIsLoading(true);
@@ -57,7 +61,7 @@ const PropertyItem = ({property, postProperty}) => {
                 propertyId={property._id}
             />
             
-            <Loading showYou={isLoading} />
+            {/* <Loading showYou={isLoading} /> */}
             <SuccessModal
                 show={successModalShow}
                 onHide={() => setSuccessModalShow(false)}
