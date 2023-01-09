@@ -2,11 +2,12 @@ import {connect} from 'react-redux';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from 'components/Loading';
+import {verifyToken} from 'actions/auth';
 
-const EmailVerification = () => {
+const EmailVerification = ({verifyToken}) => {
     const {token} = useParams();
     useEffect(() => {
-        
+        verifyToken(token);
     }, []);
 
     return (
@@ -22,4 +23,4 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-export default (EmailVerification);
+export default connect(mapStateToProps, {verifyToken}) (EmailVerification);
