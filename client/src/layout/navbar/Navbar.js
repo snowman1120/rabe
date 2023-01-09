@@ -105,7 +105,7 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                 (<>
                                     <div className="nav__group__btn">
                                         <a href="/login" className="log d-none d-sm-block"> Log In </a>
-                                        <a href="/registration" className="button button--effect d-none d-sm-block"> Join Now <i
+                                        <a href="/signup" className="button button--effect d-none d-sm-block"> Join Now <i
                                                 className="fa-solid fa-arrow-right-long"></i> </a>
                                     </div>
                                 </>)
@@ -159,7 +159,7 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                             <a href="/login" className="nav-link">Log In</a>
                                         </li>
                                         <li className="nav-item d-block d-sm-none">
-                                            <a href="/registration" className="button button--effect button--last">Join Now <i
+                                            <a href="/signup" className="button button--effect button--last">Join Now <i
                                                     className="fa-solid fa-arrow-right-long"></i></a>
                                         </li>
                                     </>)

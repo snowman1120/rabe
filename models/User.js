@@ -45,6 +45,14 @@ const UserSchema = new mongoose.Schema({
   affiliations: {
     type: String,
   },
+  confirm: {
+    type: Boolean,
+    default: false
+  },
+  approve: {
+    type: Boolean,
+    default: false
+  },
   notifications: [
     {
       type: {

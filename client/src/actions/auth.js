@@ -59,15 +59,11 @@ export const loadUser = () => async (dispatch) => {
 };
 
 // Register User
-export const register = (formData) => async (dispatch) => {
+export const register = (formData, callback) => async (dispatch) => {
   try {
     const res = await api.post('/users', formData);
-
-    dispatch({
-      type: REGISTER_SUCCESS,
-      payload: res.data
-    });
-    dispatch(loadUser());
+    window.localStorage.setItem('signup-email-address', formData.email);
+    callback();
   } catch (err) {
     const serverErrors = err.response.data.errors;
     let errors = {};
@@ -82,6 +78,49 @@ export const register = (formData) => async (dispatch) => {
     });
   }
 };
+
+export const sendEmailVerification = (email) => async (dispatch) => {
+  try {
+    const res = await api.post('/users/resend-email', {email});
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: LOGIN_FAIL,
+      payload: errors
+    });
+  }
+}
+
+export const verifyToken = (token) => async (dispatch) => {
+  try {
+    const res = await api.post('/users/verify-token', {token});
+    if(res.data.success) {
+      dispatch({
+        type: REGISTER_SUCCESS,
+        payload: res.data
+      });
+      dispatch(loadUser());
+    }
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: LOGIN_FAIL,
+      payload: errors
+    });
+  }
+}
 
 // Login User
 export const login = (data) => async (dispatch) => {

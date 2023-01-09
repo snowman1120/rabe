@@ -66,7 +66,7 @@ const SellerReg = ({serverErrors, register}) => {
 
         if(isEmpty(t_errors) && privacyPolicy) {
             // Send request
-            register(formData);
+            register(formData, () => window.location.href = '/signup/please-verify');
         }
     }
 
@@ -79,7 +79,7 @@ const SellerReg = ({serverErrors, register}) => {
                         <div className="input input--secondary">
                             <label htmlFor="firstName">First Name*</label>
                             <input type="text" name="firstName" id="firstName" placeholder="First Name"
-                                required="required" onChange={onChangeInput} />
+                                required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
                             {!isEmpty(errors.firstName) ? <div className="error__message">{errors.firstName}</div> : ''}
                         </div>
                     </div>
@@ -87,7 +87,7 @@ const SellerReg = ({serverErrors, register}) => {
                         <div className="input input--secondary">
                             <label htmlFor="lastName">Last Name*</label>
                             <input type="text" name="lastName" id="lastName" placeholder="Last Name"
-                                required="required" onChange={onChangeInput} />
+                                required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
                             {!isEmpty(errors.lastName) ? <div className="error__message">{errors.lastName}</div> : ''}
                         </div>
                     </div>
@@ -95,25 +95,25 @@ const SellerReg = ({serverErrors, register}) => {
                 <div className="input input--secondary">
                     <label htmlFor="registrationMail">Email*</label>
                     <input type="email" name="email" id="registrationMail"
-                        placeholder="Enter your email" required="required" onChange={onChangeInput} />
+                        placeholder="Enter your email" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
                     {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
                 </div>
                 <div className="input input--secondary">
                     <label htmlFor="regiPass">Password*</label>
                     <input type="password" name="password" id="regiPass" placeholder="Password"
-                        required="required" onChange={onChangeInput} />
+                        required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
                     {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
                 </div>
                 <div className="input input--secondary">
                     <label htmlFor="passCon">Password Confirmation*</label>
                     <input type="password" name="passConfirm" id="passCon" placeholder="Password Confirm"
-                        required="required" onChange={onChangeInput} />
+                        required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
                     {!isEmpty(errors.passConfirm) ? <div className="error__message">{errors.passConfirm}</div> : ''}
                 </div>
                 <div className="input input--secondary">
                     <label htmlFor="registrationPhoneNumber">Phone Number*</label>
                     <input type="text" name="phoneNumber" id="registrationPhoneNumber"
-                        placeholder="Enter your phone number" required="required" onChange={onChangeInput} />
+                        placeholder="Enter your phone number" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
                     {!isEmpty(errors.phoneNumber) ? <div className="error__message">{errors.phoneNumber}</div> : ''}
                 </div>
                 <div className="checkbox">

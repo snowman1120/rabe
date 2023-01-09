@@ -7,6 +7,7 @@ import {isEmpty} from 'utils/validation';
 import {login} from 'actions/auth';
 
 const Login = ({serverErrors, login, role, isAuthenticated}) => {
+    const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -28,9 +29,9 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
         setFormData({...formData, [e.target.name]: e.target.value});
     }
 
-    // const onChangeCheckbox = (e) => {
-    //     setRememberMe(e.target.checked);
-    // }
+    const onChangeCheckbox = (e) => {
+        setRememberMe(e.target.checked);
+    }
 
     const onKeyDownInput = (e) => {
         if(e.keyCode === 13) onSubmit();
@@ -82,14 +83,14 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
                                     required="required" onChange={onChange} onKeyDown={onKeyDownInput} />
                                 {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
                             </div>
-                            {/* <div className="checkbox login__checkbox">
+                            <div className="checkbox login__checkbox">
                                 <label>
                                     <input type="checkbox" id="remeberPass" name="remeber__pass" value="remember" onChange={onChangeCheckbox} />
                                     <span className="checkmark"></span>
                                     Remember Me
                                 </label>
                                 <a href="#!">Forget Password</a>
-                            </div> */}
+                            </div>
                             <div className="input__button">
                                 <button type="submit" className="button button--effect" onClick={onSubmit}>Login</button>
                                 {!isEmpty(errors.msg) ? <div className="error__message">{errors.msg}</div> : ''}

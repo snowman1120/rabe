@@ -1,7 +1,7 @@
 {
   "name": "rabe",
   "version": "1.0.0",
-  "description": "Social network for developers",
+  "description": "Real Estate",
   "main": "server.js",
   "scripts": {
     "start": "node server",
@@ -12,7 +12,7 @@
     "devadmin": "concurrently \"npm run server\" \"npm run admin\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
-  "author": "Brad Traversy",
+  "author": "Alex Jonsson",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.0",
@@ -20,6 +20,7 @@
     "client": "file:client",
     "config": "^3.3.3",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.17.1",
     "express-form-data": "^2.0.19",
     "express-validator": "^6.8.1",
@@ -27,6 +28,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.8",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.8.0",
     "normalize-url": "^5.3.0",
     "postcode-validator": "^3.7.0",
     "socket.io": "^4.5.4",

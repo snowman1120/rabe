@@ -23,6 +23,9 @@ import MyProperties from 'layout/myproperties/MyProperties';
 import MyProposals from 'layout/myproposals/MyProposals';
 import Cart from 'layout/cart/Cart';
 
+import SignupVerify from 'layout/auth/SignupVerify';
+import EmailVerification from 'layout/auth/EmailVerification';
+
 import KeyRisks from 'layout/keyRisks/KeyRisks';
 import Error404 from 'layout/error/404';
 
@@ -42,7 +45,10 @@ const RouterBranch = () => {
             <Route path='/contact-us' element={<ContactUs/>} />
             
             <Route path='/login' element={<Login/>} />
-            <Route path='/registration' element={<Registration/>} />
+            <Route path='/signup' element={<Registration/>} />
+
+            <Route path="/signup/please-verify" element={<SignupVerify />} />
+            <Route path="/signup/verify-email/token/:token" element={<EmailVerification />} />
 
             <Route path="/profile" element={<Profile />} />
             <Route path="/change-password" element={<ChangePassword />} />

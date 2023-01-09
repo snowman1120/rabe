@@ -17,6 +17,8 @@ const validatePhoneNumber = require('validate-phone-number-node-js');
 
 const User = require('../../models/User');
 
+const mailer = require('../../utils/mailer');
+
 const SALT = 10;
 
 // @route    POST api/users
@@ -58,7 +60,8 @@ router.post(
     user = await User.findOne({ email });
 
     if (user) {
-      return res
+      if(user.confirm) {
+        return res
         .status(400)
         .json({ errors: [
           ...errors.array(),
@@ -67,6 +70,9 @@ router.post(
             msg: 'An account with this email address already exists.' 
           }]
         });
+      } else {
+        await user.remove();
+      }
     }
 
     if(role === 'seller') {
@@ -141,21 +147,61 @@ router.post(
         }
       };
 
-      jwt.sign(
-        payload,
-        config.get('jwtSecret'),
-        { expiresIn: '5 days' },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
+      res.json({success: true});
+      // jwt.sign(
+      //   payload,
+      //   config.get('jwtSecret'),
+      //   { expiresIn: '5 days' },
+      //   (err, token) => {
+      //     if (err) throw err;
+      //     res.json({ token });
+      //   }
+      // );
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
     }
   }
 );
+
+router.post('/resend-email',
+  check('email', 'Email is required').notEmpty(),
+  async (req, res) => {
+    const email = req.body.email;
+    const sendEmailRes = await sendVerifyMessage(email);
+    if(sendEmailRes.success) res.json(sendEmailRes);
+    else res.status(400).json(sendEmailRes);
+});
+
+router.post('/verify-token', async (req, res) => {
+  const {token} = req.body;
+  jwt.verify(token, config.get('jwtSecret'), async (err, _) => {
+    if (err) {
+      console.log(err)
+      return res.status(400).json({success: false, message: 'Failed email verification.'});
+    }
+    const email = _.reqEmail;
+    const user = await User.findOne({email});
+    user.confirm = true;
+    await user.save();
+
+    const payload = {
+      user: {
+        id: user.id
+      }
+    };
+
+    jwt.sign(
+      payload,
+      config.get('jwtSecret'),
+      { expiresIn: '5 days' },
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      }
+    );
+  });
+});
 
 // @route    POST api/users
 // @desc     Update user
@@ -294,26 +340,26 @@ router.post(
       if(user.avatar) {
         fs.unlinkSync(`client/build/assets/images/avatar/${path.basename(user.avatar)}`)
       }
+
+      const destPath = `client/build/assets/images/avatar/${path.basename(req.files.avatar.path)}`;
+      const dbPath = '/assets/images/avatar/' + path.basename(req.files.avatar.path);
+      fs.copyFile(req.files.avatar.path, destPath, async function(err) {
+        if (err) {
+          res.status(400).send('Something went wrong');
+          throw err;
+        }
+
+        const profile = await User.findOneAndUpdate(
+          { _id: user.id },
+          { $set: {avatar: dbPath} },
+          { new: true, upsert: true, setDefaultsOnInsert: true }
+        ).select('-password').select('-email').select('-phoneNumber');
+        res.json(profile);
+      });
     } catch(err) {
       console.log(err)
       return res.status(400).json({ errors: [{param: 'msg', msg: 'Server Error.' }]});
     }
-
-    const destPath = `client/build/assets/images/avatar/${path.basename(req.files.avatar.path)}`;
-    const dbPath = '/assets/images/avatar/' + path.basename(req.files.avatar.path);
-    fs.copyFile(req.files.avatar.path, destPath, async function(err) {
-      if (err) {
-        res.status(400).send('Something went wrong');
-        throw err;
-      }
-
-      const profile = await User.findOneAndUpdate(
-        { _id: user.id },
-        { $set: {avatar: dbPath} },
-        { new: true, upsert: true, setDefaultsOnInsert: true }
-      ).select('-password').select('-email').select('-phoneNumber');
-      res.json(profile);
-    });
   }
 );
 
@@ -334,5 +380,38 @@ router.put('/mark-all-read', auth, async (req, res) => {
     return res.status(400).json({ errors: [{param: 'msg', msg: 'Server Error.' }]});
   }
 });
+
+const sendVerifyMessage = async (email) => {
+  const user = await User.findOne({email});
+  if(!user) return {success: false, message: 'Not Found User'};
+
+  const token = jwt.sign({
+    reqEmail: email,
+  }, config.get('jwtSecret'), { expiresIn: '1h' });
+console.log(token)
+  const mailOptions = {
+    from: process.env.SEND_EMAIL_ADDRESS,
+    to: email,
+    subject: "Verify your email address",
+    html: `
+<div style="max-width: 800px;margin: auto; margin-top: 30px;">
+	<div style="font-family: Poppins, sans-serif;">
+		<h1 style="text-align: center; margin-bottom: 30px;">Verify your email address to complete registration</h1>
+		<p>Hi Alex,</p>
+		<p>Thanks for your interest in joining Upwork! To complete your registration, we need you to verify your email address.</p>
+		<a href="${process.env.SERVER_HOST}signup/verify-email/token/${token}" style="color: white;text-decoration: none;padding: 14px 30px 16px;background-color: #5927e3;border-radius: 5px;box-shadow: 0px 4px 24px 0px rgb(89 39 227 / 25%);text-align: center;overflow: hidden;display: block;width: fit-content;margin: auto;">Verfiy Email</a>
+	</div>
+</div>
+    `,
+  };
+  try {
+    await mailer.sendMail(mailOptions);
+  } catch(err) {
+    console.log(err);
+    return {success: false, message: err};
+  }
+  console.log('Email sent successfully')
+  return {success: true, message: 'Email sent successfully'};
+}
 
 module.exports = router;
