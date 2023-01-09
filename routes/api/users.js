@@ -84,7 +84,8 @@ router.post(
         lastName,
         email,
         phoneNumber,
-        password
+        password,
+        approve: true
       });
     } else if(role === 'agent') {
       const { firstName, lastName, email, phoneNumber, postalCode, stateLicensed, licenseNumber, yearsOfExprerience, affiliations } = req.body;
@@ -388,7 +389,7 @@ const sendVerifyMessage = async (email) => {
   const token = jwt.sign({
     reqEmail: email,
   }, config.get('jwtSecret'), { expiresIn: '1h' });
-console.log(token)
+
   const mailOptions = {
     from: process.env.SEND_EMAIL_ADDRESS,
     to: email,
@@ -397,7 +398,7 @@ console.log(token)
 <div style="max-width: 800px;margin: auto; margin-top: 30px;">
 	<div style="font-family: Poppins, sans-serif;">
 		<h1 style="text-align: center; margin-bottom: 30px;">Verify your email address to complete registration</h1>
-		<p>Hi ${user.first_name} ${user.last_name},</p>
+		<p>Hi ${user.firstName} ${user.lastName},</p>
 		<p>Thanks for your interest in joining our site! To complete your registration, we need you to verify your email address.</p>
 		<a href="${process.env.SERVER_HOST}signup/verify-email/token/${token}" style="color: white;text-decoration: none;padding: 14px 30px 16px;background-color: #5927e3;border-radius: 5px;box-shadow: 0px 4px 24px 0px rgb(89 39 227 / 25%);text-align: center;overflow: hidden;display: block;width: fit-content;margin: auto;">Verfiy Email</a>
 	</div>

@@ -4,12 +4,15 @@ import { useParams } from 'react-router-dom';
 import Loading from 'components/Loading';
 import {verifyToken} from 'actions/auth';
 
-const EmailVerification = ({verifyToken}) => {
+const EmailVerification = ({verifyToken, isAuthenticated}) => {
     const {token} = useParams();
     useEffect(() => {
         verifyToken(token);
     }, []);
 
+    useEffect(() => {
+        if(isAuthenticated === true) window.location.href = '/';
+    }, [isAuthenticated]);
     return (
         <div className='registration clear__top'>
             <Loading showYou={true} />

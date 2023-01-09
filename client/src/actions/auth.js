@@ -62,7 +62,7 @@ export const loadUser = () => async (dispatch) => {
 export const register = (formData, callback) => async (dispatch) => {
   try {
     const res = await api.post('/users', formData);
-    window.localStorage.setItem('signup-email-address', formData.email);
+    window.localStorage.setItem('signup-email-address', res.data.email);
     callback();
   } catch (err) {
     const serverErrors = err.response.data.errors;
@@ -100,13 +100,11 @@ export const sendEmailVerification = (email) => async (dispatch) => {
 export const verifyToken = (token) => async (dispatch) => {
   try {
     const res = await api.post('/users/verify-token', {token});
-    if(res.data.success) {
-      dispatch({
-        type: REGISTER_SUCCESS,
-        payload: res.data
-      });
-      dispatch(loadUser());
-    }
+    dispatch({
+      type: REGISTER_SUCCESS,
+      payload: res.data
+    });
+    dispatch(loadUser());
   } catch(err) {
     const serverErrors = err.response.data.errors;
     let errors = {};

@@ -84,7 +84,7 @@ const AgentReg = ({serverErrors, register}) => {
 
         if(isEmpty(t_errors) && privacyPolicy) {
             // Send request
-            register(formData);
+            register(formData, () => window.location.href = '/signup/please-verify');
         }
     }
 
