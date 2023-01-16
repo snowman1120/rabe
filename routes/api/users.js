@@ -216,7 +216,7 @@ router.post('/verify-token', async (req, res) => {
         return res.status(400).json({success: false, message: 'Failed email verification.'});
       }
       const email = _.reqEmail;
-      const user = await User.finfOne({email});
+      const user = await User.findOne({email});
       user.confirm = true;
       await user.save();
       // const payload = {
