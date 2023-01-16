@@ -137,7 +137,7 @@ export const sendEmailResetPassword = (email) => async (dispatch) => {
   }
 }
 
-export const verifySignupToken = (token) => async (dispatch) => {
+export const verifySignupToken = (token, callback) => async (dispatch) => {
   try {
     const res = await api.post('/users/verify-token', {token});
     // dispatch({
@@ -145,7 +145,7 @@ export const verifySignupToken = (token) => async (dispatch) => {
     //   payload: res.data
     // });
     // dispatch(loadUser());
-    window.location.href = '/';
+    callback();
   } catch(err) {
     const serverErrors = err.response.data.errors;
     let errors = {};

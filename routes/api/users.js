@@ -203,33 +203,40 @@ router.post('/send-email-reset-password',
 });
 
 router.post('/verify-token', async (req, res) => {
-  const {token} = req.body;
-  jwt.verify(token, config.get('jwtSecret'), async (err, _) => {
-    if (err) {
-      console.log(err)
-      return res.status(400).json({success: false, message: 'Failed email verification.'});
-    }
-    const email = _.reqEmail;
-    const user = await User.findOne({email});
-    user.confirm = true;
-    await user.save();
-
-    const payload = {
-      user: {
-        id: user.id
+  try {
+    const {token} = req.body;
+    jwt.verify(token, config.get('jwtSecret'), async (err, _) => {
+      if (err) {
+        console.log(err)
+        return res.status(400).json({success: false, message: 'Failed email verification.'});
       }
-    };
+      const email = _.reqEmail;
+      const user = await User.findOne({email});
+      user.confirm = true;
+      await user.save();
 
-    jwt.sign(
-      payload,
-      config.get('jwtSecret'),
-      { expiresIn: '5 days' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
-  });
+      // const payload = {
+      //   user: {
+      //     id: user.id
+      //   }
+      // };
+
+      // jwt.sign(
+      //   payload,
+      //   config.get('jwtSecret'),
+      //   { expiresIn: '5 days' },
+      //   (err, token) => {
+      //     if (err) throw err;
+      //     res.json({ token });
+      //   }
+      // );
+
+      res.send({success: true});
+    });
+  } catch(err) {
+    console.error(err.message);
+    return res.status(500).send('Server Error');
+  }
 });
 
 // @route    POST api/users

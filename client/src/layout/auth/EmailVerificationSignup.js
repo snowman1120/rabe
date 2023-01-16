@@ -7,7 +7,7 @@ import {verifySignupToken} from 'actions/auth';
 const EmailVerification = ({verifySignupToken, isAuthenticated}) => {
     const {token} = useParams();
     useEffect(() => {
-        verifySignupToken(token);
+        verifySignupToken(token, () => window.location.href = '/');
     }, []);
 
     useEffect(() => {

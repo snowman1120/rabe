@@ -38,7 +38,7 @@ const UserSchema = new mongoose.Schema({
   },
   agentName: {
     type: String,
-    required: true
+    //required: true
   },
   confirm: {
     type: Boolean,
