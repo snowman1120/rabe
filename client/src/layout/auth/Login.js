@@ -89,7 +89,7 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
                                     <span className="checkmark"></span>
                                     Remember Me
                                 </label>
-                                <a href="#!">Forget Password</a>
+                                <a href="/reset-password/please-verify">Forget Password</a>
                             </div>
                             <div className="input__button">
                                 <button type="submit" className="button button--effect" onClick={onSubmit}>Login</button>

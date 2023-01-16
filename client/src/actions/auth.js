@@ -79,9 +79,29 @@ export const register = (formData, callback) => async (dispatch) => {
   }
 };
 
-export const sendEmailVerification = (email) => async (dispatch) => {
+// Register User
+export const resetPassword = (data, callback) => async (dispatch) => {
   try {
-    const res = await api.post('/users/resend-email', {email});
+    await api.post('/users/reset-password', data);
+    callback();
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: REGISTER_FAIL,
+      payload: errors
+    });
+  }
+};
+
+export const sendEmailSignup = (email) => async (dispatch) => {
+  try {
+    await api.post('/users/send-email-signup', {email});
   } catch (err) {
     const serverErrors = err.response.data.errors;
     let errors = {};
@@ -97,7 +117,27 @@ export const sendEmailVerification = (email) => async (dispatch) => {
   }
 }
 
-export const verifyToken = (token) => async (dispatch) => {
+export const sendEmailResetPassword = (email) => async (dispatch) => {
+  try {
+    await api.post('/users/send-email-reset-password', {email});
+  } catch (err) {
+    let errors = {};
+    if(err.response.data.message) {
+      errors['email'] = err.response.data.message;
+    }
+    const serverErrors = err.response.data.errors;
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+    dispatch({
+      type: LOGIN_FAIL,
+      payload: errors
+    });
+  }
+}
+
+export const verifySignupToken = (token) => async (dispatch) => {
   try {
     const res = await api.post('/users/verify-token', {token});
     dispatch({
@@ -105,6 +145,25 @@ export const verifyToken = (token) => async (dispatch) => {
       payload: res.data
     });
     dispatch(loadUser());
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: LOGIN_FAIL,
+      payload: errors
+    });
+  }
+}
+
+export const verifyResetPasswordToken = (token, callback) => async (dispatch) => {
+  try {
+    await api.post('/users/verify-token', {token});
+    callback();
   } catch(err) {
     const serverErrors = err.response.data.errors;
     let errors = {};
@@ -232,7 +291,7 @@ export const setProfile = (profile) => async (dispatch) => {
 // Set Profile
 export const markAllReadNotification = () => async (dispatch) => {
   try {
-    const res = await api.put(`/users/mark-all-read`);
+    await api.put(`/users/mark-all-read`);
     dispatch({
       type: MARK_ALL_READ_NOTIFICATION,
     });

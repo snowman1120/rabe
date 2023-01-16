@@ -24,7 +24,11 @@ import MyProposals from 'layout/myproposals/MyProposals';
 import Cart from 'layout/cart/Cart';
 
 import SignupVerify from 'layout/auth/SignupVerify';
-import EmailVerification from 'layout/auth/EmailVerification';
+import EmailVerificationSignup from 'layout/auth/EmailVerificationSignup';
+
+import ResetPasswordVerify from 'layout/auth/ResetPasswordVerify';
+import EmailVerificationResetPwd from 'layout/auth/EmailVerficationResetPwd';
+import ResetPassword from 'layout/auth/ResetPassword';
 
 import KeyRisks from 'layout/keyRisks/KeyRisks';
 import Error404 from 'layout/error/404';
@@ -48,7 +52,11 @@ const RouterBranch = () => {
             <Route path='/signup' element={<Registration/>} />
 
             <Route path="/signup/please-verify" element={<SignupVerify />} />
-            <Route path="/signup/verify-email/token/:token" element={<EmailVerification />} />
+            <Route path="/signup/verify-email/token/:token" element={<EmailVerificationSignup />} />
+            
+            <Route path="/reset-password/please-verify" element={<ResetPasswordVerify />} />
+            <Route path="/reset-password/verify-email/token/:token" element={<EmailVerificationResetPwd />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/profile" element={<Profile />} />
             <Route path="/change-password" element={<ChangePassword />} />

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const gravatar = require('gravatar');
+const verifier = require('email-verify');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../../middleware/auth');
@@ -165,13 +165,70 @@ router.post(
   }
 );
 
-router.post('/resend-email',
+router.post('/reset-password', 
+check(
+  'password',
+  'Enter a password with 8 or more characters'
+).isLength({ min: 8 }),
+async (req, res) => {
+  const { email, token, password } = req.body;
+
+  jwt.verify(token, config.get('jwtSecret'), async (err, _) => {
+    if (err) {
+      return res.status(400).json({success: false, message: 'Failed email verification.'});
+    }
+    const email = _.reqEmail;
+    const user = await User.findOne({email});
+    user.password = await bcrypt.hash(password, salt);
+    await user.save();
+    res.json({success: true});
+  });
+});
+
+router.post('/send-email-signup',
   check('email', 'Email is required').notEmpty(),
   async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const email = req.body.email;
-    const sendEmailRes = await sendVerifyMessage(email);
-    if(sendEmailRes.success) res.json(sendEmailRes);
-    else res.status(400).json(sendEmailRes);
+    verifier.verify(email, async function (err, info) {
+      if(err) {
+        return res.status(400).json({ errors: [
+          {
+            param: 'email',
+            msg: 'Email address is not valid' 
+          }
+        ] });
+      }
+      const sendEmailRes = await sendVerifyMessage(email);
+      if(sendEmailRes.success) res.json(sendEmailRes);
+      else res.status(400).json(sendEmailRes);
+    });
+});
+
+router.post('/send-email-reset-password',
+  check('email', 'Email is required').notEmpty(),
+  async (req, res) => {
+    let errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const email = req.body.email;
+    verifier.verify(email, async function (err, info) {
+      if(err) {
+        return res.status(400).json({ errors: [
+          {
+            param: 'email',
+            msg: 'Email address is not valid' 
+          }
+        ] });
+      }
+      const sendEmailRes = await sendResetPasswordMessage(email);
+      if(sendEmailRes.success) res.json(sendEmailRes);
+      else res.status(400).json(sendEmailRes);
+    });
 });
 
 router.post('/verify-token', async (req, res) => {
@@ -401,6 +458,39 @@ const sendVerifyMessage = async (email) => {
 		<p>Hi ${user.firstName} ${user.lastName},</p>
 		<p>Thanks for your interest in joining our site! To complete your registration, we need you to verify your email address.</p>
 		<a href="${process.env.SERVER_HOST}signup/verify-email/token/${token}" style="color: white;text-decoration: none;padding: 14px 30px 16px;background-color: #5927e3;border-radius: 5px;box-shadow: 0px 4px 24px 0px rgb(89 39 227 / 25%);text-align: center;overflow: hidden;display: block;width: fit-content;margin: auto;">Verfiy Email</a>
+	</div>
+</div>
+    `,
+  };
+  try {
+    await mailer.sendMail(mailOptions);
+  } catch(err) {
+    console.log(err);
+    return {success: false, message: err};
+  }
+  console.log('Email sent successfully')
+  return {success: true, message: 'Email sent successfully'};
+}
+
+const sendResetPasswordMessage = async (email) => {
+  const user = await User.findOne({email});
+  if(!user) return {success: false, message: "You haven't yet registered on this site yet. Please register first."};
+
+  const token = jwt.sign({
+    reqEmail: email,
+  }, config.get('jwtSecret'), { expiresIn: '1h' });
+
+  const mailOptions = {
+    from: process.env.SEND_EMAIL_ADDRESS,
+    to: email,
+    subject: "Verify your email address",
+    html: `
+<div style="max-width: 800px;margin: auto; margin-top: 30px;">
+	<div style="font-family: Poppins, sans-serif;">
+		<h1 style="text-align: center; margin-bottom: 30px;">Verify your email address to reset password</h1>
+		<p>Hi ${user.firstName} ${user.lastName},</p>
+		<p>To reset your password, we need you to verify your email address.</p>
+		<a href="${process.env.SERVER_HOST}reset-password/verify-email/token/${token}" style="color: white;text-decoration: none;padding: 14px 30px 16px;background-color: #5927e3;border-radius: 5px;box-shadow: 0px 4px 24px 0px rgb(89 39 227 / 25%);text-align: center;overflow: hidden;display: block;width: fit-content;margin: auto;">Verfiy Email</a>
 	</div>
 </div>
     `,

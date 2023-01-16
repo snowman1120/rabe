@@ -1,17 +1,17 @@
 import {connect} from 'react-redux';
-import { sendEmailVerification } from 'actions/auth';
+import { sendEmailSignup } from 'actions/auth';
 import { useEffect } from 'react';
 
-const SignupVerify = ({sendEmailVerification}) => {
+const SignupVerify = ({sendEmailSignup}) => {
     useEffect(() => {
-        sendEmailVerification(window.localStorage.getItem('signup-email-address'));
+        sendEmailSignup(window.localStorage.getItem('signup-email-address'));
     }, []);
     const onClickResendEmail = () => {
-        sendEmailVerification(window.localStorage.getItem('signup-email-address'));
+        sendEmailSignup(window.localStorage.getItem('signup-email-address'));
     }
 
     return (
-        <div className='registration clear__top'>
+        <div className='registration clear__top' style="margin: 200px 0 100px 0;">
             <h3 className="text-center mb-4">Verify your email to proceed</h3>
             <div>
                 {
@@ -32,4 +32,4 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, {sendEmailVerification}) (SignupVerify);
+export default connect(mapStateToProps, {sendEmailSignup}) (SignupVerify);

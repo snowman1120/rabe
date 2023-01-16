@@ -2,12 +2,13 @@ import {connect} from 'react-redux';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from 'components/Loading';
-import {verifyToken} from 'actions/auth';
+import {verifyResetPasswordToken} from 'actions/auth';
 
-const EmailVerification = ({verifyToken, isAuthenticated}) => {
+const EmailVerification = ({verifyResetPasswordToken, isAuthenticated}) => {
     const {token} = useParams();
     useEffect(() => {
-        verifyToken(token);
+        window.localStorage.setItem('token', token);
+        verifyResetPasswordToken(token, () => window.location.href = '/reset-password');
     }, []);
 
     useEffect(() => {
@@ -26,4 +27,4 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, {verifyToken}) (EmailVerification);
+export default connect(mapStateToProps, {verifyResetPasswordToken}) (EmailVerification);
