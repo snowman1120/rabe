@@ -140,11 +140,12 @@ export const sendEmailResetPassword = (email) => async (dispatch) => {
 export const verifySignupToken = (token) => async (dispatch) => {
   try {
     const res = await api.post('/users/verify-token', {token});
-    dispatch({
-      type: REGISTER_SUCCESS,
-      payload: res.data
-    });
-    dispatch(loadUser());
+    // dispatch({
+    //   type: REGISTER_SUCCESS,
+    //   payload: res.data
+    // });
+    // dispatch(loadUser());
+    window.location.href = '/';
   } catch(err) {
     const serverErrors = err.response.data.errors;
     let errors = {};
