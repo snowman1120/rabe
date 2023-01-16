@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 const SignupVerify = ({sendEmailSignup}) => {
     useEffect(() => {
+        if(!window.localStorage.getItem('email-address')) window.location.href = '/';
         sendEmailSignup(window.localStorage.getItem('email-address'));
     }, []);
     const onClickResendEmail = () => {
