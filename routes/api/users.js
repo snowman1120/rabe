@@ -88,19 +88,13 @@ router.post(
         approve: true
       });
     } else if(role === 'agent') {
-      const { firstName, lastName, email, phoneNumber, postalCode, stateLicensed, licenseNumber, yearsOfExprerience, affiliations } = req.body;
+      const { firstName, lastName, email, phoneNumber, postalCode, licenseNumber, agentName } = req.body;
 
       errors = errors.array();
       if(!postalCode) {
         errors.push({
           param: 'postalCode',
           msg: 'Postal Code is required' 
-        })
-      }
-      if(!stateLicensed) {
-        errors.push({
-          param: 'stateLicensed',
-          msg: 'State Licensed is required' 
         })
       }
       if(!licenseNumber) {
@@ -129,9 +123,7 @@ router.post(
         password,
         postalCode,
         licenseNumber,
-        stateLicensed,
-        yearsOfExprerience,
-        affiliations
+        agentName
       });
     }
 

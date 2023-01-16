@@ -41,12 +41,8 @@ const ContactModal = ( props ) => {
                               <td className='text-center'>{props.contactinfo && props.contactinfo.licenseNumber}</td>
                           </tr>
                           <tr>
-                              <td className='text-center'><b>State Licensed</b></td>
-                              <td className='text-center'>{props.contactinfo && props.contactinfo.stateLicensed}</td>
-                          </tr>
-                          <tr>
-                              <td className='text-center'><b>Affiliations</b></td>
-                              <td className='text-center'>{props.contactinfo && props.contactinfo.affiliations}</td>
+                              <td className='text-center'><b>Agent Name</b></td>
+                              <td className='text-center'>{props.contactinfo && props.contactinfo.agentName}</td>
                           </tr>
                       </tbody>
                   </Table>

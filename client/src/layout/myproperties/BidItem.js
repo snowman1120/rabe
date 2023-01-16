@@ -41,16 +41,10 @@ const BidItem = ({bid, property, getContactInfoForSeller}) => {
                         <div className="col-md-4  mb-2">
                             <p><b>Licencse Number:&nbsp;</b>{bid.user && bid.user.licenseNumber}</p>
                         </div>
-                        <div className="col-md-4  mb-2">
-                            <p><b>State Licensed:&nbsp;</b>{bid.user && bid.user.stateLicensed}</p>
-                        </div>
-                        <div className="col-md-4  mb-2">
-                            <p><b>Years Of Exprerience:&nbsp;</b>{bid.user && bid.user.yearsOfExprerience}</p>
-                        </div>
                     </div>
                     <div>
-                        <p><b>Affiliations</b></p>
-                        <p>{bid.user && bid.user.affiliations}</p>
+                        <p><b>Agent Name</b></p>
+                        <p>{bid.user && bid.user.agentName}</p>
                     </div>
                 </div>
             </div>

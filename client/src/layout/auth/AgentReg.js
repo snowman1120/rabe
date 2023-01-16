@@ -16,9 +16,7 @@ const AgentReg = ({serverErrors, register}) => {
         password: '',
         passConfirm: '',
         licenseNumber: '',
-        stateLicensed: '',
-        yearsOfExprerience: '',
-        affiliations: '',
+        agentName: '',
         postalCode: ''
     });
 
@@ -32,9 +30,7 @@ const AgentReg = ({serverErrors, register}) => {
         password: '',
         passConfirm: '',
         licenseNumber: '',
-        stateLicensed: '',
-        yearsOfExprerience: '',
-        affiliations: '',
+        agentName: '',
         postalCode: '',
         msg: ''
     });
@@ -63,8 +59,7 @@ const AgentReg = ({serverErrors, register}) => {
             }
         });
 
-        delete t_errors.affiliations;
-        delete t_errors.yearsOfExprerience;
+        delete t_errors.agentName;
 
         if(isEmpty(t_errors.email) && !validator.isEmail(formData.email)) {
             t_errors = {...t_errors, email: 'Enter a valid email'}
@@ -149,22 +144,10 @@ const AgentReg = ({serverErrors, register}) => {
                         {!isEmpty(errors.licenseNumber) ? <div className="error__message">{errors.licenseNumber}</div> : ''}
                     </div>
                     <div className="input input--secondary">
-                        <label htmlFor="stateLicensed">State Licensed*</label>
-                        <input type="text" name="stateLicensed" id="stateLicensed"
-                            placeholder="Enter your phone number" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
-                        {!isEmpty(errors.stateLicensed) ? <div className="error__message">{errors.stateLicensed}</div> : ''}
-                    </div>
-                    <div className="input input--secondary">
-                        <label htmlFor="years-of-experience">Years of Experience</label>
-                        <input type="number" name="yearsOfExprerience" id="years-of-experience" placeholder="Years of Experience"
+                        <label htmlFor="agentName">Agent Name</label>
+                        <input type="text" name="agentName" id="agentName" placeholder="Agent Name" style={{minHeight: 'auto'}}
                             required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
-                        {!isEmpty(errors.yearsOfExprerience) ? <div className="error__message">{errors.yearsOfExprerience}</div> : ''}
-                    </div>
-                    <div className="input input--secondary">
-                        <label htmlFor="affiliations">Affiliations</label>
-                        <textarea name="affiliations" id="affiliations" placeholder="Affiliations" style={{minHeight: 'auto'}}
-                            required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}></textarea>
-                        {!isEmpty(errors.affiliations) ? <div className="error__message">{errors.affiliations}</div> : ''}
+                        {!isEmpty(errors.agentName) ? <div className="error__message">{errors.agentName}</div> : ''}
                     </div>
                 </div>
             </div>

@@ -36,14 +36,9 @@ const UserSchema = new mongoose.Schema({
   licenseNumber: {
     type: String,
   },
-  stateLicensed: {
+  agentName: {
     type: String,
-  },
-  yearsOfExprerience: {
-    type: String,
-  },
-  affiliations: {
-    type: String,
+    required: true
   },
   confirm: {
     type: Boolean,
