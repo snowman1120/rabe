@@ -4,10 +4,10 @@ import { useEffect } from 'react';
 
 const SignupVerify = ({sendEmailSignup}) => {
     useEffect(() => {
-        sendEmailSignup(window.localStorage.getItem('signup-email-address'));
+        sendEmailSignup(window.localStorage.getItem('email-address'));
     }, []);
     const onClickResendEmail = () => {
-        sendEmailSignup(window.localStorage.getItem('signup-email-address'));
+        sendEmailSignup(window.localStorage.getItem('email-address'));
     }
 
     return (
@@ -15,7 +15,7 @@ const SignupVerify = ({sendEmailSignup}) => {
             <h3 className="text-center mb-4">Verify your email to proceed</h3>
             <div>
                 {
-                    window.localStorage.getItem('signup-email-address') ? <p className='text-center'>We just sent an email to the address: {window.localStorage.getItem('signup-email-address')} <br/>
+                    window.localStorage.getItem('email-address') ? <p className='text-center'>We just sent an email to the address: {window.localStorage.getItem('email-address')} <br/>
                     Please check your email and click on the link provided to verify your address.</p> : 
                     <p className='text-center'>Something went wrong. Please press F5 and try again.</p>
                 }
