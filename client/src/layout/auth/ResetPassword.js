@@ -10,7 +10,6 @@ const EmailVerification = ({serverErrors, resetPassword}) => {
     });
 
     const [token, setToken] = useState('');
-    const [email, setEmail] = useState('');
 
     const [errors, setErrors] = useState({
         password: '',
@@ -21,7 +20,6 @@ const EmailVerification = ({serverErrors, resetPassword}) => {
       if(!window.localStorage.getItem('token')) window.location.href = '/login';
       setToken(window.localStorage.getItem('token'));
       window.localStorage.removeItem('token');
-      setEmail(window.localStorage.getItem('email-address'));
       window.localStorage.removeItem('email-address');
     }, []);
     
@@ -46,7 +44,7 @@ const EmailVerification = ({serverErrors, resetPassword}) => {
 
       setErrors({...t_errors});
 
-      if(isEmpty(t_errors)) resetPassword({...formData, email, token}, () => window.location.href = '/login');
+      if(isEmpty(t_errors)) resetPassword({...formData, token}, () => window.location.href = '/login');
     }
     return (
       <section className="registration clear__top">

@@ -162,7 +162,7 @@ check(
   'Enter a password with 8 or more characters'
 ).isLength({ min: 8 }),
 async (req, res) => {
-  const { email, token, password } = req.body;
+  const { token, password } = req.body;
 
   jwt.verify(token, config.get('jwtSecret'), async (err, _) => {
     if (err) {
@@ -170,6 +170,7 @@ async (req, res) => {
     }
     const email = _.reqEmail;
     const user = await User.findOne({email});
+    const salt = await bcrypt.genSalt(SALT);
     user.password = await bcrypt.hash(password, salt);
     await user.save();
     res.json({success: true});
@@ -211,9 +212,6 @@ router.post('/verify-token', async (req, res) => {
         return res.status(400).json({success: false, message: 'Failed email verification.'});
       }
       const email = _.reqEmail;
-      const user = await User.findOne({email});
-      user.confirm = true;
-      await user.save();
 
       // const payload = {
       //   user: {
@@ -231,7 +229,7 @@ router.post('/verify-token', async (req, res) => {
       //   }
       // );
 
-      res.send({success: true});
+      res.send({success: true, email});
     });
   } catch(err) {
     console.error(err.message);
