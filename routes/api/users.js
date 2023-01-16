@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const verifier = require('email-verify');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../../middleware/auth');
@@ -185,19 +184,9 @@ router.post('/send-email-signup',
       return res.status(400).json({ errors: errors.array() });
     }
     const email = req.body.email;
-    verifier.verify(email, async function (err, info) {
-      if(err) {
-        return res.status(400).json({ errors: [
-          {
-            param: 'email',
-            msg: 'Email address is not valid' 
-          }
-        ] });
-      }
-      const sendEmailRes = await sendVerifyMessage(email);
-      if(sendEmailRes.success) res.json(sendEmailRes);
-      else res.status(400).json(sendEmailRes);
-    });
+    const sendEmailRes = await sendVerifyMessage(email);
+    if(sendEmailRes.success) res.json(sendEmailRes);
+    else res.status(400).json(sendEmailRes);
 });
 
 router.post('/send-email-reset-password',
@@ -208,19 +197,9 @@ router.post('/send-email-reset-password',
       return res.status(400).json({ errors: errors.array() });
     }
     const email = req.body.email;
-    verifier.verify(email, async function (err, info) {
-      if(err) {
-        return res.status(400).json({ errors: [
-          {
-            param: 'email',
-            msg: 'Email address is not valid' 
-          }
-        ] });
-      }
-      const sendEmailRes = await sendResetPasswordMessage(email);
-      if(sendEmailRes.success) res.json(sendEmailRes);
-      else res.status(400).json(sendEmailRes);
-    });
+    const sendEmailRes = await sendResetPasswordMessage(email);
+    if(sendEmailRes.success) res.json(sendEmailRes);
+    else res.status(400).json(sendEmailRes);
 });
 
 router.post('/verify-token', async (req, res) => {
