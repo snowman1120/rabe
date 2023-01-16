@@ -11,7 +11,7 @@ const SignupVerify = ({sendEmailSignup}) => {
     }
 
     return (
-        <div className='registration clear__top' style="margin: 200px 0 100px 0;">
+        <div className='registration clear__top' style={{margin: '200px 0 100px 0'}}>
             <h3 className="text-center mb-4">Verify your email to proceed</h3>
             <div>
                 {
