@@ -123,14 +123,14 @@ const AgentReg = ({serverErrors, register}) => {
                             required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.passConfirm) ? <div className="error__message">{errors.passConfirm}</div> : ''}
                     </div>
+                </div>
+                <div className='col-md-6 col-sm-12 mt-3 ps-4'>
                     <div className="input input--secondary">
                         <label htmlFor="registrationPhoneNumber">Phone Number*</label>
                         <input type="text" name="phoneNumber" id="registrationPhoneNumber"
                             placeholder="Enter your phone number" required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput} />
                         {!isEmpty(errors.phoneNumber) ? <div className="error__message">{errors.phoneNumber}</div> : ''}
                     </div>
-                </div>
-                <div className='col-md-6 col-sm-12 mt-3 ps-4'>
                     <div className="input input--secondary">
                         <label htmlFor="postal-code">Postal Code*</label>
                         <input type="text" name="postalCode" id="postal-code" placeholder="Postal Code"

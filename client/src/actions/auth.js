@@ -61,8 +61,8 @@ export const loadUser = () => async (dispatch) => {
 // Register User
 export const register = (formData, callback) => async (dispatch) => {
   try {
-    const res = await api.post('/users', formData);
-    window.localStorage.setItem('signup-email-address', res.data.email);
+    await api.post('/users', formData);
+    window.localStorage.setItem('email-address', formData.email);
     callback();
   } catch (err) {
     const serverErrors = err.response.data.errors;
