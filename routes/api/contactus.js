@@ -17,7 +17,7 @@ check('firstName', 'FirstName is required').notEmpty(),
   const { firstName, lastName, email, phoneNumber, subject, message } = req.body;
   const mailOptions = {
     from: process.env.SEND_EMAIL_ADDRESS,
-    to: process.env.SEND_EMAIL_ADDRESS,
+    to: 'info@zaywari.com',
     subject: "You got a message",
     html: `
         <div style="max-width: 800px;margin: auto; margin-top: 30px;">
