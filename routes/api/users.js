@@ -497,10 +497,10 @@ router.get('/sellers/:query', async (req, res) => {
       confirm: true,
       role: 'seller',
     };
-    if(phoneNumber && phoneNumber !== "") query.description = {"$regex": phoneNumber, "$options": "i"};
-    if(postalCode && postalCode !== "") query.description = {"$regex": postalCode, "$options": "i"};
-    if(email && email !== "") query.description = {"$regex": email, "$options": "i"};
-    if(licenseNumber && licenseNumber !== "") query.description = {"$regex": licenseNumber, "$options": "i"};
+    if(phoneNumber && phoneNumber !== "") query.phoneNumber = {"$regex": phoneNumber, "$options": "i"};
+    if(postalCode && postalCode !== "") query.postalCode = {"$regex": postalCode, "$options": "i"};
+    if(email && email !== "") query.email = {"$regex": email, "$options": "i"};
+    if(licenseNumber && licenseNumber !== "") query.licenseNumber = {"$regex": licenseNumber, "$options": "i"};
     if(name && name !== '') {
       query['$or'] = [
         { 'firstName': name }, 
@@ -535,11 +535,11 @@ router.get('/agents/:query', async (req, res) => {
       confirm: true,
       role: 'agent',
     };
-    if(phoneNumber !== "") query.description = {"$regex": phoneNumber, "$options": "i"};
-    if(postalCode !== "") query.description = {"$regex": postalCode, "$options": "i"};
-    if(email !== "") query.description = {"$regex": email, "$options": "i"};
-    if(licenseNumber !== "") query.description = {"$regex": licenseNumber, "$options": "i"};
-    if(name !== '') {
+    if(phoneNumber && phoneNumber !== "") query.phoneNumber = {"$regex": phoneNumber, "$options": "i"};
+    if(postalCode && postalCode !== "") query.postalCode = {"$regex": postalCode, "$options": "i"};
+    if(email && email !== "") query.email = {"$regex": email, "$options": "i"};
+    if(licenseNumber && licenseNumber !== "") query.licenseNumber = {"$regex": licenseNumber, "$options": "i"};
+    if(name && name !== '') {
       query['$or'] = [
         { 'firstName': name }, 
         { 'lastName': name },

@@ -360,7 +360,7 @@ export const getAgents = (filter, {skip, limit}) => async (dispatch) => {
     dispatch({
       type: LOADING
     });
-    const res = await api.get(`/users/agents/${query.join('&')}&skip=${skip}&limit=${limit}`);
+    const res = await api.get(`/users/agents/query?${query.join('&')}&skip=${skip}&limit=${limit}`);
     dispatch({
       type: GET_AGENTS,
       payload: res.data,

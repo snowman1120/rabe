@@ -353,7 +353,7 @@
     }
     .item__head__right {
       p {
-        text-align: right;
+        text-align: center;
         font-weight: 400;
         @include responsive(xs) {
           text-align: left;
@@ -504,7 +504,6 @@
 
     .property-price {
       font-size: 20px;
-      margin-top: 5px;
     }
 
     .property-desc {
@@ -7573,6 +7572,50 @@
       }
     }
   }
+
+  .property__list {
+    .property-info {
+      .type__bed__bath {
+        @include responsive(xxl) {
+          display: block !important;
+        }
+        @include responsive(xl) {
+          display: block !important;
+        }
+        @include responsive(md) {
+          display: block !important;
+        }
+        @include responsive(sm) {
+          display: flex !important;
+        }
+      }
+      .item__info__single {
+        .property-price {
+          @include responsive(xxl) {
+            text-align: left !important;
+          }
+          @include responsive(xl) {
+            text-align: left !important;
+          }
+          @include responsive(md) {
+            text-align: left !important;
+          }
+          @include responsive(sm) {
+            text-align: right !important;
+          }
+        }
+      }
+      .property-rooms {
+        // @include responsive(lg) {
+        //   margin-top: -26px;
+        // }
+        @include responsive(md) {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
   /* ==== 
    --------- (4.4) all sections styles end ---------
    ==== */

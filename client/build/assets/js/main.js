@@ -107,6 +107,7 @@
         );
         $(".property__grid__area__wrapper__inner__two").addClass("col-xl-5");
         $(".property__grid__area__wrapper__inner__three").addClass("col-xl-7");
+        $(".property__list__wrapper").addClass("property__list");
         $(".property__list__wrapper").removeClass("property__grid");
 
         $('.property-desc').removeClass('d-none');

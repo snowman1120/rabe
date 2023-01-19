@@ -19,14 +19,10 @@ const Sellers = ({ isAuthenticated, role, sellers, count, loading, getSellers })
   useEffect(() => {
     getSellers(filter, {skip: (page - 1) * LIMIT, limit: LIMIT});
   }, []);
-  // useEffect(() => {
-  //   if(isAuthenticated === false) window.location.href = '/';
-  //   if(role && role !== 'admin') window.location.href = '/';
-  // }, [isAuthenticated, role]);
-
   useEffect(() => {
-    console.log(sellers, count);
-  }, [sellers, count]);
+    if(isAuthenticated === false) window.location.href = '/';
+    if(role && role !== 'admin') window.location.href = '/';
+  }, [isAuthenticated, role]);
 
   const goPage = (p) => {
     if(p < 1) p = 1;
@@ -58,22 +54,24 @@ const Sellers = ({ isAuthenticated, role, sellers, count, loading, getSellers })
                 <input type="text" className="form-control" value={filter.name} name="name" style={{maxWidth: 300}} onChange={onChange} onKeyDown={onKeyDownInput} />
               </div>
             </div>
-            <div className='mt-4'>
+            <div className='mt-4 row'>
                 {
                   sellers.map(seller => (
-                    <div key={seller._id} className="col-12 col-lg-6" style={{borderRadius: '5px', boxShadow: '0px 2px 5px rgb(0 0 0 / 30%)', padding: '10px', cursor: 'pointer'}}>
-                      <div className='row'>
-                        <div className='col-4'>
-                          <img style={{width: '100%', borderRadius: '5px', boxShadow: '0 0 5px rgb(0 0 0 / 30%)'}} 
-                            src={seller && seller.avatar ? seller.avatar : "/assets/images/profile.jpg"} alt="seller" />
-                        </div>
-                        <div className='col-8'>
-                          <h5 className='mt-2 mb-2'>{seller.firstName}&nbsp;{seller.lastName}</h5>
-                          <div>
-                            <div className='col-12'><span style={{fontSize: 17}}>Email: <b>{seller.email}</b></span></div>
-                            <div className='col-12'><span style={{fontSize: 17}}>Phone Number: <b>{seller.phoneNumber}</b></span></div>
-                            <div className='col-12'><span style={{fontSize: 17}}>Postal Code: <b>{seller.postalCode}</b></span></div>
-                            <div className='col-12'><span style={{fontSize: 17}}>License Number: <b>{seller.licenseNumber}</b></span></div>
+                    <div className='col-12 col-lg-6 ps-4 pe-4'>
+                      <div key={seller._id} style={{borderRadius: '5px', boxShadow: '0px 2px 5px rgb(0 0 0 / 30%)', padding: '10px', cursor: 'pointer'}}>
+                        <div className='row'>
+                          <div className='col-4'>
+                            <img style={{width: '100%', borderRadius: '5px', boxShadow: '0 0 5px rgb(0 0 0 / 30%)'}} 
+                              src={seller && seller.avatar ? seller.avatar : "/assets/images/profile.jpg"} alt="seller" />
+                          </div>
+                          <div className='col-8'>
+                            <h5 className='mt-2 mb-2'>{seller.firstName}&nbsp;{seller.lastName}</h5>
+                            <div>
+                              <div className='col-12'><span style={{fontSize: 17}}>Email: <b>{seller.email}</b></span></div>
+                              <div className='col-12'><span style={{fontSize: 17}}>Phone Number: <b>{seller.phoneNumber}</b></span></div>
+                              <div className='col-12'><span style={{fontSize: 17}}>Postal Code: <b>{seller.postalCode}</b></span></div>
+                              <div className='col-12'><span style={{fontSize: 17}}>License Number: <b>{seller.licenseNumber}</b></span></div>
+                            </div>
                           </div>
                         </div>
                       </div>

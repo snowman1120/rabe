@@ -199,14 +199,14 @@
           font-size: 14px;
         }
         @include responsive(lg) {
-          position: absolute;
-          right: 0px;
-          top: 0px;
-          bottom: 0px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 50px;
+          // position: absolute;
+          // right: 0px;
+          // top: 0px;
+          // bottom: 0px;
+          // display: flex;
+          // align-items: center;
+          // justify-content: center;
+          width: 17px;
           height: 100%;
           margin: 0px;
           border-left: 3px solid $white;
@@ -242,6 +242,7 @@
       max-height: 200px;
       overflow-y: auto;
       min-width: 14rem;
+      position: absolute;
       @include responsive(minScreenLaptop) {
         display: block;
         opacity: 0;

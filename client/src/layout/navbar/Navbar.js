@@ -150,7 +150,7 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                             <ul className="dropdown-menu" aria-labelledby="navbarPropertyDropdown">
                                                 <li><a className="dropdown-item" href="/admin/sellers">Sellers</a></li>
                                                 <li><a className="dropdown-item" href="/admin/agents">Agents</a></li>
-                                                <li><a className="dropdown-item" href="/admin/properties">Property List</a></li>
+                                                {/* <li><a className="dropdown-item" href="/admin/properties">Property List</a></li> */}
                                             </ul>
                                         </li>
                                     ) : ''
