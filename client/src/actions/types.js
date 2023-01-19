@@ -55,3 +55,4 @@ export const LOADING = 'LOADING';
 export const ERRORS = 'ERRORS';
 export const GET_SELLERS = 'GET_SELLERS';
 export const GET_AGENTS = 'GET_AGENTS';
+export const APPROVE_AGENT = 'APPROVE_AGENT';

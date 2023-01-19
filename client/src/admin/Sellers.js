@@ -57,8 +57,8 @@ const Sellers = ({ isAuthenticated, role, sellers, count, loading, getSellers })
             <div className='mt-4 row'>
                 {
                   sellers.map(seller => (
-                    <div className='col-12 col-lg-6 ps-4 pe-4'>
-                      <div key={seller._id} style={{borderRadius: '5px', boxShadow: '0px 2px 5px rgb(0 0 0 / 30%)', padding: '10px', cursor: 'pointer'}}>
+                    <div key={seller._id} className='col-12 col-lg-6 ps-4 pe-4'>
+                      <div style={{borderRadius: '5px', boxShadow: '0px 2px 5px rgb(0 0 0 / 30%)', padding: '10px', cursor: 'pointer'}}>
                         <div className='row'>
                           <div className='col-4'>
                             <img style={{width: '100%', borderRadius: '5px', boxShadow: '0 0 5px rgb(0 0 0 / 30%)'}} 

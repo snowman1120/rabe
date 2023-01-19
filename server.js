@@ -39,6 +39,7 @@ app.use('/api/bids', require('./routes/api/bids'));
 app.use('/api/my_properties', require('./routes/api/myproperties'));
 app.use('/api/cart', require('./routes/api/cart'));
 app.use('/api/stripe', require('./routes/api/stripe'));
+app.use('/api/contact-us', require('./routes/api/contactus'));
 
 process.env.NODE_ENV = "production";
 

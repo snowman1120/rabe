@@ -10,7 +10,7 @@ import {getMyProperties, updateRemainTime} from 'actions/property';
 import {getBidsForProperty} from 'actions/bids';
 import Footer from 'layout/footer/Footer';
 
-const MyProperties = ({loading, properties, countingdown, getMyProperties, updateRemainTime, isAuthenticated}) => {
+const MyProperties = ({loading, role, properties, countingdown, getMyProperties, updateRemainTime, isAuthenticated}) => {
     useEffect(() => {
         if(!countingdown) updateRemainTime();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -21,6 +21,10 @@ const MyProperties = ({loading, properties, countingdown, getMyProperties, updat
         getMyProperties();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        if(role !== 'agent') window.location.href = '/';
+    }, [role]);
 
     if(isAuthenticated === false) {
         return <Navigate to="/" />
@@ -122,6 +126,7 @@ const MyProperties = ({loading, properties, countingdown, getMyProperties, updat
 
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
+    role: state.auth.user && state.auth.user.role,
     properties: state.property.myProperties,
     countingdown: state.property.countingdown,
     loading: state.property.loading,

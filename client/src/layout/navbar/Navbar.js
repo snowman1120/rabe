@@ -7,7 +7,7 @@ import {markAllReadNotification} from 'actions/auth';
 import $ from 'jquery';
 import { useEffect } from 'react';
 
-const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllReadNotification, logout}) => {
+const Navbar = ({socket, isAuthenticated, user, role, notifications, avatar, markAllReadNotification, logout}) => {
     
     useEffect(() => {
         if(!socket) return;
@@ -87,15 +87,19 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                     </div>
                                     <ul className="navbar-nav nav__group__btn">
                                         <li className="nav-item dropdown d-none d-sm-block">
-                                            <a className="nav-link dropdown-toggle" href="#" id="navbarHomeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <a className="nav-link dropdown-toggle" href="#!" id="navbarHomeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <img className="avatar" src={isEmpty(avatar) ? "/assets/images/profile.jpg" : avatar} alt="avatar" />
                                                 {`${user.firstName} ${user.lastName}`}
                                             </a>
                                             <ul className="dropdown-menu" aria-labelledby="navbarHomeDropdown">
                                                 <li><a className="dropdown-item" href="/profile">Profile</a></li>
-                                                <li><a className="dropdown-item" href={user && user.role === 'seller' ? "/my-properties" : "/my-proposals"}>
-                                                    {user && user.role === 'seller' ? "My Properties" : "My Proposals"}</a></li>
-                                                <li><a className="dropdown-item" href="/cart">Cart</a></li>
+                                                {
+                                                    role !== 'admin' ? <li><a className="dropdown-item" href={user && role === 'seller' ? "/my-properties" : "/my-proposals"}>
+                                                    {user && role === 'seller' ? "My Properties" : "My Proposals"}</a></li> : ''
+                                                }
+                                                {
+                                                    role === 'seller' ? <li><a className="dropdown-item" href="/cart">Cart</a></li> : ''
+                                                }
                                                 <li><a className="dropdown-item" href="#!" onClick={logout}>Log out</a></li>
                                             </ul>
                                         </li>
@@ -124,35 +128,30 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                 <li className="nav-item dropdown">
                                     <a className="nav-link" href="/properties" id="navbarPropertyDropdown">Properties</a>
                                 </li>
-                                { isAuthenticated ? 
+                                { isAuthenticated && role !== 'admin' ? 
                                     (
-                                        user.role === 'seller' ? 
+                                        role === 'seller' ? 
                                             <li className="nav-item"><a className="nav-link" href="/my-properties">My Properties</a></li> : 
                                             <li className="nav-item"><a className="nav-link" href="/my-proposals">My Proposals</a></li>
                                     ) : 
                                     ''
                                 }
-                                { isAuthenticated && user.role === 'seller' ? 
+                                { isAuthenticated && role === 'seller' ? 
                                     (
                                         <li className="nav-item"><a className="nav-link" href="/post-property">Post Property</a></li>
                                     ) : ''
                                 }
-                                <li className="nav-item">
-                                    <a className="nav-link" href="/contact-us">Contact</a>
-                                </li>
-                                { isAuthenticated && user.role === 'admin' ? 
+                                {
+                                    role !== 'admin' ? <li className="nav-item">
+                                        <a className="nav-link" href="/contact-us">Contact</a>
+                                    </li> : ''
+                                }
+                                { isAuthenticated && role === 'admin' ? 
                                     (
-                                        <li className="nav-item dropdown">
-                                            <a className="nav-link dropdown-toggle" href="#!" id="navbarPropertyDropdown"
-                                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Admin
-                                            </a>
-                                            <ul className="dropdown-menu" aria-labelledby="navbarPropertyDropdown">
-                                                <li><a className="dropdown-item" href="/admin/sellers">Sellers</a></li>
-                                                <li><a className="dropdown-item" href="/admin/agents">Agents</a></li>
-                                                {/* <li><a className="dropdown-item" href="/admin/properties">Property List</a></li> */}
-                                            </ul>
-                                        </li>
+                                        <>
+                                            <li className='mav-item'><a className="nav-link" href="/admin/sellers">Sellers</a></li>
+                                            <li className='mav-item'><a className="nav-link" href="/admin/agents">Agents</a></li>
+                                        </>
                                     ) : ''
                                 }
                                 {
@@ -166,9 +165,13 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                             </a>
                                             <ul className="dropdown-menu d-block d-sm-none" aria-labelledby="navbarDropdown">
                                                 <li><a className="dropdown-item" href="/profile">Profile</a></li>
-                                                <li><a className="dropdown-item" href={user && user.role === 'seller' ? "/my-properties" : "/my-proposals"}>
-                                                    {user && user.role === 'seller' ? "My Properties" : "My Proposals"}</a></li>
-                                                <li><a className="dropdown-item" href="/cart">Cart</a></li>
+                                                {
+                                                    role !== 'admin' ? <li><a className="dropdown-item" href={user && role === 'seller' ? "/my-properties" : "/my-proposals"}>
+                                                    {user && role === 'seller' ? "My Properties" : "My Proposals"}</a></li> : ''
+                                                }
+                                                {
+                                                    role === 'seller' ? <li><a className="dropdown-item" href="/cart">Cart</a></li> : ''
+                                                }
                                                 <li><a className="dropdown-item" href="#!" onClick={logout}>Log out</a></li>
                                             </ul>
                                         </li>
@@ -196,6 +199,7 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth && state.auth.isAuthenticated,
     user: state.auth.user && state.auth.user,
+    role: state.auth.user && state.auth.user.role,
     socket: state.auth.user && state.auth.socket,
     avatar: state.auth.user && state.auth.user.avatar,
     notifications: state.auth.user && state.auth.user.notifications

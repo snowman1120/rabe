@@ -59,7 +59,7 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
     }
 
     if (isAuthenticated) {
-        if(role === 'admin') return <Navigate to="/admin" />;
+        // if(role === 'admin') return <Navigate to="/admin/sellers" />;
         return <Navigate to="/" />;
     }
 
@@ -70,7 +70,7 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
                 <div className="container">
                     <div className="registration__area">
                         <h4 className="neutral-top">Log in</h4>
-                        <p>Don't have an account? <a href="registration">Sign up here.</a></p>
+                        <p>Don't have an account? <a href="/signup">Sign up here.</a></p>
                         <div name="login__form" className="form__login">
                             <div className="input input--secondary">
                                 <label htmlFor="loginMail">Email*</label>
@@ -85,11 +85,11 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
                                 {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
                             </div>
                             <div className="checkbox login__checkbox">
-                                <label>
+                                {/* <label>
                                     <input type="checkbox" id="remeberPass" name="remeber__pass" value="remember" onChange={onChangeCheckbox} />
                                     <span className="checkmark"></span>
                                     Remember Me
-                                </label>
+                                </label> */}
                                 <a href="/reset-password/please-verify">Forget Password</a>
                             </div>
                             <div className="input__button">

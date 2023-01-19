@@ -19,7 +19,7 @@ import ContactModal from './ContactModal';
 
 import './style.css';
 
-const MyProposals = ({loading, isAuthenticated, bids, countingdown, getBidsForAgent, updateRemainTime, getContactInfoForAgent}) => {
+const MyProposals = ({loading, isAuthenticated, role, bids, countingdown, getBidsForAgent, updateRemainTime, getContactInfoForAgent}) => {
     const [progressBids, setProgressBids] = useState([]);
     const [winningBids, setWinningBids] = useState([]);
 
@@ -55,6 +55,10 @@ const MyProposals = ({loading, isAuthenticated, bids, countingdown, getBidsForAg
         if(!countingdown) updateRemainTime();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [countingdown]);
+
+    useEffect(() => {
+        if(role !== 'agent') window.location.href = '/';
+    }, [role]);
 
     const onViewInfo = (userID, propertyID,) => {
         getContactInfoForAgent(userID, propertyID, viewContactInfo);
@@ -257,6 +261,7 @@ const MyProposals = ({loading, isAuthenticated, bids, countingdown, getBidsForAg
 const mapStateToProps = (state) => ({
     user: state.auth.user,
     isAuthenticated: state.auth.isAuthenticated,
+    role: state.auth.user && state.auth.user.role,
     bids: state.bids.bids,
     loading: state.bids.loading,
     countingdown: state.property.countingdown,

@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import {connect} from 'react-redux';
 
 import Loading from 'components/Loading';
-import { getAgents } from 'actions/auth';
+import { getAgents, toggleApprove } from 'actions/auth';
+import SuccessModal from 'components/SuccessModal';
 
 const LIMIT = 12;
 
-const Agents = ({ isAuthenticated, role, agents, count, loading, getAgents }) => {
+const Agents = ({ isAuthenticated, role, agents, count, loading, getAgents, toggleApprove }) => {
   const [filter, setFilter] = useState({
     name: null,
     phoneNumber: null,
@@ -16,6 +17,7 @@ const Agents = ({ isAuthenticated, role, agents, count, loading, getAgents }) =>
     sortBy: 'date',
   });
   const [page, setPage] = useState(1);
+  const [successModalShow, setSuccessModalShow] = useState(false);
   useEffect(() => {
     getAgents(filter, {skip: (page - 1) * LIMIT, limit: LIMIT});
   }, []);
@@ -41,8 +43,20 @@ const Agents = ({ isAuthenticated, role, agents, count, loading, getAgents }) =>
       getAgents(filter, {skip: 0, limit: LIMIT});
     }
   }
+
+  const handleApprove = (id) => {
+    toggleApprove(id, () => {
+      setSuccessModalShow(true);
+    });
+  }
+
   return (
     <div>
+      <SuccessModal
+        show={successModalShow}
+        onHide={() => setSuccessModalShow(false)}
+        message="successfully done."
+    />
       <Loading showYou={loading} />
       <div className="container clear__top">
         <div className="admin-agents mt-lg-4">
@@ -56,21 +70,27 @@ const Agents = ({ isAuthenticated, role, agents, count, loading, getAgents }) =>
             </div>
             <div className='mt-4 row'>
                 {
-                  agents.map(seller => (
-                    <div className='col-12 col-lg-6 ps-4 pe-4'>
-                      <div key={seller._id} style={{borderRadius: '5px', boxShadow: '0px 2px 5px rgb(0 0 0 / 30%)', padding: '10px', cursor: 'pointer'}}>
+                  agents.map(agent => (
+                    <div key={agent._id} className='col-12 col-lg-6 ps-4 pe-4'>
+                      <div style={{borderRadius: '5px', boxShadow: '0px 2px 5px rgb(0 0 0 / 30%)', padding: '10px', cursor: 'pointer'}}>
                         <div className='row'>
                           <div className='col-4'>
                             <img style={{width: '100%', borderRadius: '5px', boxShadow: '0 0 5px rgb(0 0 0 / 30%)'}} 
-                              src={seller && seller.avatar ? seller.avatar : "/assets/images/profile.jpg"} alt="seller" />
+                              src={agent && agent.avatar ? agent.avatar : "/assets/images/profile.jpg"} alt="agent" />
                           </div>
                           <div className='col-8'>
-                            <h5 className='mt-2 mb-2'>{seller.firstName}&nbsp;{seller.lastName}</h5>
+                            <div className='justify-content-between d-flex align-items-center'>
+                              <h5 className='mt-2 mb-2'>{agent.firstName}&nbsp;{agent.lastName}</h5>
+                              <div className='me-3' 
+                                style={{width: 30, height: 30, borderRadius: "50%", backgroundColor: agent.approve ? '#00d5ff' : '#ff4646'}}
+                                onClick={() => handleApprove(agent._id)}
+                              ></div>
+                            </div>
                             <div>
-                              <div className='col-12'><span style={{fontSize: 17}}>Email: <b>{seller.email}</b></span></div>
-                              <div className='col-12'><span style={{fontSize: 17}}>Phone Number: <b>{seller.phoneNumber}</b></span></div>
-                              <div className='col-12'><span style={{fontSize: 17}}>Postal Code: <b>{seller.postalCode}</b></span></div>
-                              <div className='col-12'><span style={{fontSize: 17}}>License Number: <b>{seller.licenseNumber}</b></span></div>
+                              <div className='col-12'><span style={{fontSize: 17}}>Email: <b>{agent.email}</b></span></div>
+                              <div className='col-12'><span style={{fontSize: 17}}>Phone Number: <b>{agent.phoneNumber}</b></span></div>
+                              <div className='col-12'><span style={{fontSize: 17}}>Postal Code: <b>{agent.postalCode}</b></span></div>
+                              <div className='col-12'><span style={{fontSize: 17}}>License Number: <b>{agent.licenseNumber}</b></span></div>
                             </div>
                           </div>
                         </div>
@@ -114,4 +134,4 @@ const mapStateToProps = (state) => ({
   count: state.admin.agentCnt,
 });
 
-export default connect(mapStateToProps, { getAgents }) (Agents);
+export default connect(mapStateToProps, { getAgents, toggleApprove }) (Agents);

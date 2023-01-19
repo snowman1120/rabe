@@ -23,6 +23,7 @@ import {
   ERRORS,
   GET_SELLERS,
   GET_AGENTS,
+  APPROVE_AGENT,
 } from './types';
 
 import socketIO from "socket.io-client";
@@ -365,6 +366,35 @@ export const getAgents = (filter, {skip, limit}) => async (dispatch) => {
       type: GET_AGENTS,
       payload: res.data,
     });
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: ERRORS,
+      payload: errors
+    });
+  }
+}
+
+export const toggleApprove = (id, callback) => async (dispatch) => {
+  try {
+    dispatch({
+      type: LOADING
+    });
+    const res = await api.post('/users/agents/approve', { id });
+    dispatch({
+      type: APPROVE_AGENT,
+      payload: {
+        agent: res.data,
+        id,
+      }
+    });
+    callback();
   } catch(err) {
     const serverErrors = err.response.data.errors;
     let errors = {};

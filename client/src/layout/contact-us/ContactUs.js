@@ -1,8 +1,64 @@
-
+import { useState, useEffect } from 'react';
+import {connect} from 'react-redux';
+import validator from 'validator';
 import Footer from 'layout/footer/Footer';
-const ContactUs = () => {
+import {isEmpty} from 'utils/validation';
+
+import { sendMessage } from 'actions/contactUs';
+import Loading from 'components/Loading';
+const ContactUs = ({ serverErrors, sendMessage }) => {
+    const [formData, setFormData] = useState({
+        email: '',
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        subject: '',
+        message: '',
+    });
+    
+    const [errors, setErrors] = useState({
+        email: '',
+        password: '',
+        msg: ''
+    });
+
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setErrors(serverErrors);
+    }, [serverErrors]);
+
+    const onChange = (e) => {
+        setFormData({...formData, [e.target.name]: e.target.value});
+    }
+
+    const onKeyDownInput = (e) => {
+        if(e.keyCode === 13) onSubmit();
+    }
+
+    const onSubmit = () => {
+        let t_errors = {};
+        Object.keys(formData).forEach((key) => {
+            if(isEmpty(formData[key])) {
+                t_errors = {...t_errors, [key]: 'Required field'};
+            }
+        });
+
+        if(isEmpty(t_errors.email) && !validator.isEmail(formData.email)) {
+            t_errors = {...t_errors, email: 'Enter a valid email!'}
+        }
+
+        setErrors({...t_errors});
+
+        if(isEmpty(t_errors)) {
+            // Send request
+            setLoading(true);
+            sendMessage(formData, () => setLoading(false));
+        }
+    }
     return (
         <div>
+            <Loading showYou={loading} />
             {/* <!-- ==== banner section start ==== --> */}
             <section className="support__banner contact__banner bg__img clear__top"
                 data-background="./assets/images/contact-banner-bg.png">
@@ -18,11 +74,11 @@ const ContactUs = () => {
             {/* <!-- ==== #banner section end ==== --> */}
 
             {/* <!-- ==== contact overview section start ==== --> */}
-            <section className="contact__overview">
+            {/* <section className="contact__overview">
                 <div className="container">
                     <div className="contact__overview__area">
                         <div className="row">
-                            <div className="col-md-6 col-xl-4">
+                            <div className="col-md-6">
                                 <div className="contact__overview__single column__space--secondary shadow__effect">
                                     <img src="assets/images/icons/email.png" alt="email" />
                                     <h5>Send Us an Email</h5>
@@ -33,7 +89,7 @@ const ContactUs = () => {
                                     </p>
                                 </div>
                             </div>
-                            <div className="col-md-6 col-xl-4">
+                            <div className="col-md-6">
                                 <div className="contact__overview__single column__space--secondary shadow__effect">
                                     <img src="assets/images/icons/phone.png" alt="Call" />
                                     <h5>Give Us a Call</h5>
@@ -44,21 +100,10 @@ const ContactUs = () => {
                                     </p>
                                 </div>
                             </div>
-                            <div className="col-md-6 col-xl-4">
-                                <div className="contact__overview__single shadow__effect">
-                                    <img src="assets/images/icons/chat.png" alt="Chat" />
-                                    <h5>Chat with us</h5>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipiscing.</p>
-                                    <hr />
-                                    <p className="neutral-bottom">
-                                        <a href="#0">Open live chat</a>
-                                    </p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             {/* <!-- ==== #contact overview section end ==== --> */}
 
             {/* <!-- ==== ask section start ==== --> */}
@@ -69,211 +114,80 @@ const ContactUs = () => {
                             <div className="section__header">
                                 <h2 className="neutral-top">Ask a Question</h2>
                             </div>
-                            <form action="#" name="ask__from" method="post">
+                            <div className='mt-4'>
                                 <div className="row">
                                     <div className="col-sm-6">
                                         <div className="input input--secondary">
                                             <label htmlFor="askFirstName">First Name*</label>
-                                            <input type="text" name="ask__first__name" id="askFirstName"
-                                                placeholder="Enter Your First Name" required="required" />
+                                            <input type="text" name="firstName" id="askFirstName"
+                                                placeholder="Enter Your First Name" required="required" value={formData.firstName} onChange={onChange} onKeyDown={onKeyDownInput} />
+                                            {!isEmpty(errors.firstName) ? <div className="error__message">{errors.email}</div> : ''}
                                         </div>
                                     </div>
                                     <div className="col-sm-6">
                                         <div className="input input--secondary">
                                             <label htmlFor="askLastName">Last Name*</label>
-                                            <input type="text" name="ask__last__name" id="askLastName"
-                                                placeholder="Enter Your Last Name" required="required" />
+                                            <input type="text" name="lastName" id="askLastName"
+                                                placeholder="Enter Your Last Name" required="required" value={formData.lastName} onChange={onChange} onKeyDown={onKeyDownInput} />
+                                            {!isEmpty(errors.lastName) ? <div className="error__message">{errors.email}</div> : ''}
                                         </div>
                                     </div>
                                 </div>
                                 <div className="input input--secondary">
                                     <label htmlFor="askRegistrationMail">Email*</label>
-                                    <input type="email" name="ask__registration__email" id="askRegistrationMail"
-                                        placeholder="Enter your email" required="required" />
+                                    <input type="email" name="email" id="askRegistrationMail"
+                                        placeholder="Enter your email" required="required" value={formData.email} onChange={onChange} onKeyDown={onKeyDownInput} />
+                                    {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
                                 </div>
                                 <div className="input input--secondary input__alt">
                                     <label htmlFor="askNumber">Phone*</label>
                                     <div className="input-group">
                                         <div className="input-group-prepend">
-                                            <select className="number__code__select" id="numberCodeSelectAlert">
+                                            {/* <select className="number__code__select" id="numberCodeSelectAlert">
                                                 <option selected value="0">+1</option>
                                                 <option value="1">+2</option>
                                                 <option value="2">+3</option>
                                                 <option value="3">+4</option>
                                                 <option value="4">+5</option>
                                                 <option value="5">+6</option>
-                                            </select>
+                                            </select> */}
+                                            <span>+1</span>
                                         </div>
-                                        <input type="number" name="ask__number" id="askNumber" required="required"
-                                            placeholder="345-323-1234" />
+                                        <input type="number" name="phoneNumber" id="askNumber" required="required"
+                                            placeholder="345-323-1234" value={formData.phoneNumber} onChange={onChange} onKeyDown={onKeyDownInput} />
                                     </div>
+                                    {!isEmpty(errors.phoneNumber) ? <div className="error__message">{errors.email}</div> : ''}
                                 </div>
                                 <div className="input input--secondary">
                                     <label htmlFor="askSubject">Subject*</label>
-                                    <input type="text" name="ask__subject" id="askSubject" placeholder="Write Subject"
-                                        required="required" />
+                                    <input type="text" name="subject" id="askSubject" placeholder="Write Subject"
+                                        required="required" value={formData.subject} onChange={onChange} onKeyDown={onKeyDownInput} />
+                                    {!isEmpty(errors.subject) ? <div className="error__message">{errors.email}</div> : ''}
                                 </div>
                                 <div className="input input--secondary">
                                     <label htmlFor="askMessage">Message*</label>
-                                    <textarea name="ask_message" id="askMessage" required="required"
-                                        placeholder="Write Message"></textarea>
+                                    <textarea name="message" id="askMessage" required="required"
+                                        placeholder="Write Message" value={formData.message} onChange={onChange} onKeyDown={onKeyDownInput}></textarea>
+                                    {!isEmpty(errors.message) ? <div className="error__message">{errors.email}</div> : ''}
                                 </div>
                                 <div className="input__button">
-                                    <button type="submit" className="button button--effect">Subscribe</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            {/* <!-- ==== #ask section end ==== --> */}
-
-            {/* <!-- ==== faq section start ==== --> */}
-            <section className="faq section__space">
-                <div className="container">
-                    <div className="faq__area">
-                        <div className="section__header">
-                            <h2 className="neutral-top">Frequently Asked
-                                Questions</h2>
-                        </div>
-                        <div className="faq__group">
-                            <div className="accordion" id="accordionExampleFund">
-                                <div className="accordion-item content__space">
-                                    <h5 className="accordion-header" id="headingFundOne">
-                                        <span className="icon_box">
-                                            <img src="assets/images/icons/message.png" alt="Fund" />
-                                        </span>
-                                        <button className="accordion-button" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseFundOne" aria-expanded="true"
-                                            aria-controls="collapseFundOne">
-                                            What is Revest?
-                                        </button>
-                                    </h5>
-                                    <div id="collapseFundOne" className="accordion-collapse collapse show"
-                                        aria-labelledby="headingFundOne" data-bs-parent="#accordionExampleFund">
-                                        <div className="accordion-body">
-                                            <p>combined with a handful of model sentence structures, to generate Lorem Ipsum
-                                                which looks reasonable. The generated Lorem Ipsum is therefore always free
-                                                from
-                                                repetition, injected humour, or</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="accordion-item content__space">
-                                    <h5 className="accordion-header" id="headingFundTwo">
-                                        <span className="icon_box">
-                                            <img src="assets/images/icons/message.png" alt="Fund" />
-                                        </span>
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseFundTwo" aria-expanded="false"
-                                            aria-controls="collapseFundTwo">
-                                            What are the benefits of investing via Revest?
-                                        </button>
-                                    </h5>
-                                    <div id="collapseFundTwo" className="accordion-collapse collapse"
-                                        aria-labelledby="headingFundTwo" data-bs-parent="#accordionExampleFund">
-                                        <div className="accordion-body">
-                                            <p>combined with a handful of model sentence structures, to generate Lorem Ipsum
-                                                which looks reasonable. The generated Lorem Ipsum is therefore always free
-                                                from
-                                                repetition, injected humour, or</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="accordion-item content__space">
-                                    <h5 className="accordion-header" id="headingFundThree">
-                                        <span className="icon_box">
-                                            <img src="assets/images/icons/message.png" alt="Fund" />
-                                        </span>
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseFundThree" aria-expanded="false"
-                                            aria-controls="collapseFundThree">
-                                            What makes Revest different?
-                                        </button>
-                                    </h5>
-                                    <div id="collapseFundThree" className="accordion-collapse collapse"
-                                        aria-labelledby="headingFundThree" data-bs-parent="#accordionExampleFund">
-                                        <div className="accordion-body">
-                                            <p>combined with a handful of model sentence structures, to generate Lorem Ipsum
-                                                which looks reasonable. The generated Lorem Ipsum is therefore always free
-                                                from
-                                                repetition, injected humour, or</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="accordion-item content__space">
-                                    <h5 className="accordion-header" id="headingFundFour">
-                                        <span className="icon_box">
-                                            <img src="assets/images/icons/message.png" alt="Fund" />
-                                        </span>
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseFundFour" aria-expanded="false"
-                                            aria-controls="collapseFundFour">
-                                            What happens to my investments if Revest goes into bankruptcy?
-                                        </button>
-                                    </h5>
-                                    <div id="collapseFundFour" className="accordion-collapse collapse"
-                                        aria-labelledby="headingFundFour" data-bs-parent="#accordionExampleFund">
-                                        <div className="accordion-body">
-                                            <p>combined with a handful of model sentence structures, to generate Lorem Ipsum
-                                                which looks reasonable. The generated Lorem Ipsum is therefore always free
-                                                from
-                                                repetition, injected humour, or</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="accordion-item content__space">
-                                    <h5 className="accordion-header" id="headingFundFive">
-                                        <span className="icon_box">
-                                            <img src="assets/images/icons/message.png" alt="Fund" />
-                                        </span>
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseFundFive" aria-expanded="false"
-                                            aria-controls="collapseFundFive">
-                                            What regulations apply to Revest?
-                                        </button>
-                                    </h5>
-                                    <div id="collapseFundFive" className="accordion-collapse collapse"
-                                        aria-labelledby="headingFundFive" data-bs-parent="#accordionExampleFund">
-                                        <div className="accordion-body">
-                                            <p>combined with a handful of model sentence structures, to generate Lorem Ipsum
-                                                which looks reasonable. The generated Lorem Ipsum is therefore always free
-                                                from
-                                                repetition, injected humour, or</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="accordion-item content__space">
-                                    <h5 className="accordion-header" id="headingFundSix">
-                                        <span className="icon_box">
-                                            <img src="assets/images/icons/message.png" alt="Fund" />
-                                        </span>
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseFundSix" aria-expanded="false"
-                                            aria-controls="collapseFundSix">
-                                            How do I Fund investing in Revest?
-                                        </button>
-                                    </h5>
-                                    <div id="collapseFundSix" className="accordion-collapse collapse"
-                                        aria-labelledby="headingFundSix" data-bs-parent="#accordionExampleFund">
-                                        <div className="accordion-body">
-                                            <p className="neutral-top neutral-bottom">combined with a handful of model sentence
-                                                structures, to generate Lorem Ipsum
-                                                which looks reasonable. The generated Lorem Ipsum is therefore always free
-                                                from
-                                                repetition, injected humour, or</p>
-                                        </div>
-                                    </div>
+                                    <button type="submit" className="button button--effect" onClick={onSubmit}>Subscribe</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-            {/* <!-- ==== #faq section end ==== --> */}
+            {/* <!-- ==== #ask section end ==== --> */}
             <Footer />
         </div>
     )
 }
 
-export default ContactUs;
+const mapStateToProps = (state) => ({
+    serverErrors: state.auth.errors,
+    isAuthenticated: state.auth.isAuthenticated,
+    role: state.auth.user && state.auth.user.role
+});
+
+export default connect(mapStateToProps, {sendMessage}) (ContactUs);

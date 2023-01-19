@@ -3,6 +3,7 @@ import {
   ERRORS,
   GET_SELLERS,
   GET_AGENTS,
+  APPROVE_AGENT,
 } from '../actions/types';
 
 const initialState = {
@@ -42,6 +43,14 @@ function adminReducer(state = initialState, action) {
         ...state,
         agents: payload.agents,
         agentCnt: payload.count,
+        loading: false,
+      }
+    case APPROVE_AGENT:
+      const agents = [...state.agents];
+      agents[agents.findIndex(agent => agent._id === payload.id)] = payload.agent;
+      return {
+        ...state,
+        agents,
         loading: false,
       }
     default:

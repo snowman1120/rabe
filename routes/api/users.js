@@ -562,4 +562,18 @@ router.get('/agents/:query', async (req, res) => {
     res.status(500).json({ errors: [{ param: 'msg', msg: 'Server Error' }] });
   }
 });
+
+router.post('/agents/approve', async (req, res) => {
+  try {
+    const id = req.body.id;
+    const agent = await User.findOne({_id: id});
+    agent.approve = !agent.approve;
+    await agent.save();
+    res.json(agent);
+  } catch(err) {
+    console.error(err.message);
+    res.status(500).json({ errors: [{ param: 'msg', msg: 'Server Error' }] });
+  }
+});
+
 module.exports = router;
