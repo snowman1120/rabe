@@ -8,6 +8,7 @@ import Loading from 'components/Loading';
 
 import {getMyProperties, updateRemainTime} from 'actions/property';
 import {getBidsForProperty} from 'actions/bids';
+import Footer from 'layout/footer/Footer';
 
 const MyProperties = ({loading, properties, countingdown, getMyProperties, updateRemainTime, isAuthenticated}) => {
     useEffect(() => {
@@ -114,6 +115,7 @@ const MyProperties = ({loading, properties, countingdown, getMyProperties, updat
                 </div>
             </section>
             {/* <!-- ==== #market section end ==== --> */}
+            <Footer />
         </div>
     )
 }

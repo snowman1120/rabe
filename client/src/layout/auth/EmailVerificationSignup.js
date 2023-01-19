@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Loading from 'components/Loading';
 import {verifySignupToken} from 'actions/auth';
 
+import Footer from 'layout/footer/Footer';
 const EmailVerification = ({verifySignupToken, isAuthenticated}) => {
     const {token} = useParams();
     useEffect(() => {
@@ -14,9 +15,12 @@ const EmailVerification = ({verifySignupToken, isAuthenticated}) => {
         if(isAuthenticated === true) window.location.href = '/';
     }, [isAuthenticated]);
     return (
-        <div className='registration clear__top'>
-            <Loading showYou={true} />
-            <h3 className="text-center mb-4">Verifing Email</h3>
+        <div>
+            <div className='registration clear__top'>
+                <Loading showYou={true} />
+                <h3 className="text-center mb-4">Verifing Email</h3>
+            </div>
+            <Footer />
         </div>
     )
 }

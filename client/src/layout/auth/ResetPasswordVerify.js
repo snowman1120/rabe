@@ -3,6 +3,7 @@ import { sendEmailResetPassword } from 'actions/auth';
 import { useEffect, useState } from 'react';
 import {isEmpty} from 'utils/validation';
 
+import Footer from 'layout/footer/Footer';
 const ResetPasswordVerify = ({sendEmailResetPassword, serverErrors}) => {
     const [email, setEmail] = useState('');
     useEffect(() => {
@@ -37,24 +38,27 @@ const ResetPasswordVerify = ({sendEmailResetPassword, serverErrors}) => {
     }
 
     return (
-        <div className='registration clear__top' style={{margin: '200px 0 100px 0'}}>
-            <h3 className="text-center mb-4">Verify your email to proceed</h3>
-            <div>
-                <div className="input input--secondary" style={{maxWidth: '400px', margin: 'auto'}}>
-                    <label htmlFor="loginMail">Email*</label>
-                    <input type="email" name="email" id="loginMail" placeholder="Enter your email"
-                        required="required" onChange={onChange} onKeyDown={onKeyDownInput} />
-                    {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
-                </div>
-                {
-                    window.localStorage.getItem('email-address') ? <p className='text-center'>We just sent an email to the address: {window.localStorage.getItem('email-address')} <br/>
-                    Please check your email and click on the link provided to verify your address.</p> : 
-                    <p className='text-center'>Please enter your email address and click send button.</p>
-                }
-                <div className='mt-4'>
-                    <button className='button button--effect d-sm-block next-button m-auto' onClick={onClickResendEmail}>Send Verification Email</button>
+        <div>
+            <div className='registration clear__top' style={{margin: '200px 0 100px 0'}}>
+                <h3 className="text-center mb-4">Verify your email to proceed</h3>
+                <div>
+                    <div className="input input--secondary" style={{maxWidth: '400px', margin: 'auto'}}>
+                        <label htmlFor="loginMail">Email*</label>
+                        <input type="email" name="email" id="loginMail" placeholder="Enter your email"
+                            required="required" onChange={onChange} onKeyDown={onKeyDownInput} />
+                        {!isEmpty(errors.email) ? <div className="error__message">{errors.email}</div> : ''}
+                    </div>
+                    {
+                        isEmpty(errors.email) ? window.localStorage.getItem('email-address') ? <p className='text-center'>We just sent an email to the address: {window.localStorage.getItem('email-address')} <br/>
+                        Please check your email and click on the link provided to verify your address.</p> : 
+                        <p className='text-center'>Please enter your email address and click send button.</p> : ''
+                    }
+                    <div className='mt-4'>
+                        <button className='button button--effect d-sm-block next-button m-auto' onClick={onClickResendEmail}>Send Verification Email</button>
+                    </div>
                 </div>
             </div>
+            <Footer />
         </div>
     )
 }

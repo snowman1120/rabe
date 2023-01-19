@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 import { useEffect, useState } from 'react';
 import {isEmpty} from 'utils/validation';
 
+import Footer from 'layout/footer/Footer';
 import { resetPassword } from '../../actions/auth';
 
 const EmailVerification = ({serverErrors, resetPassword}) => {
@@ -47,25 +48,29 @@ const EmailVerification = ({serverErrors, resetPassword}) => {
       if(isEmpty(t_errors)) resetPassword({...formData, token}, () => window.location.href = '/login');
     }
     return (
-      <section className="registration clear__top">
-        <div className="container">
-            <div className="registration__area" style={{maxWidth: '640px'}}>
-                <h4 className="neutral-top">Reset Password</h4>
-                <div name="registration__form" className='mt-lg-4'>
-                  <div className="input input--secondary">
-                      <label htmlFor="regiPass">Password*</label>
-                      <input type="password" name="password" id="regiPass" placeholder="Password"
-                          required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
-                      {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
+      <div>
+        <section className="registration clear__top">
+          <div className="container">
+              <div className="registration__area" style={{maxWidth: '640px'}}>
+                  <h4 className="neutral-top">Reset Password</h4>
+                  <div name="registration__form" className='mt-lg-4'>
+                    <div className="input input--secondary">
+                        <label htmlFor="regiPass">Password*</label>
+                        <input type="password" name="password" id="regiPass" placeholder="Password"
+                            required="required" onChange={onChangeInput} onKeyDown={onKeyDownInput}  />
+                        {!isEmpty(errors.password) ? <div className="error__message">{errors.password}</div> : ''}
+                    </div>
+                    <div className="input__button">
+                        <button type="submit" className="button button--effect" onClick={onSubmit}>Reset password</button>
+                        {!isEmpty(errors.msg) ? <div className="error__message">{errors.msg}</div> : ''}
+                    </div>
                   </div>
-                  <div className="input__button">
-                      <button type="submit" className="button button--effect" onClick={onSubmit}>Reset password</button>
-                      {!isEmpty(errors.msg) ? <div className="error__message">{errors.msg}</div> : ''}
-                  </div>
-                </div>
-            </div>
-        </div>
-      </section>
+              </div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+      
     )
 }
 

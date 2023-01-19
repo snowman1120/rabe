@@ -17,7 +17,7 @@ const Error404 = () => {
                         </div>
                         <div className="col-lg-8 d-none d-lg-block">
                             <div className="error__thumb thumb__ltr">
-                                <img src="assets/images/error.png" alt="Error" />
+                                <img src="/assets/images/error.png" alt="Error" />
                             </div>
                         </div>
                     </div>

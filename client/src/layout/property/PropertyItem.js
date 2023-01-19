@@ -15,7 +15,7 @@ const PropertyItem = ({property}) => {
                         <div className="property__item__image column__space--secondary">
                             <div className="img__effect">
                                 <a href="#!" onClick={gotoDetailPage}>
-                                    <img src={property.photos.length > 0 ? property.photos[0] : 'assets/images/income.png'} alt="Los Angeles" />
+                                    <img src={property.photos.length > 0 ? property.photos[0] : 'assets/images/income.png'} alt="Property pic" />
                                 </a>
                             </div>
                         </div>
@@ -46,14 +46,18 @@ const PropertyItem = ({property}) => {
                             </div>
                             <div className='row'>
                                 <div className='property-info'>
-                                    <div className="item__info__single">
-                                        <p><b>{property.propertyType.name}</b></p>
-                                    </div>
-                                    <div className="item__info__single">
-                                        <p className='property-rooms text-end mtm-26'><span><b>{property.bedrooms}</b>&nbsp;bed&nbsp;&nbsp;<b>{property.bathrooms}</b>&nbsp;bath</span></p>
-                                    </div>
-                                    <div className="item__info__single">
-                                        <p className='property-price'><b>${numberWithCommas(property.price)}</b></p>
+                                    <div className='row'>
+                                        <div className='col-sm-8 col-md-12 justify-content-between d-flex type__bed__bath'>
+                                            <div className="item__info__single">
+                                                <p><b>{property.propertyType.name}</b></p>
+                                            </div>
+                                            <div className="item__info__single">
+                                                <p className='property-rooms'><span><b>{property.bedrooms}</b>&nbsp;bed&nbsp;&nbsp;<b>{property.bathrooms}</b>&nbsp;bath</span></p>
+                                            </div>
+                                        </div>
+                                        <div className="item__info__single col-sm-4 col-md-12">
+                                            <p className='property-price text-end'><b>${numberWithCommas(property.price)}</b></p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className='property-desc d-none col-md-9 col-xs-12'>
@@ -61,7 +65,7 @@ const PropertyItem = ({property}) => {
                                 </div>
                             </div>
                             <div className="item__footer">
-                                <div className="item__security">
+                                {/* <div className="item__security">
                                     <div className="icon__box">
                                         <img src="assets/images/home.png" alt="Security" />
                                     </div>
@@ -69,16 +73,16 @@ const PropertyItem = ({property}) => {
                                         <p className="secondary">Security</p>
                                         <h6>1st-Rank Mortgage</h6>
                                     </div>
-                                </div>
-                                <div className="item__cta__group">
+                                </div> */}
+                                {/* <div className="item__cta__group">
                                     <a href="registration" className="button button--effect">Submit Now</a>
                                     <a href="#!" onClick={gotoDetailPage}
                                         className="button button--secondary button--effect">Details</a>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="invest__cta__wrapper">
                                 <div className="countdown__wrapper">
-                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to invest</p>
+                                    <p className="secondary"><i className="fa-solid fa-clock"></i> Left to bid</p>
                                     <div className="countdown">
                                         <h6>
                                             <span className="days"><b>{property.DHMS.days}</b></span><span className="ref"><b>D</b></span>

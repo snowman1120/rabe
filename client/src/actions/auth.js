@@ -17,7 +17,12 @@ import {
   SET_PROFILE,
 
   MARK_ALL_READ_NOTIFICATION,
-  MARK_ALL_READ_FAIL
+  MARK_ALL_READ_FAIL,
+
+  LOADING,
+  ERRORS,
+  GET_SELLERS,
+  GET_AGENTS,
 } from './types';
 
 import socketIO from "socket.io-client";
@@ -35,22 +40,22 @@ export const loadUser = () => async (dispatch) => {
   try {
     const res = await api.get('/auth');
 
-    const socket = socketIO.connect(SERVER_ADDRESS);
+    // const socket = socketIO.connect(SERVER_ADDRESS);
 
     dispatch({
       type: USER_LOADED,
       payload: {
         user: res.data,
-        socket
+        // socket
       }
     });
 
-    socket.emit("message", 
-      {
-        userName: `${res.data.firstName} ${res.data.lastName}`, 
-        id: `${res.data._id}`
-      }
-    )
+    // socket.emit("message", 
+    //   {
+    //     userName: `${res.data.firstName} ${res.data.lastName}`, 
+    //     id: `${res.data._id}`
+    //   }
+    // )
   } catch (err) {
     dispatch({
       type: AUTH_ERROR
@@ -123,7 +128,11 @@ export const sendEmailResetPassword = (email) => async (dispatch) => {
   } catch (err) {
     let errors = {};
     if(err.response.data.message) {
-      errors['email'] = err.response.data.message;
+      if(typeof err.response.data.message === 'object') {
+        errors['email'] = 'Something went wrong. Please try again.'
+      } else {
+        errors['email'] = err.response.data.message;
+      }
     }
     const serverErrors = err.response.data.errors;
 
@@ -306,6 +315,66 @@ export const markAllReadNotification = () => async (dispatch) => {
 
     dispatch({
       type: MARK_ALL_READ_FAIL,
+      payload: errors
+    });
+  }
+}
+
+export const getSellers = (filter, {skip, limit}) => async (dispatch) => {
+  try {
+    let query = [];
+    query = Object.keys(filter).map(item => {
+      if(!filter[item]) return `${item}=`;
+      return `${item}=${filter[item]}`;
+    })
+    dispatch({
+      type: LOADING
+    });
+    const res = await api.get(`/users/sellers/query?${query.join('&')}&skip=${skip}&limit=${limit}`);
+    dispatch({
+      type: GET_SELLERS,
+      payload: res.data,
+    });
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: ERRORS,
+      payload: errors
+    });
+  }
+}
+
+export const getAgents = (filter, {skip, limit}) => async (dispatch) => {
+  try {
+    let query = [];
+    query = Object.keys(filter).map(item => {
+      if(!filter[item]) return `${item}=`;
+      return `${item}=${filter[item]}`;
+    })
+    dispatch({
+      type: LOADING
+    });
+    const res = await api.get(`/users/agents/${query.join('&')}&skip=${skip}&limit=${limit}`);
+    dispatch({
+      type: GET_AGENTS,
+      payload: res.data,
+    });
+  } catch(err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+
+    dispatch({
+      type: ERRORS,
       payload: errors
     });
   }

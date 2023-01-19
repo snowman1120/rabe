@@ -12,6 +12,7 @@ import {bidToProperty, updateBid, getListingNow} from 'actions/bids';
 import SuccessModal from 'components/SuccessModal';
 import ConfirmModal from './ConfirmModal';
 import CongrateModal from './CongrateModal';
+import Footer from 'layout/footer/Footer';
 
 import $ from 'jquery';
 window.jQuery = window.$ = $;
@@ -280,7 +281,7 @@ const PropertyDetails = ({
                                 </div>
                                 <div className="col-lg-4">
                                     <div className="text-start text-lg-end">
-                                        <a href="contact-us" className="button button--secondary button--effect">Request
+                                        <a href="/contact-us" className="button button--secondary button--effect">Request
                                             info</a>
                                     </div>
                                 </div>
@@ -327,6 +328,7 @@ const PropertyDetails = ({
                 </div>
             </section>
             {/* <!-- ==== #market section end ==== --> */}
+            <Footer />
         </div>
     )
 }

@@ -117,7 +117,20 @@ router.get('/filter/:query', async (req, res) => {
       status: 'inprogress'
     };
     if(searchWord != "") query.description = {"$regex": searchWord, "$options": "i"};
-    if(location != "") query.location = {areaLevel_1: location};
+    if(location != "") {
+      let [capName, geoName] = location.split(',');
+      capName = capName.trim();
+      geoName = geoName.trim();
+      query['$or'] = [
+        { 'address.areaLevel_1.long': capName }, 
+        { 'address.areaLevel_1.long': geoName },
+        { 'address.areaLevel_2.long': capName },
+        { 'address.areaLevel_2.long': geoName },
+        { 'address.areaLevel_3.long': capName },
+        { 'address.areaLevel_3.long': geoName },
+      ]
+      
+    }
     if(propertyType != "") query.propertyType = propertyType;
 
     let sort = {};

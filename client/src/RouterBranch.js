@@ -2,12 +2,9 @@
 import { Route, Routes } from 'react-router-dom';
 
 import Home from 'layout/home/Home';
-import Home2 from 'layout/home/Home2';
-import Home3 from 'layout/home/Home3';
 
 import Properties from 'layout/property/Properties';
 import PropertyDetails from 'layout/propertyDetails/PropertyDetails';
-import PropertyAlert from 'layout/property/PropertyAlert';
 
 import ContactUs from 'layout/contact-us/ContactUs';
 
@@ -35,16 +32,18 @@ import Error404 from 'layout/error/404';
 
 import Test from 'layout/Test';
 
+import AdminPanel from 'admin/Dashboard';
+import Sellers from 'admin/Sellers';
+import Agents from 'admin/Agents';
+import AdminProperties from 'admin/Properties';
+
 const RouterBranch = () => {
     return (
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/home2" element={<Home2 />} />
-            <Route path="/home3" element={<Home3 />} />
 
             <Route path='/properties' element={<Properties />} />
             <Route path='/property-details/:propertyID' element={<PropertyDetails />} />
-            <Route path='/property-alert' element={<PropertyAlert />} />
             
             <Route path='/contact-us' element={<ContactUs/>} />
             
@@ -68,6 +67,12 @@ const RouterBranch = () => {
             <Route path="/cart" element={<Cart />} />
 
             <Route path="/key-risks" element={<KeyRisks />} />
+
+            {/* Admin Pages */}
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin/sellers" element={<Sellers />} />
+            <Route path="/admin/agents" element={<Agents />} />
+            <Route path="/admin/properties" element={<AdminProperties />} />
 
             <Route path="/test" element={<Test />} />
 

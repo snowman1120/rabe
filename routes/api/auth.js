@@ -79,6 +79,18 @@ router.post(
           });
       }
 
+      if(user.role === 'agent' && !user.approve) {
+        return res
+          .status(400)
+          .json({ errors: [
+            ...errors.array(),
+            {
+              param: 'msg',
+              msg: 'You are not approved yet.' 
+            }]
+          });
+      }
+
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
@@ -92,18 +104,6 @@ router.post(
             }]
           });
       }
-
-      // if(user.role === 'agent' && !user.approve) {
-      //   return res
-      //     .status(400)
-      //     .json({ errors: [
-      //       ...errors.array(),
-      //       {
-      //         param: 'msg',
-      //         msg: 'You are not approved yet.' 
-      //       }]
-      //     });
-      // }
 
       const payload = {
         user: {

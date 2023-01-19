@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Loading from 'components/Loading';
+import Footer from 'layout/footer/Footer';
 
 import {getBidsForAgent, getContactInfoForAgent} from 'actions/bids';
 import {updateRemainTime} from 'actions/property';
@@ -248,6 +249,7 @@ const MyProposals = ({loading, isAuthenticated, bids, countingdown, getBidsForAg
                     </Tabs>
                 </div>
             </section>
+            <Footer />
         </div>
     )
 }

@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 
 import SuccessModal from 'components/SuccessModal';
 import ImageUpload from './ImageUpload';
+import Footer from 'layout/footer/Footer';
 
 import {isEmpty} from 'utils/validation';
 
@@ -148,6 +149,7 @@ const Profile = ({serverErrors, update, setProfile, user, isAuthenticated}) => {
                     description_2: 'to see your property list'
                 }}
             />
+            <Footer />
         </div>
     )
 }

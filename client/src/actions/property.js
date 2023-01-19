@@ -12,8 +12,12 @@ import {
   COUNTING_DOWN,
   REMOVE_PROPERTIES,
 
+  GET_LOCATIONS,
+  LOCATION_ERRORS,
+
   GET_MY_PROPERTIES,
-  GET_CART
+  GET_CART,
+  PROPERTY_TYPES_ERROR,
 } from './types';
 
 export const updateRemainTime = () => async (dispatch) => {
@@ -229,11 +233,34 @@ export const getPropertyTypes = () => async (dispatch) => {
         serverErrors.forEach((error) => errors[error.param] = error.msg);
       }
       dispatch({
-        type: PROPERTY_ERROR,
+        type: PROPERTY_TYPES_ERROR,
         payload: errors
       });
     }
-  };
+};
+
+// Get property types
+export const getLocations = () => async (dispatch) => {
+  try {
+    const res = await api.get('/location');
+
+    dispatch({
+      type: GET_LOCATIONS,
+      payload: res.data
+    });
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+    dispatch({
+      type: LOCATION_ERRORS,
+      payload: errors
+    });
+  }
+};
 
 // get Distance from agent to a property
 export const getDistance2property = (originPostalCode, destPostalCode) => async (dispatch) => {
@@ -252,5 +279,31 @@ export const getDistance2property = (originPostalCode, destPostalCode) => async 
       payload: errors
     });
     return false;
+  }
+}
+
+export const getFeaturedProperties = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: LOADING_PROPERTY
+    })
+    const res = await api.get(`/property/filter/query?searchWord=&location=&propertyType=&sortBy=date&skip=0&limit=5`);
+
+    dispatch({
+      type: GET_PROPERTIES,
+      payload: res.data.properties,
+      count: res.data.count
+    });
+  } catch (err) {
+    const serverErrors = err.response.data.errors;
+    let errors = {};
+
+    if (serverErrors) {
+      serverErrors.forEach((error) => errors[error.param] = error.msg);
+    }
+    dispatch({
+      type: PROPERTY_ERROR,
+      payload: errors
+    });
   }
 }

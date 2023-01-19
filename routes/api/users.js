@@ -377,7 +377,7 @@ router.post(
     const user = await User.findOne({_id: req.user.id});
 
     try {
-      if(user.avatar) {
+      if(user.avatar && fs.existsSync(`client/build/assets/images/avatar/${path.basename(user.avatar)}`)) {
         fs.unlinkSync(`client/build/assets/images/avatar/${path.basename(user.avatar)}`)
       }
 
@@ -487,4 +487,79 @@ const sendResetPasswordMessage = async (email) => {
   return {success: true, message: 'Email sent successfully'};
 }
 
+// @route    GET api/property/:filter
+// @desc     Get property
+// @access   public
+router.get('/sellers/:query', async (req, res) => {
+  try {
+    const {name, phoneNumber, postalCode, email, licenseNumber, sortBy, skip, limit} = req.query;
+    let query = {
+      confirm: true,
+      role: 'seller',
+    };
+    if(phoneNumber && phoneNumber !== "") query.description = {"$regex": phoneNumber, "$options": "i"};
+    if(postalCode && postalCode !== "") query.description = {"$regex": postalCode, "$options": "i"};
+    if(email && email !== "") query.description = {"$regex": email, "$options": "i"};
+    if(licenseNumber && licenseNumber !== "") query.description = {"$regex": licenseNumber, "$options": "i"};
+    if(name && name !== '') {
+      query['$or'] = [
+        { 'firstName': name }, 
+        { 'lastName': name },
+      ];
+    }
+    let sort = {};
+    if(sortBy === 'date') sort = {date: -1};
+    // if(sortBy === 'price') sort = {price: -1};
+
+    const sellers = await User.find(query)
+      .sort(sort)
+      .select('-password')
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
+
+    const count = await User.find(query).countDocuments();
+    res.json({ sellers, count });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ errors: [{ param: 'msg', msg: 'Server Error' }] });
+  }
+});
+
+// @route    GET api/property/:filter
+// @desc     Get property
+// @access   public
+router.get('/agents/:query', async (req, res) => {
+  try {
+    const {name, phoneNumber, postalCode, email, licenseNumber, sortBy, skip, limit} = req.query;
+    let query = {
+      confirm: true,
+      role: 'agent',
+    };
+    if(phoneNumber !== "") query.description = {"$regex": phoneNumber, "$options": "i"};
+    if(postalCode !== "") query.description = {"$regex": postalCode, "$options": "i"};
+    if(email !== "") query.description = {"$regex": email, "$options": "i"};
+    if(licenseNumber !== "") query.description = {"$regex": licenseNumber, "$options": "i"};
+    if(name !== '') {
+      query['$or'] = [
+        { 'firstName': name }, 
+        { 'lastName': name },
+      ];
+    }
+    let sort = {};
+    if(sortBy === 'date') sort = {date: -1};
+    // if(sortBy === 'price') sort = {price: -1};
+
+    const agents = await User.find(query)
+      .sort(sort)
+      .select('-password')
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
+
+    const count = await User.find(query).countDocuments();
+    res.json({ agents, count });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ errors: [{ param: 'msg', msg: 'Server Error' }] });
+  }
+});
 module.exports = router;

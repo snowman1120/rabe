@@ -97,7 +97,7 @@
 
         $('.property-desc').addClass('d-none');
         $('.property-info').removeClass('col-md-3 col-xs-12');
-        $('.property-rooms').addClass('text-end mtm-26');
+        // $('.property-rooms').addClass('text-end mtm-26');
       });
   
       $(".grid__list").on("click", function () {

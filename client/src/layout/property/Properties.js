@@ -4,8 +4,9 @@ import {connect} from 'react-redux';
 
 import PropertyItem from './PropertyItem';
 import Loading from 'components/Loading';
+import Footer from 'layout/footer/Footer';
 
-import { getProperties, getPropertyTypes, removeProperties } from 'actions/property';
+import { getProperties, getPropertyTypes, removeProperties, getLocations } from 'actions/property';
 import {updateRemainTime} from 'actions/property';
 
 import $ from 'jquery';
@@ -14,7 +15,19 @@ window.jQuery = window.$ = $;
 //require("jquery-nice-select");
 const LIMIT = 8;
 
-const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes, countingdown, getProperties, updateRemainTime, removeProperties}) => {
+const Properties = ({
+    locations,
+    propertyTypes, 
+    properties, 
+    loading, 
+    count, 
+    getLocations, 
+    getPropertyTypes, 
+    countingdown, 
+    getProperties, 
+    updateRemainTime, 
+    removeProperties
+}) => {
     const locationRef = useRef();
     const typeRef = useRef();
     const sortRef = useRef();
@@ -27,6 +40,7 @@ const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes
     });
 
     useEffect(() => {
+        getLocations();
         getPropertyTypes();
         getPropertiesFromServer(filterData, 0);
         if(!countingdown) updateRemainTime();
@@ -48,7 +62,7 @@ const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes
             getPropertiesFromServer({...filterData, propertyType: null}, 0);
         } else {
             const propertyTypeIdx = propertyTypes.findIndex(type => type.name === e.target.value);
-            if(propertyTypeIdx > 0) {
+            if(propertyTypeIdx >= 0) {
                 setFilterData({...filterData, propertyType: propertyTypes[propertyTypeIdx]._id});
                 removeProperties();
                 getPropertiesFromServer({...filterData, propertyType: propertyTypes[propertyTypeIdx]._id}, 0);
@@ -58,7 +72,7 @@ const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes
 
     useEffect(() => {
         const propertyTypeIdx = propertyTypes.findIndex(type => type.name === $(typeRef.current).val());
-        if(propertyTypeIdx > 0)
+        if(propertyTypeIdx >= 0)
             setFilterData({...filterData, propertyType: propertyTypes[propertyTypeIdx]._id});
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [propertyTypes]);
@@ -113,10 +127,7 @@ const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes
                                 <div className="property__select__wrapper">
                                     <select className="location__select" id="location" name="location" ref={locationRef} onChange={onChangeSelect}>
                                         <option data-display="Location" value="root">Select Location</option>
-                                        <option value="angeles">Los Angeles</option>
-                                        <option value="francis">San Francisco, CA</option>
-                                        <option value="weldon">The Weldon</option>
-                                        <option value="diego">San Diego</option>
+                                        {locations.map(l => <option value={`${l.capName}, ${l.geoName}`} key={l.capName}>{`${l.capName}, ${l.geoName}`}</option>)}
                                     </select>
                                 </div>
                             </div>
@@ -165,6 +176,7 @@ const Properties = ({propertyTypes, properties, loading, count, getPropertyTypes
                 </div>
             </section>
             {/* <!-- ==== properties grid section end ==== --> */}
+            <Footer />
         </div>
     )
 }
@@ -173,8 +185,9 @@ const mapStateToProps = (state) => ({
     count: state.property.count,
     properties: state.property.properties,
     propertyTypes: state.propertyType.propertyTypes,
+    locations: state.location.locations,
     loading: state.property.loading,
     countingdown: state.property.countingdown
 });
 
-export default connect(mapStateToProps, { getPropertyTypes, getProperties, updateRemainTime, removeProperties}) (Properties);
+export default connect(mapStateToProps, { getPropertyTypes, getProperties, updateRemainTime, removeProperties, getLocations}) (Properties);

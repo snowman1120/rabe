@@ -4,6 +4,7 @@ import validator from 'validator';
 import { Navigate } from 'react-router-dom';
 import {isEmpty} from 'utils/validation';
 
+import Footer from 'layout/footer/Footer';
 import {login} from 'actions/auth';
 
 const Login = ({serverErrors, login, role, isAuthenticated}) => {
@@ -58,7 +59,7 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
     }
 
     if (isAuthenticated) {
-        if(role === 'admin') return <Navigate to="/admin/dashboard" />;
+        if(role === 'admin') return <Navigate to="/admin" />;
         return <Navigate to="/" />;
     }
 
@@ -100,6 +101,7 @@ const Login = ({serverErrors, login, role, isAuthenticated}) => {
                 </div>
             </section>
             {/* <!-- ==== #registration section end ==== --> */}
+            <Footer />
         </div>
     )
 }

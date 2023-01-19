@@ -10,6 +10,7 @@ import Address from './Address';
 import ImageUploader from 'layout/postProperty/ImageUploader';
 import SuccessModal from 'components/SuccessModal';
 import Loading from 'components/Loading';
+import Footer from 'layout/footer/Footer';
 
 import { addProperty, getPropertyTypes } from 'actions/property';
 
@@ -100,7 +101,7 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
 
     const onChangeType = (e) => {
         const propertyTypeIdx = propertyTypes.findIndex(type => type.name === e.target.value);
-        if(propertyTypeIdx > 0) {
+        if(propertyTypeIdx >= 0) {
             setFormData({...formData, propertyType: propertyTypes[propertyTypeIdx]._id});
             switchUnitStatus();
         }
@@ -378,6 +379,7 @@ const PostProperty = ({ serverErrors, addProperty, getPropertyTypes, propertyTyp
                     description_2: 'to see your cart'
                 }}
             />
+            <Footer />
         </div>
         
     )

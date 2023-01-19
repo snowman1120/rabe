@@ -4,6 +4,7 @@ import {Navigate} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropertyItem from './PropertyItem';
 import Loading from 'components/Loading';
+import Footer from 'layout/footer/Footer';
 
 import {getCart} from 'actions/property';
 
@@ -95,6 +96,7 @@ const Cart = ({loading, cart, getCart, isAuthenticated}) => {
                 </div>
             </section>
             {/* <!-- ==== #market section end ==== --> */}
+            <Footer />
         </div>
     )
 }

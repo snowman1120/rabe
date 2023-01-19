@@ -87,8 +87,7 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                     </div>
                                     <ul className="navbar-nav nav__group__btn">
                                         <li className="nav-item dropdown d-none d-sm-block">
-                                            <a className="nav-link dropdown-toggle" href="#!" id="navbarHomeDropdown"
-                                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <a className="nav-link dropdown-toggle" href="#" id="navbarHomeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <img className="avatar" src={isEmpty(avatar) ? "/assets/images/profile.jpg" : avatar} alt="avatar" />
                                                 {`${user.firstName} ${user.lastName}`}
                                             </a>
@@ -133,9 +132,29 @@ const Navbar = ({socket, isAuthenticated, user, notifications, avatar, markAllRe
                                     ) : 
                                     ''
                                 }
+                                { isAuthenticated && user.role === 'seller' ? 
+                                    (
+                                        <li className="nav-item"><a className="nav-link" href="/post-property">Post Property</a></li>
+                                    ) : ''
+                                }
                                 <li className="nav-item">
                                     <a className="nav-link" href="/contact-us">Contact</a>
                                 </li>
+                                { isAuthenticated && user.role === 'admin' ? 
+                                    (
+                                        <li className="nav-item dropdown">
+                                            <a className="nav-link dropdown-toggle" href="#!" id="navbarPropertyDropdown"
+                                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Admin
+                                            </a>
+                                            <ul className="dropdown-menu" aria-labelledby="navbarPropertyDropdown">
+                                                <li><a className="dropdown-item" href="/admin/sellers">Sellers</a></li>
+                                                <li><a className="dropdown-item" href="/admin/agents">Agents</a></li>
+                                                <li><a className="dropdown-item" href="/admin/properties">Property List</a></li>
+                                            </ul>
+                                        </li>
+                                    ) : ''
+                                }
                                 {
                                     isAuthenticated ? 
                                     (<>

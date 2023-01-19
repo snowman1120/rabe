@@ -22,7 +22,7 @@ setSocket(socketIO);
 // Connect Database
 connectDB();
 // Connect Socket
-connectSocket(socketIO);
+// connectSocket(socketIO);
 app.use(formData.parse())
 // Init Middleware
 app.use(express.json());
@@ -34,6 +34,7 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/property', require('./routes/api/property'));
 app.use('/api/property_type', require('./routes/api/propertyType'));
+app.use('/api/location', require('./routes/api/location'));
 app.use('/api/bids', require('./routes/api/bids'));
 app.use('/api/my_properties', require('./routes/api/myproperties'));
 app.use('/api/cart', require('./routes/api/cart'));

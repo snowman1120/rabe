@@ -45,16 +45,13 @@ export const GET_LISTING_NOW = 'GET_LISTING_NOW';
 
 export const GET_MY_PROPERTIES = 'GET_MY_PROPERTIES';
 
+export const GET_LOCATIONS = 'GET_LOCATIONS';
+export const LOCATION_ERRORS = 'LOCATION_ERRORS';
 
-
-export const UPDATE_LIKES = 'UPDATE_LIKES';
-export const GET_PROFILE = 'GET_PROFILE';
-export const GET_PROFILES = 'GET_PROFILES';
-export const GET_REPOS = 'GET_REPOS';
-export const NO_REPOS = 'NO_REPOS';
-export const CLEAR_PROFILE = 'CLEAR_PROFILE';
-export const PROFILE_ERROR = 'PROFILE_ERROR';
 export const ACCOUNT_DELETED = 'ACCOUNT_DELETED';
 
-export const ADD_COMMENT = 'ADD_COMMENT';
-export const REMOVE_COMMENT = 'REMOVE_COMMENT';
+// Admin
+export const LOADING = 'LOADING';
+export const ERRORS = 'ERRORS';
+export const GET_SELLERS = 'GET_SELLERS';
+export const GET_AGENTS = 'GET_AGENTS';

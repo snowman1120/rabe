@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import { Navigate } from 'react-router-dom';
 
 import {isEmpty} from 'utils/validation';
+import Footer from 'layout/footer/Footer';
 
 import {changePassword} from 'actions/auth';
 
@@ -96,6 +97,7 @@ const ChangePassword = ({serverErrors, passwordChanged, changePassword, isAuthen
                 </div>
             </section>
             {/* <!-- ==== #registration section end ==== --> */}
+            <Footer />
         </div>
     )
 }

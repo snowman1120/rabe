@@ -1,4 +1,5 @@
 
+import Footer from 'layout/footer/Footer';
 const ContactUs = () => {
     return (
         <div>
@@ -270,6 +271,7 @@ const ContactUs = () => {
                 </div>
             </section>
             {/* <!-- ==== #faq section end ==== --> */}
+            <Footer />
         </div>
     )
 }

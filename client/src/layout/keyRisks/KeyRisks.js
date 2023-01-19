@@ -1,3 +1,5 @@
+
+import Footer from 'layout/footer/Footer';
 const KeyRisks = () => {
     return (
         <div>
@@ -170,6 +172,7 @@ const KeyRisks = () => {
                     </div>
                 </div>
             </section>
+            <Footer />
         </div>
     )
 }
